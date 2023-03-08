@@ -12,5 +12,5 @@ jobs:
     vmImage: 'windows-latest'
   steps:
     - template: build.yml
-			parameters:
-				python_arch: x86
+      parameters:
+        python_arch: x86

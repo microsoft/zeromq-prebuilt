@@ -1,41 +1,41 @@
 parameters:
   repo: ''
   tag: ''
-	python_arch: ''
+  python_arch: ''
 
 steps:
 - task: NodeTool@0
-	inputs:
-		versionSource: 'spec'
-		versionSpec: '18.x'
+  inputs:
+    versionSource: 'spec'
+    versionSpec: '18.x'
 
 - task: UsePythonVersion@0
-	condition: and(succeeded(), ne('${{ parameters.python_arch }}', ''))
-	inputs:
-		versionSpec: '3.x'
-		addToPath: true
-		architecture: ${{ parameters.python_arch }}
+  condition: and(succeeded(), ne('${{ parameters.python_arch }}', ''))
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
+    architecture: ${{ parameters.python_arch }}
 
 - task: Bash@3
-	displayName: Git Clone
-	inputs:
-		targetType: 'inline'
-		script: |
-			set -ex
-			REPO=`[ "${{ parameters.repo }}" ] &&  echo ${{ parameters.repo }} || echo $(node -p "require('./config.json').zeromqRepo")`
-			TREEISH=`[ "${{ parameters.tag }}" ] && echo ${{ parameters.tag }} || echo $(node -p "require('./config.json').zeromqTag")`
-			git clone -b build https://github.com/${REPO}.git
-			cd zeromq.js
-			git checkout $TREEISH
+  displayName: Git Clone
+  inputs:
+    targetType: 'inline'
+    script: |
+      set -ex
+      REPO=`[ "${{ parameters.repo }}" ] &&  echo ${{ parameters.repo }} || echo $(node -p "require('./config.json').zeromqRepo")`
+      TREEISH=`[ "${{ parameters.tag }}" ] && echo ${{ parameters.tag }} || echo $(node -p "require('./config.json').zeromqTag")`
+      git clone -b build https://github.com/${REPO}.git
+      cd zeromq.js
+      git checkout $TREEISH
 
 
 - task: Bash@3
-	displayName: List files
-	inputs:
-		targetType: 'inline'
-		workingDirectory: zeromq.js
-		script: |
-			ls
+  displayName: List files
+  inputs:
+    targetType: 'inline'
+    workingDirectory: zeromq.js
+    script: |
+      ls
 
 
 # - task: Bash@3
