@@ -1,16 +1,16 @@
 jobs:
-
 - job:
-  displayName: Windows 64
+  displayName: win_64
   pool:
     vmImage: 'windows-latest'
   steps:
-  - task: NodeTool@0
-    inputs:
-      versionSource: 'spec'
-      versionSpec: '18.x'
-  - task: UsePythonVersion@0
-    inputs:
-      versionSpec: '3.x'
-      addToPath: true
-      architecture: 'x64'
+    - template: build.yml
+
+- job:
+  displayName: win32
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+    - template: build.yml
+			parameters:
+				python_arch: x86

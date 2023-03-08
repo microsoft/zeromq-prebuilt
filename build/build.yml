@@ -1,0 +1,503 @@
+parameters:
+  repo: ''
+  tag: ''
+	python_arch: ''
+
+steps:
+- task: NodeTool@0
+	inputs:
+		versionSource: 'spec'
+		versionSpec: '18.x'
+
+- task: UsePythonVersion@0
+	condition: and(succeeded(), ne('${{ parameters.python_arch }}', ''))
+	inputs:
+		versionSpec: '3.x'
+		addToPath: true
+		architecture: ${{ parameters.python_arch }}
+
+- task: Bash@3
+	displayName: Git Clone
+	inputs:
+		targetType: 'inline'
+		script: |
+			set -ex
+			REPO=`[ "${{ parameters.repo }}" ] &&  echo ${{ parameters.repo }} || echo $(node -p "require('./config.json').zeromqRepo")`
+			TREEISH=`[ "${{ parameters.tag }}" ] && echo ${{ parameters.tag }} || echo $(node -p "require('./config.json').zeromqTag")`
+			git clone -b build https://github.com/${REPO}.git
+			cd zeromq.js
+			git checkout $TREEISH
+
+
+- task: Bash@3
+	displayName: List files
+	inputs:
+		targetType: 'inline'
+		workingDirectory: zeromq.js
+		script: |
+			ls
+
+
+# - task: Bash@3
+# 	displayName: install
+# 	inputs:
+# 		targetType: 'inline'
+# 		workingDirectory: zeromq.js
+# 		script: |
+# 			npm install
+
+#   - task: Bash@3
+#     displayName: Prebuilds
+#     inputs:
+#       targetType: 'inline'
+#       workingDirectory: zeromq.js
+#       script: |
+#         npm run prebuild
+#   - task: Bash@3
+#     displayName: ls
+#     inputs:
+#       workingDirectory: zeromq.js/prebuilds
+#       targetType: 'inline'
+#       script: |
+#         ls
+
+#   - task: PublishPipelineArtifact@0
+#     displayName: 'Publish Pipeline Artifact'
+#     inputs:
+#       artifactName: win32-x64
+#       targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/win32-x64
+#     condition: succeeded()
+
+# - job:
+#   displayName: Windows 32
+#   pool:
+#     vmImage: 'windows-latest'
+#   steps:
+#   - task: NodeTool@0
+#     inputs:
+#       versionSource: 'spec'
+#       versionSpec: '18.x'
+#       # force32bit: true
+#   - task: UsePythonVersion@0
+#     inputs:
+#       versionSpec: '3.x'
+#       addToPath: true
+#       architecture: 'x86'
+
+#   - task: Bash@3
+#     displayName: Git Clone
+#     inputs:
+#       targetType: 'inline'
+#       script: |
+#         # Write your commands here
+#         git clone -b build https://github.com/donjayamanne/zeromq.js.git
+
+
+#   - bash: |
+#       npm install
+#     displayName: Install
+#     workingDirectory: zeromq.js
+#     env:
+#       ARCH: x86
+#       npm_config_arch: ia32
+
+#   - bash: |
+#       npm run prebuild
+#     displayName: Install
+#     workingDirectory: zeromq.js
+#     env:
+#       ARCH: x86
+#       npm_config_arch: ia32
+
+#   - task: Bash@3
+#     displayName: ls
+#     inputs:
+#       workingDirectory: zeromq.js/prebuilds
+#       targetType: 'inline'
+#       script: |
+#         ls
+
+#   - task: PublishPipelineArtifact@0
+#     displayName: 'Publish Pipeline Artifact'
+#     inputs:
+#       artifactName: win32-ia32
+#       targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/win32-ia32
+#     condition: succeeded()
+
+# - job:
+#   displayName: Mac 64
+#   pool:
+#     vmImage: 'macOS-latest'
+#   steps:
+#   - task: NodeTool@0
+#     inputs:
+#       versionSource: 'spec'
+#       versionSpec: '18.x'
+#   - task: UsePythonVersion@0
+#     inputs:
+#       versionSpec: '3.x'
+#       addToPath: true
+
+#   - task: Bash@3
+#     displayName: Git Clone
+#     inputs:
+#       targetType: 'inline'
+#       script: |
+#         # Write your commands here
+#         git clone -b build https://github.com/donjayamanne/zeromq.js.git
+
+#   - bash: |
+#       npm install
+#     displayName: Install
+#     workingDirectory: zeromq.js
+
+#   - bash: |
+#       npm run prebuild
+#     displayName: Install
+#     workingDirectory: zeromq.js
+#   - task: Bash@3
+#     displayName: ls
+#     inputs:
+#       workingDirectory: zeromq.js/prebuilds
+#       targetType: 'inline'
+#       script: |
+#         ls
+
+#   - task: PublishPipelineArtifact@0
+#     displayName: 'Publish Pipeline Artifact'
+#     inputs:
+#       artifactName: darwin-x64
+#       targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/darwin-x64
+#     condition: succeeded()
+
+# - job:
+#   displayName: Mac arm64
+#   pool:
+#     vmImage: 'macOS-latest'
+#   steps:
+#   - task: NodeTool@0
+#     inputs:
+#       versionSource: 'spec'
+#       versionSpec: '18.x'
+#   - task: UsePythonVersion@0
+#     inputs:
+#       versionSpec: '3.x'
+#       addToPath: true
+
+#   - task: Bash@3
+#     displayName: Git Clone
+#     inputs:
+#       targetType: 'inline'
+#       script: |
+#         # Write your commands here
+#         git clone -b build https://github.com/donjayamanne/zeromq.js.git
+
+#   - bash: |
+#       npm install
+#     displayName: Install
+#     workingDirectory: zeromq.js
+#     env:
+#       ARCH: arm64
+
+#   - bash: |
+#       npm run prebuild
+#     displayName: Install
+#     workingDirectory: zeromq.js
+#     env:
+#       ARCH: arm64
+#   - task: Bash@3
+#     displayName: ls
+#     inputs:
+#       workingDirectory: zeromq.js/prebuilds
+#       targetType: 'inline'
+#       script: |
+#         ls
+
+
+#   - task: PublishPipelineArtifact@0
+#     displayName: 'Publish Pipeline Artifact'
+#     inputs:
+#       artifactName: darwin-arm64
+#       targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/darwin-arm64
+#     condition: succeeded()
+
+# - job:
+#   displayName: Ubuntu 64 MUSL
+#   pool:
+#     vmImage: 'ubuntu-latest'
+#   steps:
+
+#   - task: DockerInstaller@0
+#     inputs:
+#       dockerVersion: '17.09.0-ce'
+#   - task: NodeTool@0
+#     inputs:
+#       versionSource: 'spec'
+#       versionSpec: '18.x'
+#   - task: UsePythonVersion@0
+#     inputs:
+#       versionSpec: '3.x'
+#       addToPath: true
+
+#   - task: Bash@3
+#     displayName: Setup dependencies
+#     inputs:
+#       targetType: 'inline'
+#       script: |
+#         pwd
+
+
+#   - task: Bash@3
+#     displayName: Setup dependencies
+#     env:
+#       CURRENDIR: $(Build.SourcesDirectory)
+#     inputs:
+#       targetType: 'inline'
+#       script: |
+#         echo This is the current directory $CURRENDIR
+
+
+#   - task: Bash@3
+#     displayName: Setup dependencies
+#     inputs:
+#       targetType: 'inline'
+#       script: |
+#         docker run hello-world
+
+#   - task: Bash@3
+#     displayName: Git Clone
+#     inputs:
+#       targetType: 'inline'
+#       script: |
+#         # Write your commands here
+#         git clone -b build https://github.com/donjayamanne/zeromq.js.git
+
+
+#   - task: Bash@3
+#     displayName: Setup dependencies
+#     env:
+#       CURRENDIR: $(Build.SourcesDirectory)
+#       DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild
+#     inputs:
+#       targetType: 'inline'
+#       workingDirectory: zeromq.js
+#       script: |
+#           docker pull node:18-alpine
+#           docker tag node:18-alpine builder
+#           docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged builder sh -c "$DOCKERCMD"
+
+#   - task: Bash@3
+#     displayName: ls
+#     inputs:
+#       workingDirectory: zeromq.js/prebuilds
+#       targetType: 'inline'
+#       script: |
+#         ls
+
+#   - task: PublishPipelineArtifact@0
+#     displayName: 'Publish Pipeline Artifact'
+#     inputs:
+#       artifactName: linux-musl-x64
+#       targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/linux-x64
+#     condition: succeeded()
+
+# - job:
+#   displayName: Ubuntu arm64 MUSL
+#   pool:
+#     vmImage: 'ubuntu-latest'
+#   steps:
+
+#   - task: DockerInstaller@0
+#     inputs:
+#       dockerVersion: '17.09.0-ce'
+#   - task: NodeTool@0
+#     inputs:
+#       versionSource: 'spec'
+#       versionSpec: '18.x'
+#   - task: UsePythonVersion@0
+#     inputs:
+#       versionSpec: '3.x'
+#       addToPath: true
+
+#   - task: Bash@3
+#     displayName: Setup dependencies
+#     inputs:
+#       targetType: 'inline'
+#       script: |
+#         pwd
+
+
+#   - task: Bash@3
+#     displayName: Setup dependencies
+#     env:
+#       CURRENDIR: $(Build.SourcesDirectory)
+#     inputs:
+#       targetType: 'inline'
+#       script: |
+#         echo This is the current directory $CURRENDIR
+
+
+#   - task: Bash@3
+#     displayName: Setup dependencies
+#     inputs:
+#       targetType: 'inline'
+#       script: |
+#         docker run hello-world
+
+#   - task: Bash@3
+#     displayName: Git Clone
+#     inputs:
+#       targetType: 'inline'
+#       script: |
+#         # Write your commands here
+#         git clone -b build https://github.com/donjayamanne/zeromq.js.git
+
+
+#   - task: Bash@3
+#     displayName: Setup dependencies
+#     env:
+#       CURRENDIR: $(Build.SourcesDirectory)
+#       DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && npm_config_arch=arm64 ARCH=arm64 pnpm install && npm_config_arch=arm64 ARCH=arm64 pnpm run prebuild
+#       ARCH: arm64
+#     inputs:
+#       targetType: 'inline'
+#       workingDirectory: zeromq.js
+#       script: |
+#           docker pull node:18-alpine
+#           docker tag node:18-alpine builder
+#           docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged -e ARCH='arm64' -e npm_config_arch='arm64' builder sh -c "$DOCKERCMD"
+
+#   - task: Bash@3
+#     displayName: ls
+#     inputs:
+#       workingDirectory: zeromq.js/prebuilds
+#       targetType: 'inline'
+#       script: |
+#         ls
+
+#   - task: PublishPipelineArtifact@0
+#     displayName: 'Publish Pipeline Artifact'
+#     inputs:
+#       artifactName: linux-musl-arm64
+#       targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/linux-arm64
+#     condition: succeeded()
+
+# - job:
+#   displayName: Ubuntu glibc x64
+#   pool:
+#     vmImage: 'ubuntu-latest'
+#   steps:
+#   - task: NodeTool@0
+#     inputs:
+#       versionSource: 'spec'
+#       versionSpec: '18.x'
+#   - task: UsePythonVersion@0
+#     inputs:
+#       versionSpec: '3.x'
+#       addToPath: true
+
+#   - task: Bash@3
+#     displayName: Git Clone
+#     inputs:
+#       targetType: 'inline'
+#       script: |
+#         # Write your commands here
+#         git clone -b build https://github.com/donjayamanne/zeromq.js.git
+
+#   - bash: |
+#       npm install
+#     displayName: Install
+#     workingDirectory: zeromq.js
+#     env:
+#       ARCH: x64
+
+#   - bash: |
+#       npm run prebuild
+#     displayName: Install
+#     workingDirectory: zeromq.js
+#     env:
+#       ARCH: x64
+#   - task: Bash@3
+#     displayName: ls
+#     inputs:
+#       workingDirectory: zeromq.js/prebuilds
+#       targetType: 'inline'
+#       script: |
+#         ls
+
+
+#   - task: PublishPipelineArtifact@0
+#     displayName: 'Publish Pipeline Artifact'
+#     inputs:
+#       artifactName: linux-x64
+#       targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/linux-x64
+#     condition: succeeded()
+
+# - job:
+#   displayName: Ubuntu glibc arm64
+#   pool:
+#     vmImage: 'ubuntu-latest'
+#   steps:
+#   - task: NodeTool@0
+#     inputs:
+#       versionSource: 'spec'
+#       versionSpec: '18.x'
+#   - task: UsePythonVersion@0
+#     inputs:
+#       versionSpec: '3.x'
+#       addToPath: true
+
+#   - task: Bash@3
+#     displayName: Install dependencies
+#     inputs:
+#       targetType: 'inline'
+#       script: |
+#         # Write your commands here
+#         # sudo apt install software-properties-common -y
+#         sudo apt install gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu
+
+#   - task: Bash@3
+#     displayName: Git Clone
+#     inputs:
+#       targetType: 'inline'
+#       script: |
+#         # Write your commands here
+#         git clone -b build https://github.com/donjayamanne/zeromq.js.git
+
+#   - bash: |
+#       npm install
+#     displayName: Install
+#     workingDirectory: zeromq.js
+#     env:
+#       ARCH: arm64
+#       npm_config_arch: arm64
+#       TRIPLE: aarch64-linux-gnu
+#       GCC: 9
+#       ARCHIVE_SUFFIX: -armv8
+
+#   - bash: |
+#       npm run prebuild
+#     displayName: Install
+#     workingDirectory: zeromq.js
+#     env:
+#       ARCH: arm64
+#       npm_config_arch: arm64
+#       TRIPLE: aarch64-linux-gnu
+#       GCC: 9
+#       ARCHIVE_SUFFIX: -armv8
+
+#   - task: Bash@3
+#     displayName: ls
+#     inputs:
+#       workingDirectory: zeromq.js/prebuilds
+#       targetType: 'inline'
+#       script: |
+#         ls
+
+
+#   - task: PublishPipelineArtifact@0
+#     displayName: 'Publish Pipeline Artifact'
+#     inputs:
+#       artifactName: linux-arm64
+#       targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/linux-arm64
+#     condition: succeeded()

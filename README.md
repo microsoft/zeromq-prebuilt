@@ -1,6 +1,6 @@
 # ripgrep-prebuilt
 
-[![Build Status](https://dev.azure.com/vscode/zeromq-prebuilt/_apis/build/status/microsoft.zeromq-prebuilt?branchName=main)](https://dev.azure.com/vscode/zeromq-prebuilt/_build/latest?definitionId=18&branchName=main)
+[![Build Status](https://dev.azure.com/monacotools/Monaco/_apis/build/status/Extensions/ms-toolsai/zeromq-prebuilt?branchName=main)](https://dev.azure.com/monacotools/Monaco/_build/latest?definitionId=466&branchName=main)
 
 Builds [zeromq](https://github.com/zeromq/zeromq.js) on Azure Pipelines for multiple platforms, used by the [Jupyter Extension for VS Code](https://github.com/microsoft/vscode-jupyter).
 
