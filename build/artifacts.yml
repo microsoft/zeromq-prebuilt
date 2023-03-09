@@ -12,7 +12,7 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    contents: $(Build.SourcesDirectory)/zeromq.js/prebuilds
+    contents: $(Build.SourcesDirectory)/zeromq.js/prebuilds/**
     targetFolder: $(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}
 
 - task: PublishPipelineArtifact@0
