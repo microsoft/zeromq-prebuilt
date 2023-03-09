@@ -30,3 +30,194 @@ jobs:
         npm_config_arch: ia32
         artifact_name: 'win32-ia32'
         prebuild_folder_name: 'win32-ia32'
+
+- job:
+  displayName: macOS_64
+  pool:
+    vmImage: 'macOS-latest'
+  steps:
+    - template: build.yml
+      parameters:
+        artifact_name: 'darwin-x64'
+        prebuild_folder_name: 'darwin-x64'
+
+- job:
+  displayName: macOS_arm64
+  pool:
+    vmImage: 'macOS-latest'
+  steps:
+    - template: build.yml
+      parameters:
+        ARCH: arm64
+        artifact_name: 'darwin-arm64'
+        prebuild_folder_name: 'darwin-arm64'
+
+- job:
+  displayName: linux_64_glibc
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    - template: build.yml
+      parameters:
+        artifact_name: 'darwin-x64'
+        prebuild_folder_name: 'darwin-x64'
+
+
+- job:
+  displayName: linux_arm64_glibc
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    - template: build.yml
+      parameters:
+				build: false
+        artifact_name: 'darwin-x64'
+        prebuild_folder_name: 'darwin-x64'
+
+  - task: Bash@3
+    displayName: Install dependencies
+    inputs:
+      targetType: 'inline'
+      script: |
+        # Write your commands here
+        sudo apt install gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu
+
+  - bash: |
+      npm install
+    displayName: Install
+    workingDirectory: zeromq.js
+    env:
+      ARCH: arm64
+      npm_config_arch: arm64
+      TRIPLE: aarch64-linux-gnu
+      GCC: 9
+      ARCHIVE_SUFFIX: -armv8
+
+  - bash: |
+      npm run prebuild
+    displayName: Prebuild
+    workingDirectory: zeromq.js
+    env:
+      ARCH: arm64
+      npm_config_arch: arm64
+      TRIPLE: aarch64-linux-gnu
+      GCC: 9
+      ARCHIVE_SUFFIX: -armv8
+
+  - task: Bash@3
+    displayName: ls
+    inputs:
+      workingDirectory: zeromq.js/prebuilds
+      targetType: 'inline'
+      script: |
+        ls
+
+  - task: PublishPipelineArtifact@0
+    displayName: 'Publish Pipeline Artifact'
+    inputs:
+      artifactName: linux-arm64-glibc
+      targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/linux-arm64
+    condition: succeeded()
+
+
+- job:
+  displayName: linux_64_musl
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    - template: build.yml
+      parameters:
+				build: false
+        artifact_name: 'darwin-x64'
+        prebuild_folder_name: 'darwin-x64'
+
+
+  - task: DockerInstaller@0
+    inputs:
+      dockerVersion: '17.09.0-ce'
+  - task: Bash@3
+    displayName: Install dependencies
+    inputs:
+      targetType: 'inline'
+      script: |
+        # Write your commands here
+        sudo apt install gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu
+
+  - task: Bash@3
+    displayName: Build
+    env:
+      CURRENDIR: $(Build.SourcesDirectory)
+      DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild
+    inputs:
+      targetType: 'inline'
+      workingDirectory: zeromq.js
+      script: |
+          docker pull node:18-alpine
+          docker tag node:18-alpine builder
+          docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged builder sh -c "$DOCKERCMD"
+
+  - task: Bash@3
+    displayName: ls
+    inputs:
+      workingDirectory: zeromq.js/prebuilds
+      targetType: 'inline'
+      script: |
+        ls
+
+  - task: PublishPipelineArtifact@0
+    displayName: 'Publish Pipeline Artifact'
+    inputs:
+      artifactName: linux-arm64-glibc
+      targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/linux-arm64
+    condition: succeeded()
+
+- job:
+  displayName: linux_arm64_musl
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    - template: build.yml
+      parameters:
+				build: false
+        artifact_name: 'darwin-x64'
+        prebuild_folder_name: 'darwin-x64'
+
+
+  - task: DockerInstaller@0
+    inputs:
+      dockerVersion: '17.09.0-ce'
+  - task: Bash@3
+    displayName: Install dependencies
+    inputs:
+      targetType: 'inline'
+      script: |
+        # Write your commands here
+        sudo apt install gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu
+
+  - task: Bash@3
+    displayName: Build
+    env:
+      CURRENDIR: $(Build.SourcesDirectory)
+      DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && npm_config_arch=arm64 ARCH=arm64 pnpm install && npm_config_arch=arm64 ARCH=arm64 pnpm run prebuild
+    inputs:
+      targetType: 'inline'
+      workingDirectory: zeromq.js
+      script: |
+          docker pull node:18-alpine
+          docker tag node:18-alpine builder
+          docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged -e ARCH='arm64' -e npm_config_arch='arm64' builder sh -c "$DOCKERCMD"
+
+  - task: Bash@3
+    displayName: ls
+    inputs:
+      workingDirectory: zeromq.js/prebuilds
+      targetType: 'inline'
+      script: |
+        ls
+
+  - task: PublishPipelineArtifact@0
+    displayName: 'Publish Pipeline Artifact'
+    inputs:
+      artifactName: linux-arm64-musl
+      targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/linux-arm64
+    condition: succeeded()
