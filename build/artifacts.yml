@@ -14,7 +14,7 @@ steps:
   inputs:
     # contents: zeromq.js/prebuilds/**/*.node
     SourceFolder: zeromq.js/prebuilds
-    contents: '**/*.node'
+    contents: '**'
     targetFolder: $(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}
 
 - task: PublishPipelineArtifact@0
