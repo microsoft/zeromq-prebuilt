@@ -197,8 +197,8 @@ jobs:
     - task: PublishPipelineArtifact@0
       displayName: 'Publish Pipeline Artifact'
       inputs:
-        artifactName: linux-arm64-glibc
-        targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/linux-arm64
+        artifactName: linux-x64-musl
+        targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/linux-x64
       condition: succeeded()
 
 - job: # linux_arm64_musl
