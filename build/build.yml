@@ -2,10 +2,10 @@ parameters:
   repo: ''
   tag: ''
   python_arch: 'x64'
-	npm_config_arch: 'x64'
-	ARCH: 'x64'
-	artifact_name: ''
-	prebuilds_folder_name: ''
+  npm_config_arch: 'x64'
+  ARCH: 'x64'
+  artifact_name: ''
+  prebuild_folder_name: ''
 
 steps:
 - task: NodeTool@0
@@ -14,7 +14,7 @@ steps:
     versionSpec: '18.x'
 
 - task: UsePythonVersion@0
-	displayName: Use Python 3.x $(python_arch)
+  displayName: Use Python 3.x $(python_arch)
   inputs:
     versionSpec: '3.x'
     addToPath: true
@@ -50,12 +50,12 @@ steps:
 
 
 - task: Bash@3
-	displayName: install
-	inputs:
-		targetType: 'inline'
-		workingDirectory: zeromq.js
-		script: |
-			npm install
+  displayName: install
+  inputs:
+    targetType: 'inline'
+    workingDirectory: zeromq.js
+    script: |
+      npm install
     env:
       ARCH: ${{ parameters.ARCH }}
       npm_config_arch: ${{ parameters.npm_config_arch }}
@@ -83,7 +83,7 @@ steps:
     displayName: 'Publish Pipeline Artifact'
     inputs:
       artifactName: ${{ parameters.artifact_name }}
-      targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuilds_folder_name }}
+      targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}
     condition: succeeded()
 
 # - job:

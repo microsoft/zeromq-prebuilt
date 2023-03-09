@@ -14,8 +14,8 @@ jobs:
   steps:
     - template: build.yml
       parameters:
-				artifcat_name: 'win32-x64'
-				prebuilds_folder_name: 'win32-x64'
+        artifact_name: 'win32-x64'
+        prebuild_folder_name: 'win32-x64'
 
 - job:
   displayName: win_32
@@ -25,7 +25,7 @@ jobs:
     - template: build.yml
       parameters:
         python_arch: x86
-				ARCH: x86
-				npm_config_arch: ia32
-				artifcat_name: 'win32-ia32'
-				prebuilds_folder_name: 'win32-ia32'
+        ARCH: x86
+        npm_config_arch: ia32
+        artifact_name: 'win32-ia32'
+        prebuild_folder_name: 'win32-ia32'
