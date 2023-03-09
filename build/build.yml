@@ -48,43 +48,36 @@ steps:
     script: |
       node ./build/patch.js
 
+- bash: |
+    npm install
+  displayName: Install
+  workingDirectory: zeromq.js
+  env:
+    ARCH: ${{ parameters.ARCH }}
+    npm_config_arch: ${{ parameters.npm_config_arch }}
+
+- bash: |
+    npm run prebuild
+  displayName: PreBuild
+  workingDirectory: zeromq.js
+  env:
+    ARCH: ${{ parameters.ARCH }}
+    npm_config_arch: ${{ parameters.npm_config_arch }}
 
 - task: Bash@3
-  displayName: install
+  displayName: ls
   inputs:
+    workingDirectory: zeromq.js/prebuilds
     targetType: 'inline'
-    workingDirectory: zeromq.js
     script: |
-      npm install
-    env:
-      ARCH: ${{ parameters.ARCH }}
-      npm_config_arch: ${{ parameters.npm_config_arch }}
+      ls
 
-  - task: Bash@3
-    displayName: Prebuilds
-    inputs:
-      targetType: 'inline'
-      workingDirectory: zeromq.js
-      script: |
-        npm run prebuild
-    env:
-      ARCH: ${{ parameters.ARCH }}
-      npm_config_arch: ${{ parameters.npm_config_arch }}
-
-  - task: Bash@3
-    displayName: ls
-    inputs:
-      workingDirectory: zeromq.js/prebuilds
-      targetType: 'inline'
-      script: |
-        ls
-
-  - task: PublishPipelineArtifact@0
-    displayName: 'Publish Pipeline Artifact'
-    inputs:
-      artifactName: ${{ parameters.artifact_name }}
-      targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}
-    condition: succeeded()
+- task: PublishPipelineArtifact@0
+  displayName: 'Publish Pipeline Artifact'
+  inputs:
+    artifactName: ${{ parameters.artifact_name }}
+    targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}
+  condition: succeeded()
 
 # - job:
 #   displayName: Windows 32
