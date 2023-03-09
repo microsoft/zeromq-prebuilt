@@ -38,7 +38,7 @@ jobs:
   steps:
     - template: build.yml
       parameters:
-				ARCH: ''
+        ARCH: ''
         artifact_name: 'darwin-x64'
         prebuild_folder_name: 'darwin-x64'
 
