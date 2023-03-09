@@ -1,7 +1,11 @@
 parameters:
   repo: ''
   tag: ''
-  python_arch: ''
+  python_arch: 'x64'
+	npm_config_arch: 'x64'
+	ARCH: 'x64'
+	artifact_name: ''
+	prebuilds_folder_name: ''
 
 steps:
 - task: NodeTool@0
@@ -10,7 +14,7 @@ steps:
     versionSpec: '18.x'
 
 - task: UsePythonVersion@0
-  condition: and(succeeded(), ne('${{ parameters.python_arch }}', ''))
+	displayName: Use Python 3.x $(python_arch)
   inputs:
     versionSpec: '3.x'
     addToPath: true
@@ -24,7 +28,7 @@ steps:
       set -ex
       REPO=`[ "${{ parameters.repo }}" ] &&  echo ${{ parameters.repo }} || echo $(node -p "require('./config.json').zeromqRepo")`
       TREEISH=`[ "${{ parameters.tag }}" ] && echo ${{ parameters.tag }} || echo $(node -p "require('./config.json').zeromqTag")`
-      git clone -b build https://github.com/${REPO}.git
+      git clone -b build https://github.com/${REPO}.git zeromq.js
       cd zeromq.js
       git checkout $TREEISH
 
@@ -37,36 +41,50 @@ steps:
     script: |
       ls
 
+- task: Bash@3
+  displayName: Patch zeromq.js
+  inputs:
+    targetType: 'inline'
+    script: |
+      node ./build/patch.js
 
-# - task: Bash@3
-# 	displayName: install
-# 	inputs:
-# 		targetType: 'inline'
-# 		workingDirectory: zeromq.js
-# 		script: |
-# 			npm install
 
-#   - task: Bash@3
-#     displayName: Prebuilds
-#     inputs:
-#       targetType: 'inline'
-#       workingDirectory: zeromq.js
-#       script: |
-#         npm run prebuild
-#   - task: Bash@3
-#     displayName: ls
-#     inputs:
-#       workingDirectory: zeromq.js/prebuilds
-#       targetType: 'inline'
-#       script: |
-#         ls
+- task: Bash@3
+	displayName: install
+	inputs:
+		targetType: 'inline'
+		workingDirectory: zeromq.js
+		script: |
+			npm install
+    env:
+      ARCH: ${{ parameters.ARCH }}
+      npm_config_arch: ${{ parameters.npm_config_arch }}
 
-#   - task: PublishPipelineArtifact@0
-#     displayName: 'Publish Pipeline Artifact'
-#     inputs:
-#       artifactName: win32-x64
-#       targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/win32-x64
-#     condition: succeeded()
+  - task: Bash@3
+    displayName: Prebuilds
+    inputs:
+      targetType: 'inline'
+      workingDirectory: zeromq.js
+      script: |
+        npm run prebuild
+    env:
+      ARCH: ${{ parameters.ARCH }}
+      npm_config_arch: ${{ parameters.npm_config_arch }}
+
+  - task: Bash@3
+    displayName: ls
+    inputs:
+      workingDirectory: zeromq.js/prebuilds
+      targetType: 'inline'
+      script: |
+        ls
+
+  - task: PublishPipelineArtifact@0
+    displayName: 'Publish Pipeline Artifact'
+    inputs:
+      artifactName: ${{ parameters.artifact_name }}
+      targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuilds_folder_name }}
+    condition: succeeded()
 
 # - job:
 #   displayName: Windows 32
