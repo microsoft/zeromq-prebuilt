@@ -50,18 +50,6 @@ steps:
     ARCH: ${{ parameters.ARCH }}
     npm_config_arch: ${{ parameters.npm_config_arch }}
 
-- task: Bash@3
-  displayName: ls
-  condition: and(succeeded(), eq('${{ parameters.build }}', 'true'))
-  inputs:
-    workingDirectory: zeromq.js/prebuilds
-    targetType: 'inline'
-    script: |
-      ls
-
-- task: PublishPipelineArtifact@0
-  displayName: 'Publish Pipeline Artifact'
-  condition: and(succeeded(), eq('${{ parameters.build }}', 'true'))
-  inputs:
-    artifactName: ${{ parameters.artifact_name }}
-    targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}
+- template: artifacts.yml
+  parameters:
+    artifact_name: ${{ parameters.artifact_name }}

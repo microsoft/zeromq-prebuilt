@@ -92,20 +92,10 @@ jobs:
         GCC: 9
         ARCHIVE_SUFFIX: -armv8
 
-    - task: Bash@3
-      displayName: ls
-      inputs:
-        workingDirectory: zeromq.js/prebuilds
-        targetType: 'inline'
-        script: |
-          ls
+    - template: artifacts.yml
+      parameters:
+        artifact_name: linux-arm64-glibc
 
-    - task: PublishPipelineArtifact@0
-      displayName: 'Publish Pipeline Artifact'
-      inputs:
-        artifactName: linux-arm64-glibc
-        targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/linux-arm64
-      condition: succeeded()
 
 # The build configurations have been taken from here:
 # https://github.com/zeromq/zeromq.js/blob/47bb35c1941cb4fa8b510fb7da4d40b37cfa2e5f/.travis.yml#L94
@@ -137,20 +127,9 @@ jobs:
         GCC: 9
         ARCHIVE_SUFFIX: -armv7
 
-    - task: Bash@3
-      displayName: ls
-      inputs:
-        workingDirectory: zeromq.js/prebuilds
-        targetType: 'inline'
-        script: |
-          ls
-
-    - task: PublishPipelineArtifact@0
-      displayName: 'Publish Pipeline Artifact'
-      inputs:
-        artifactName: linux-arm-glibc
-        targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/linux-arm
-      condition: succeeded()
+    - template: artifacts.yml
+      parameters:
+        artifact_name: linux-arm-glibc
 
 - job: linux_64_musl
   displayName: linux_64_musl
@@ -186,20 +165,9 @@ jobs:
             docker tag node:18-alpine builder
             docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged builder sh -c "$DOCKERCMD"
 
-    - task: Bash@3
-      displayName: ls
-      inputs:
-        workingDirectory: zeromq.js/prebuilds
-        targetType: 'inline'
-        script: |
-          ls
-
-    - task: PublishPipelineArtifact@0
-      displayName: 'Publish Pipeline Artifact'
-      inputs:
-        artifactName: linux-x64-musl
-        targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/linux-x64
-      condition: succeeded()
+    - template: artifacts.yml
+      parameters:
+        artifact_name: linux-x64-musl
 
 - job: linux_arm64_musl
   displayName: linux_arm64_musl
@@ -236,20 +204,9 @@ jobs:
             docker tag node:18-alpine builder
             docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged -e ARCH='arm64' -e npm_config_arch='arm64' builder sh -c "$DOCKERCMD"
 
-    - task: Bash@3
-      displayName: ls
-      inputs:
-        workingDirectory: zeromq.js/prebuilds
-        targetType: 'inline'
-        script: |
-          ls
-
-    - task: PublishPipelineArtifact@0
-      displayName: 'Publish Pipeline Artifact'
-      inputs:
-        artifactName: linux-arm64-musl
-        targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/linux-arm64
-      condition: succeeded()
+    - template: artifacts.yml
+      parameters:
+        artifact_name: linux-arm64-musl
 
 - job: publish
   pool:
