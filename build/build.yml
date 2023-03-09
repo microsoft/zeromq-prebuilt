@@ -50,6 +50,7 @@ steps:
     ARCH: ${{ parameters.ARCH }}
     npm_config_arch: ${{ parameters.npm_config_arch }}
 
-- template: artifacts.yml
-  parameters:
-    artifact_name: ${{ parameters.artifact_name }}
+- ${{ if eq(parameters.build, true) }}:
+  - template: artifacts.yml
+    parameters:
+      artifact_name: ${{ parameters.artifact_name }}
