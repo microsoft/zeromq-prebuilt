@@ -8,7 +8,7 @@ trigger:
     - v*
 
 jobs:
-- job: win32-x64
+- job: win32_x64
   pool:
     vmImage: 'windows-latest'
   steps:
@@ -17,7 +17,7 @@ jobs:
         artifact_name: 'win32-x64'
         prebuild_folder_name: 'win32-x64'
 
-- job: win32-ia32
+- job: win32_ia32
   pool:
     vmImage: 'windows-latest'
   steps:
@@ -29,7 +29,7 @@ jobs:
         artifact_name: 'win32-ia32'
         prebuild_folder_name: 'win32-ia32'
 
-- job: darwin-x64
+- job: darwin_x64
   pool:
     vmImage: 'macOS-latest'
   steps:
@@ -39,7 +39,7 @@ jobs:
         artifact_name: 'darwin-x64'
         prebuild_folder_name: 'darwin-x64'
 
-- job: darwin-arm64
+- job: darwin_arm64
   pool:
     vmImage: 'macOS-latest'
   steps:
@@ -49,7 +49,7 @@ jobs:
         artifact_name: 'darwin-arm64'
         prebuild_folder_name: 'darwin-arm64'
 
-- job: linux-x64-glibc
+- job: linux_x64_glibc
   pool:
     vmImage: 'ubuntu-latest'
   steps:
@@ -60,7 +60,7 @@ jobs:
 
 # The build configurations have been taken from here:
 # https://github.com/zeromq/zeromq.js/blob/47bb35c1941cb4fa8b510fb7da4d40b37cfa2e5f/.travis.yml#L94
-- job: linux-arm64-glibc
+- job: linux_arm64_glibc
   pool:
     vmImage: 'ubuntu-latest'
   steps:
@@ -94,7 +94,7 @@ jobs:
 
 # The build configurations have been taken from here:
 # https://github.com/zeromq/zeromq.js/blob/47bb35c1941cb4fa8b510fb7da4d40b37cfa2e5f/.travis.yml#L94
-- job: linux-arm-glibc
+- job: linux_arm_glibc
   pool:
     vmImage: 'ubuntu-latest'
   steps:
@@ -125,7 +125,7 @@ jobs:
       parameters:
         artifact_name: linux-arm-glibc
 
-- job: linux-x64-musl
+- job: linux_x64_musl
   pool:
     vmImage: 'ubuntu-latest'
   steps:
@@ -162,7 +162,7 @@ jobs:
       parameters:
         artifact_name: linux-x64-musl
 
-- job: linux-arm64-musl
+- job: linux_arm64_musl
   pool:
     vmImage: 'ubuntu-latest'
   steps:
@@ -205,14 +205,14 @@ jobs:
     vmImage: 'ubuntu-latest'
   # condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
   dependsOn:
-  - win32-x64
-  - win32-ia32
-  - darwin-x64
-  - darwin-arm64
-  - linux-x64-glibc
-  - linux-arm64-glibc
-  - linux-arm-glibc
-  - linux-x64-musl
-  - linux-arm64-musl
+  - win32_x64
+  - win32_ia32
+  - darwin_x64
+  - darwin_arm64
+  - linux_x64_glibc
+  - linux_arm64_glibc
+  - linux_arm_glibc
+  - linux_x64_musl
+  - linux_arm64_musl
   steps:
     - template: publish.yml
