@@ -8,7 +8,7 @@ trigger:
     - v*
 
 jobs:
-- job:
+- job: # win_64
   displayName: win_64
   pool:
     vmImage: 'windows-latest'
@@ -18,7 +18,7 @@ jobs:
         artifact_name: 'win32-x64'
         prebuild_folder_name: 'win32-x64'
 
-- job:
+- job: # win_32
   displayName: win_32
   pool:
     vmImage: 'windows-latest'
@@ -31,7 +31,7 @@ jobs:
         artifact_name: 'win32-ia32'
         prebuild_folder_name: 'win32-ia32'
 
-- job:
+- job: # macOS_64
   displayName: macOS_64
   pool:
     vmImage: 'macOS-latest'
@@ -41,7 +41,7 @@ jobs:
         artifact_name: 'darwin-x64'
         prebuild_folder_name: 'darwin-x64'
 
-- job:
+- job: # macOS_arm64
   displayName: macOS_arm64
   pool:
     vmImage: 'macOS-latest'
@@ -52,7 +52,7 @@ jobs:
         artifact_name: 'darwin-arm64'
         prebuild_folder_name: 'darwin-arm64'
 
-- job:
+- job: # linux_64_glibc
   displayName: linux_64_glibc
   pool:
     vmImage: 'ubuntu-latest'
@@ -62,10 +62,9 @@ jobs:
         artifact_name: 'darwin-x64'
         prebuild_folder_name: 'darwin-x64'
 
-
 # The build configurations have been taken from here:
 # https://github.com/zeromq/zeromq.js/blob/47bb35c1941cb4fa8b510fb7da4d40b37cfa2e5f/.travis.yml#L94
-- job:
+- job: # linux_arm64_glibc
   displayName: linux_arm64_glibc
   pool:
     vmImage: 'ubuntu-latest'
@@ -108,10 +107,9 @@ jobs:
         targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/linux-arm64
       condition: succeeded()
 
-
 # The build configurations have been taken from here:
 # https://github.com/zeromq/zeromq.js/blob/47bb35c1941cb4fa8b510fb7da4d40b37cfa2e5f/.travis.yml#L94
-- job:
+- job: # linux_arm_glibc
   displayName: linux_arm_glibc
   pool:
     vmImage: 'ubuntu-latest'
@@ -125,7 +123,7 @@ jobs:
       inputs:
         targetType: 'inline'
         script: |
-          sudo apt install gcc-9-arm-linux-gnueabihf, g++-9-arm-linux-gnueabihf
+          sudo apt install gcc-9-arm-linux-gnueabihf g++-9-arm-linux-gnueabihf
 
     - bash: |
         npm install
@@ -154,8 +152,7 @@ jobs:
         targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/linux-arm
       condition: succeeded()
 
-
-- job:
+- job: # linux_64_musl
   displayName: linux_64_musl
   pool:
     vmImage: 'ubuntu-latest'
@@ -204,7 +201,7 @@ jobs:
         targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/linux-arm64
       condition: succeeded()
 
-- job:
+- job: # linux_arm64_musl
   displayName: linux_arm64_musl
   pool:
     vmImage: 'ubuntu-latest'
