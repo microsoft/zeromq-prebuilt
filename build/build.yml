@@ -14,7 +14,7 @@ steps:
     versionSpec: '18.x'
 
 - task: UsePythonVersion@0
-  displayName: Use Python 3.x $(python_arch)
+  displayName: Use Python 3.x ${{ parameters.python_arch }}
   inputs:
     versionSpec: '3.x'
     addToPath: true
@@ -28,7 +28,7 @@ steps:
       set -ex
       REPO=`[ "${{ parameters.repo }}" ] &&  echo ${{ parameters.repo }} || echo $(node -p "require('./config.json').zeromqRepo")`
       TREEISH=`[ "${{ parameters.tag }}" ] && echo ${{ parameters.tag }} || echo $(node -p "require('./config.json').zeromqTag")`
-      git clone -b build https://github.com/${REPO}.git zeromq.js
+      git clone -b https://github.com/${REPO}.git zeromq.js
       cd zeromq.js
       git checkout $TREEISH
 
