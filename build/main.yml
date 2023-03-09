@@ -70,7 +70,7 @@ jobs:
   steps:
     - template: build.yml
       parameters:
-				build: false
+        build: false
         artifact_name: 'darwin-x64'
         prebuild_folder_name: 'darwin-x64'
 
@@ -127,7 +127,7 @@ jobs:
   steps:
     - template: build.yml
       parameters:
-				build: false
+        build: false
         artifact_name: 'darwin-x64'
         prebuild_folder_name: 'darwin-x64'
 
@@ -178,7 +178,7 @@ jobs:
   steps:
     - template: build.yml
       parameters:
-				build: false
+        build: false
         artifact_name: 'darwin-x64'
         prebuild_folder_name: 'darwin-x64'
 
