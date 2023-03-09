@@ -1,4 +1,4 @@
 {
-    "zeromqRepo": "https://github.com/zeromq/zeromq.js",
+    "zeromqRepo": "zeromq/zeromq.js",
     "zeromqTag": "v6.0.0-beta.16"
 }
