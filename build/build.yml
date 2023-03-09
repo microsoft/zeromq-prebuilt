@@ -44,7 +44,7 @@ steps:
     npm install
     npm run prebuild
   displayName: Build
-  condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), neq('${{ parameters.npm_config_arch }}', ''))
+  condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), ne('${{ parameters.npm_config_arch }}', ''))
   workingDirectory: zeromq.js
   env:
     ARCH: ${{ parameters.ARCH }}
