@@ -13,8 +13,8 @@ steps:
 - task: CopyFiles@2
   inputs:
     # contents: zeromq.js/prebuilds/**/*.node
-    SourceFolder: $(Build.SourcesDirectory)/zeromq.js/prebuilds
-    contents: '**'
+    SourceFolder: zeromq.js/prebuilds
+    contents: '**/*.node'
     targetFolder: $(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}
 
 - task: PublishPipelineArtifact@0
