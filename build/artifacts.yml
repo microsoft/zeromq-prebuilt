@@ -5,7 +5,7 @@ steps:
 - task: CopyFiles@2
   inputs:
     SourceFolder: $(Build.SourcesDirectory)/zeromq.js/prebuilds
-    contents: '**'
+    contents: '**/*.node'
     targetFolder: $(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}
 
 - task: PublishPipelineArtifact@0
