@@ -28,7 +28,7 @@ steps:
       set -ex
       REPO=`[ "${{ parameters.repo }}" ] &&  echo ${{ parameters.repo }} || echo $(node -p "require('./config.json').zeromqRepo")`
       TREEISH=`[ "${{ parameters.tag }}" ] && echo ${{ parameters.tag }} || echo $(node -p "require('./config.json').zeromqTag")`
-      git clone -b https://github.com/${REPO}.git zeromq.js
+      git clone https://github.com/${REPO}.git zeromq.js
       cd zeromq.js
       git checkout $TREEISH
 
@@ -79,61 +79,6 @@ steps:
     targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}
   condition: succeeded()
 
-# - job:
-#   displayName: Windows 32
-#   pool:
-#     vmImage: 'windows-latest'
-#   steps:
-#   - task: NodeTool@0
-#     inputs:
-#       versionSource: 'spec'
-#       versionSpec: '18.x'
-#       # force32bit: true
-#   - task: UsePythonVersion@0
-#     inputs:
-#       versionSpec: '3.x'
-#       addToPath: true
-#       architecture: 'x86'
-
-#   - task: Bash@3
-#     displayName: Git Clone
-#     inputs:
-#       targetType: 'inline'
-#       script: |
-#         # Write your commands here
-#         git clone -b build https://github.com/donjayamanne/zeromq.js.git
-
-
-#   - bash: |
-#       npm install
-#     displayName: Install
-#     workingDirectory: zeromq.js
-#     env:
-#       ARCH: x86
-#       npm_config_arch: ia32
-
-#   - bash: |
-#       npm run prebuild
-#     displayName: Install
-#     workingDirectory: zeromq.js
-#     env:
-#       ARCH: x86
-#       npm_config_arch: ia32
-
-#   - task: Bash@3
-#     displayName: ls
-#     inputs:
-#       workingDirectory: zeromq.js/prebuilds
-#       targetType: 'inline'
-#       script: |
-#         ls
-
-#   - task: PublishPipelineArtifact@0
-#     displayName: 'Publish Pipeline Artifact'
-#     inputs:
-#       artifactName: win32-ia32
-#       targetPath: $(Build.SourcesDirectory)/zeromq.js/prebuilds/win32-ia32
-#     condition: succeeded()
 
 # - job:
 #   displayName: Mac 64
