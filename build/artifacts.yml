@@ -1,0 +1,22 @@
+parameters:
+  artifact_name: ''
+
+steps:
+- task: Bash@3
+  displayName: ls
+  inputs:
+    workingDirectory: zeromq.js/prebuilds
+    targetType: 'inline'
+    script: |
+      ls
+
+- task: CopyFiles@2
+  inputs:
+    contents: $(Build.SourcesDirectory)/zeromq.js/prebuilds
+    targetFolder: $(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}
+
+- task: PublishPipelineArtifact@0
+  displayName: 'Publish Pipeline Artifact'
+  inputs:
+    artifactName: ${{ parameters.artifact_name }}
+    targetPath: $(Build.ArtifactStagingDirectory)
