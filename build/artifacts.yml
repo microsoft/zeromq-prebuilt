@@ -9,11 +9,18 @@ steps:
     targetType: 'inline'
     script: |
       ls
+- task: Bash@3
+  displayName: ls
+  inputs:
+    workingDirectory: zeromq.js/prebuilds/win32-ia32
+    targetType: 'inline'
+    script: |
+      ls
 
 - task: CopyFiles@2
   inputs:
     # contents: zeromq.js/prebuilds/**/*.node
-    SourceFolder: zeromq.js/prebuilds
+    SourceFolder: $(Build.SourcesDirectory)/zeromq.js/prebuilds
     contents: '**'
     targetFolder: $(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}
 
