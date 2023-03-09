@@ -8,7 +8,7 @@ const sourceFolder = path.join(__dirname, "..", "zeromq.js");
 [
   {
     file: path.join(sourceFolder, "binding.gyp"),
-    searchText: '                "<!@(pkg-config libsodium --libs)",',
+    searchText: '                "<!@(pkg-config libsodium --libs)",\n',
     replacement: "",
   },
   {
