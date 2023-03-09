@@ -44,11 +44,20 @@ steps:
     npm install
     npm run prebuild
   displayName: Build
-  condition: and(succeeded(), eq('${{ parameters.build }}', 'true'))
+  condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), , neq('${{ parameters.npm_config_arch }}', ''))
   workingDirectory: zeromq.js
   env:
     ARCH: ${{ parameters.ARCH }}
     npm_config_arch: ${{ parameters.npm_config_arch }}
+
+- bash: |
+    npm install
+    npm run prebuild
+  displayName: Build
+  condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), , eq('${{ parameters.npm_config_arch }}', ''))
+  workingDirectory: zeromq.js
+  env:
+    ARCH: ${{ parameters.ARCH }}
 
 - task: Bash@3
   displayName: ls
