@@ -1,12 +1,18 @@
 # ripgrep-prebuilt
 
-[![Build Status](https://dev.azure.com/vscode/zeromq-prebuilt/_apis/build/status/microsoft.zeromq-prebuilt?branchName=main)](https://dev.azure.com/vscode/zeromq-prebuilt/_build/latest?definitionId=18&branchName=main)
+[![Build Status](https://dev.azure.com/monacotools/Monaco/_apis/build/status/Extensions/ms-toolsai/zeromq-prebuilt?branchName=main)](https://dev.azure.com/monacotools/Monaco/_build/latest?definitionId=466&branchName=main)
 
 Builds [zeromq](https://github.com/zeromq/zeromq.js) on Azure Pipelines for multiple platforms, used by the [Jupyter Extension for VS Code](https://github.com/microsoft/vscode-jupyter).
 
 ## Details
 
 Reads `config.json` to determine which repo to clone and which tag to check out. If the build was triggered by a tag, each job will package the build outputs and publish them as pipeline artifacts, and the last job will upload those artifacts to the Github release. The Github release is consumed by the [Jupyter Extension](https://github.com/microsoft/vscode-jupyter).
+
+* zeromq.js is patched, see [patch.js](https://github.com/microsoft/zeromq-prebuilt/blob/main/patch.js) file for details
+* As and when a new release of zeromq.js has been published, we will need to
+	* Update the [config.json](https://github.com/microsoft/zeromq-prebuilt/blob/main/config.json) file to point to the new upstream release
+    * Update the patches accordingly
+    * Update the build pipeline (if necessary, e.g. if there are new dependencies that need to be installed)
 
 ## Contributing
 

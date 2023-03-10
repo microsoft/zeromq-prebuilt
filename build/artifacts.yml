@@ -1,0 +1,16 @@
+parameters:
+  artifact_name: ''
+  prebuild_folder_name: ''
+  output_node_file: ''
+
+steps:
+
+- bash: |
+    cp '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}-${{ parameters.output_node_file }}'
+  displayName: Copy output file
+
+- task: PublishPipelineArtifact@0
+  displayName: 'Publish Pipeline Artifact'
+  inputs:
+    artifactName: ${{ parameters.artifact_name }}
+    targetPath: $(Build.ArtifactStagingDirectory)

@@ -1,0 +1,68 @@
+parameters:
+  repo: ''
+  tag: ''
+  python_arch: 'x64'
+  npm_config_arch: 'x64'
+  ARCH: 'x64'
+  artifact_name: ''
+  prebuild_folder_name: ''
+  build: true
+  output_node_file: ''
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSource: 'spec'
+    versionSpec: '18.x'
+
+- task: UsePythonVersion@0
+  displayName: Use Python 3 ${{ parameters.python_arch }}
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
+    architecture: ${{ parameters.python_arch }}
+
+- task: Bash@3
+  displayName: Git Clone
+  inputs:
+    targetType: 'inline'
+    script: |
+      set -ex
+      REPO=`[ "${{ parameters.repo }}" ] &&  echo ${{ parameters.repo }} || echo $(node -p "require('./config.json').zeromqRepo")`
+      TREEISH=`[ "${{ parameters.tag }}" ] && echo ${{ parameters.tag }} || echo $(node -p "require('./config.json').zeromqTag")`
+      git clone https://github.com/${REPO}.git zeromq.js
+      cd zeromq.js
+      git checkout $TREEISH
+
+- task: Bash@3
+  displayName: Patch zeromq.js
+  inputs:
+    targetType: 'inline'
+    script: |
+      node ./build/patch.js
+
+- bash: |
+    npm install
+    npm run prebuild
+  displayName: Build
+  condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), ne('${{ parameters.ARCH }}', ''))
+  workingDirectory: zeromq.js
+  env:
+    ARCH: ${{ parameters.ARCH }}
+    npm_config_arch: ${{ parameters.npm_config_arch }}
+
+- bash: |
+    npm install
+    npm run prebuild
+  displayName: Build
+  condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), eq('${{ parameters.ARCH }}', ''))
+  workingDirectory: zeromq.js
+  env:
+    npm_config_arch: ${{ parameters.npm_config_arch }}
+
+- ${{ if eq(parameters.build, true) }}:
+  - template: artifacts.yml
+    parameters:
+      artifact_name: ${{ parameters.artifact_name }}
+      prebuild_folder_name: ${{ parameters.prebuild_folder_name }}
+      output_node_file: ${{ parameters.output_node_file }}
