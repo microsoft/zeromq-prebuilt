@@ -90,6 +90,7 @@ jobs:
     - template: artifacts.yml
       parameters:
         artifact_name: linux-arm64-glibc
+        prebuild_folder_name: 'linux-arm64'
 
 
 # The build configurations have been taken from here:
@@ -124,6 +125,7 @@ jobs:
     - template: artifacts.yml
       parameters:
         artifact_name: linux-arm-glibc
+        prebuild_folder_name: 'linux-arm'
 
 - job: linux_x64_musl
   pool:
@@ -161,6 +163,7 @@ jobs:
     - template: artifacts.yml
       parameters:
         artifact_name: linux-x64-musl
+        prebuild_folder_name: 'linux-x64'
 
 - job: linux_arm64_musl
   pool:
@@ -199,6 +202,7 @@ jobs:
     - template: artifacts.yml
       parameters:
         artifact_name: linux-arm64-musl
+        prebuild_folder_name: 'linux-arm64'
 
 - job: publish
   pool:

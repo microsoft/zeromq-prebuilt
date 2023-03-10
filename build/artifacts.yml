@@ -1,12 +1,15 @@
 parameters:
   artifact_name: ''
+  prebuild_folder_name: ''
 
 steps:
-- task: CopyFiles@2
+- task: ArchiveFiles@2
   inputs:
-    SourceFolder: $(Build.SourcesDirectory)/zeromq.js/prebuilds
-    contents: '**/*.node'
-    targetFolder: $(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}
+    rootFolderOrFile: $(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}.zip'
+    replaceExistingArchive: true
 
 - task: PublishPipelineArtifact@0
   displayName: 'Publish Pipeline Artifact'
