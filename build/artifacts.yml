@@ -5,23 +5,9 @@ parameters:
 
 steps:
 
-# - bash: |
-#     cp '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}-${{ parameters.output_node_file }}'
-#   displayName: Copy output file
-
-# - task: CopyFiles@2
-#   inputs:
-#     SourceFolder: $(Build.SourcesDirectory)/zeromq.js/prebuilds
-#     contents: '**/*.node'
-#     targetFolder: $(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}
-
-- task: ArchiveFiles@2
-  inputs:
-    rootFolderOrFile: '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}'
-    includeRootFolder: false
-    archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}.zip'
-    replaceExistingArchive: true
+- bash: |
+    cp '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}-${{ parameters.output_node_file }}'
+  displayName: Copy output file
 
 - task: PublishPipelineArtifact@0
   displayName: 'Publish Pipeline Artifact'
