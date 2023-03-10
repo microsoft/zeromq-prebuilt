@@ -7,6 +7,7 @@ parameters:
   artifact_name: ''
   prebuild_folder_name: ''
   build: true
+  output_node_file: ''
 
 steps:
 - task: NodeTool@0
@@ -63,3 +64,5 @@ steps:
   - template: artifacts.yml
     parameters:
       artifact_name: ${{ parameters.artifact_name }}
+      prebuild_folder_name: ${{ parameters.prebuild_folder_name }}
+      output_node_file: ${{ parameters.output_node_file }}

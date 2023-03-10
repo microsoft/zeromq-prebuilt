@@ -16,6 +16,7 @@ jobs:
       parameters:
         artifact_name: 'win32-x64'
         prebuild_folder_name: 'win32-x64'
+        output_node_file: 'node.napi.glibc.node'
 
 - job: win32_ia32
   pool:
@@ -28,6 +29,7 @@ jobs:
         npm_config_arch: ia32
         artifact_name: 'win32-ia32'
         prebuild_folder_name: 'win32-ia32'
+        output_node_file: 'node.napi.glibc.node'
 
 - job: darwin_x64
   pool:
@@ -38,6 +40,7 @@ jobs:
         ARCH: ''
         artifact_name: 'darwin-x64'
         prebuild_folder_name: 'darwin-x64'
+        output_node_file: 'node.napi.glibc.node'
 
 - job: darwin_arm64
   pool:
@@ -48,6 +51,7 @@ jobs:
         ARCH: arm64
         artifact_name: 'darwin-arm64'
         prebuild_folder_name: 'darwin-arm64'
+        output_node_file: 'node.napi.glibc.node'
 
 - job: linux_x64_glibc
   pool:
@@ -57,6 +61,7 @@ jobs:
       parameters:
         artifact_name: 'linux-x64'
         prebuild_folder_name: 'linux-x64'
+        output_node_file: 'node.napi.glibc.node'
 
 # The build configurations have been taken from here:
 # https://github.com/zeromq/zeromq.js/blob/47bb35c1941cb4fa8b510fb7da4d40b37cfa2e5f/.travis.yml#L94
@@ -91,6 +96,7 @@ jobs:
       parameters:
         artifact_name: linux-arm64-glibc
         prebuild_folder_name: 'linux-arm64'
+        output_node_file: 'node.napi.glibc.node'
 
 
 # The build configurations have been taken from here:
@@ -126,6 +132,7 @@ jobs:
       parameters:
         artifact_name: linux-arm-glibc
         prebuild_folder_name: 'linux-arm'
+        output_node_file: 'node.napi.glibc.node'
 
 - job: linux_x64_musl
   pool:
@@ -164,6 +171,7 @@ jobs:
       parameters:
         artifact_name: linux-x64-musl
         prebuild_folder_name: 'linux-x64'
+        output_node_file: 'node.napi.musl.node'
 
 - job: linux_arm64_musl
   pool:
@@ -203,6 +211,7 @@ jobs:
       parameters:
         artifact_name: linux-arm64-musl
         prebuild_folder_name: 'linux-arm64'
+        output_node_file: 'node.napi.musl.node'
 
 - job: publish
   pool:
