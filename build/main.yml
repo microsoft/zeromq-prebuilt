@@ -176,7 +176,8 @@ jobs:
   dependsOn:
   - win32_x64
   - win32_ia32
-  - darwin_x64_arm64
+  - darwin_x64
+  - darwin_arm64
   - linux_x64_glibc
   - linux_arm64_glibc
   - linux_arm_glibc
