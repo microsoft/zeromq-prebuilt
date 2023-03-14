@@ -7,6 +7,7 @@ parameters:
   artifact_name: ''
   prebuild_folder_name: ''
   build: true
+  test: true
   output_node_file: ''
 
 steps:
@@ -66,3 +67,4 @@ steps:
       artifact_name: ${{ parameters.artifact_name }}
       prebuild_folder_name: ${{ parameters.prebuild_folder_name }}
       output_node_file: ${{ parameters.output_node_file }}
+      test: ${{ parameters.test }}
