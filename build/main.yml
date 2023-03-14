@@ -145,19 +145,12 @@ jobs:
     - task: DockerInstaller@0
       inputs:
         dockerVersion: '17.09.0-ce'
-    - task: Bash@3
-      displayName: Install dependencies
-      inputs:
-        targetType: 'inline'
-        script: |
-          # Write your commands here
-          sudo apt install gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu
 
     - task: Bash@3
       displayName: Build
       env:
         CURRENDIR: $(Build.SourcesDirectory)
-        DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild
+        DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && ALPINE_CHROOT=3.10 ARCHIVE_SUFFIX=-x64-musl pnpm run prebuild
       inputs:
         targetType: 'inline'
         workingDirectory: zeromq.js
@@ -185,19 +178,12 @@ jobs:
     - task: DockerInstaller@0
       inputs:
         dockerVersion: '17.09.0-ce'
-    - task: Bash@3
-      displayName: Install dependencies
-      inputs:
-        targetType: 'inline'
-        script: |
-          # Write your commands here
-          sudo apt install gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu
 
     - task: Bash@3
       displayName: Build
       env:
         CURRENDIR: $(Build.SourcesDirectory)
-        DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && npm_config_arch=arm64 ARCH=arm64 pnpm install && npm_config_arch=arm64 ARCH=arm64 pnpm run prebuild
+        DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && npm_config_arch=arm64 ARCH=arm64 pnpm install && npm_config_arch=arm64 ARCH=arm64 ALPINE_CHROOT=3.10 ARCHIVE_SUFFIX=-x64-musl pnpm run prebuild
       inputs:
         targetType: 'inline'
         workingDirectory: zeromq.js
