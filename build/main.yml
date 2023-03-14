@@ -1,7 +1,7 @@
-trigger:
-  tags:
-    include:
-    - '*'
+# trigger:
+#   tags:
+#     include:
+#     - '*'
 
 jobs:
 - job: win32_x64
