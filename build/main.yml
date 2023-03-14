@@ -70,22 +70,31 @@ jobs:
       parameters:
         build: false
 
-    - task: DockerInstaller@0
-      inputs:
-        dockerVersion: '17.09.0-ce'
+    # - task: DockerInstaller@0
+    #   inputs:
+    #     dockerVersion: '17.09.0-ce'
 
-    - task: Bash@3
-      displayName: Build
-      env:
-        CURRENDIR: $(Build.SourcesDirectory)
-        DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild
-      inputs:
-        targetType: 'inline'
-        workingDirectory: zeromq.js
-        script: |
-            docker pull centos7_devtoolset8_x64
-            docker tag centos7_devtoolset8_x64 builder
-            docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged builder sh -c "$DOCKERCMD"
+		# Docker v2
+		# Build or push Docker images, login or logout, start or stop containers, or run a Docker command.
+		- task: Docker@2
+			inputs:
+			# Container Repository
+				containerRegistry: VSCodeHub
+				repository:  'vscode-linux-build-agent'
+				command: '--volume $(Build.SourcesDirectory)/zeromq.js:/app --workdir /app --privileged builder sh -c "apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild"'
+
+    # - task: Bash@3
+    #   displayName: Build
+    #   env:
+    #     CURRENDIR: $(Build.SourcesDirectory)
+    #     DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild
+    #   inputs:
+    #     targetType: 'inline'
+    #     workingDirectory: zeromq.js
+    #     script: |
+    #         docker pull centos7_devtoolset8_x64
+    #         docker tag centos7_devtoolset8_x64 builder
+    #         docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged builder sh -c "$DOCKERCMD"
 
     - template: artifacts.yml
       parameters:
