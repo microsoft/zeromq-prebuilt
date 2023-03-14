@@ -127,17 +127,9 @@ jobs:
       parameters:
         build: false
 
-
     - task: DockerInstaller@0
       inputs:
         dockerVersion: '17.09.0-ce'
-    - task: Bash@3
-      displayName: Install dependencies
-      inputs:
-        targetType: 'inline'
-        script: |
-          # Write your commands here
-          sudo apt install gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu
 
     - task: Bash@3
       displayName: Build
