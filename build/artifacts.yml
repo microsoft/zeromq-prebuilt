@@ -6,6 +6,13 @@ parameters:
 steps:
 
 - bash: |
+    cd '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}'
+    ls
+    cd '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}'
+    ls
+  displayName: Copy output file
+
+- bash: |
     cp '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}-${{ parameters.output_node_file }}'
   displayName: Copy output file
 
