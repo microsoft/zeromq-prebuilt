@@ -183,7 +183,7 @@ jobs:
       displayName: Build
       env:
         CURRENDIR: $(Build.SourcesDirectory)
-        DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && npm_config_arch=arm64 ARCH=arm64 pnpm install && npm_config_arch=arm64 ARCH=arm64 ARCHIVE_SUFFIX=-x64-musl pnpm run prebuild
+        DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && npm_config_arch=arm64 ARCH=arm64 pnpm install && npm_config_arch=arm64 ARCH=arm64 ARCHIVE_SUFFIX=-arm64-musl pnpm run prebuild
       inputs:
         targetType: 'inline'
         workingDirectory: zeromq.js
