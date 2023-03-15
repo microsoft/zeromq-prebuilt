@@ -4,139 +4,7 @@ trigger:
     - '*'
 
 jobs:
-- job: win32_x64
-  pool:
-    vmImage: 'windows-latest'
-  steps:
-    - template: build.yml
-      parameters:
-        artifact_name: 'win32-x64'
-        prebuild_folder_name: 'win32-x64'
-        output_node_file: 'node.napi.glibc.node'
-
-- job: win32_ia32
-  pool:
-    vmImage: 'windows-latest'
-  steps:
-    - template: build.yml
-      parameters:
-        python_arch: x86
-        ARCH: x86
-        npm_config_arch: ia32
-        artifact_name: 'win32-ia32'
-        prebuild_folder_name: 'win32-ia32'
-        output_node_file: 'node.napi.glibc.node'
-        test: false
-
-- job: darwin_x64
-  pool:
-    vmImage: 'macOS-latest'
-  steps:
-    - template: build.yml
-      parameters:
-        ARCH: ''
-        artifact_name: 'darwin-x64'
-        prebuild_folder_name: 'darwin-x64'
-        output_node_file: 'node.napi.glibc.node'
-
-- job: darwin_arm64
-  pool:
-    vmImage: 'macOS-latest'
-  steps:
-    - template: build.yml
-      parameters:
-        ARCH: arm64
-        artifact_name: 'darwin-arm64'
-        prebuild_folder_name: 'darwin-arm64'
-        output_node_file: 'node.napi.glibc.node'
-        test: false
-
 - job: linux_x64_glibc
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:
-    - template: build.yml
-      parameters:
-        artifact_name: 'linux-x64'
-        prebuild_folder_name: 'linux-x64'
-        output_node_file: 'node.napi.glibc.node'
-
-# The build configurations have been taken from here:
-# https://github.com/zeromq/zeromq.js/blob/47bb35c1941cb4fa8b510fb7da4d40b37cfa2e5f/.travis.yml#L94
-- job: linux_arm64_glibc
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:
-    - template: build.yml
-      parameters:
-        build: false
-        test: false
-
-    - task: Bash@3
-      displayName: Install dependencies
-      inputs:
-        targetType: 'inline'
-        script: |
-          sudo apt install gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu
-
-    - bash: |
-        npm install
-        npm run prebuild
-      displayName: Build
-      workingDirectory: zeromq.js
-      env:
-        ARCH: arm64
-        npm_config_arch: arm64
-        TRIPLE: aarch64-linux-gnu
-        GCC: 9
-        ARCHIVE_SUFFIX: -armv8
-
-    - template: artifacts.yml
-      parameters:
-        artifact_name: linux-arm64-glibc
-        prebuild_folder_name: 'linux-arm64'
-        output_node_file: 'node.napi.glibc.node'
-        test: false
-
-
-# The build configurations have been taken from here:
-# https://github.com/zeromq/zeromq.js/blob/47bb35c1941cb4fa8b510fb7da4d40b37cfa2e5f/.travis.yml#L94
-- job: linux_arm_glibc
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:
-    - template: build.yml
-      parameters:
-        build: false
-        test: false
-
-    - task: Bash@3
-      displayName: Install dependencies
-      inputs:
-        targetType: 'inline'
-        script: |
-          sudo apt install gcc-9-arm-linux-gnueabihf g++-9-arm-linux-gnueabihf
-
-    - bash: |
-        npm install
-        npm run prebuild
-      displayName: Build
-      workingDirectory: zeromq.js
-      env:
-        ARCH: arm
-        npm_config_arch: arm
-        TRIPLE: arm-linux-gnueabihf
-        GCC: 9
-        ARCHIVE_SUFFIX: -armv7
-
-    - template: artifacts.yml
-      parameters:
-        artifact_name: linux-arm-glibc
-        prebuild_folder_name: 'linux-arm'
-        output_node_file: 'node.napi.glibc.node'
-        test: false
-
-- job: linux_x64_musl
   pool:
     vmImage: 'ubuntu-latest'
   steps:
@@ -149,38 +17,46 @@ jobs:
       inputs:
         dockerVersion: '17.09.0-ce'
 
+    - task: Docker@2
+      displayName: 'Login'
+      inputs:
+      # Container Repository
+        containerRegistry: VSCodeHub
+        repository:  'vscode-linux-build-agent'
+        command: 'login'
+
+    - task: Docker@0
+      displayName: 'Run'
+      inputs:
+      # Container Repository
+        azureContainerRegistry: VSCodeHub
+        repository:  'vscode-linux-build-agent'
+        imageName:  'vscode-linux-build-agent'
+        command: 'Run a Docker command'
+        workingDirectory: zeromq.js
+        # workingDirectory: '/app'
+        volumes:
+          $(Build.SourcesDirectory)/zeromq.js:/app
+        # arguments: '--volume $(Build.SourcesDirectory)/zeromq.js:/app --workdir /app --privileged builder sh -c "apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild"'
+        # customCommand: 'sh -c "pwd && apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild"'
+        customCommand: 'run --volume $(Build.SourcesDirectory)/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "pwd && apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild"'
+
+    - task: DockerInstaller@0
+
     - task: Bash@3
       displayName: Build
       env:
         CURRENDIR: $(Build.SourcesDirectory)
-        DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild
+        DOCKERCMD: npm i -g pnpm && pnpm install && pnpm run prebuild
+        # DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild
       inputs:
         targetType: 'inline'
         workingDirectory: zeromq.js
         script: |
-            docker pull node:18-alpine
-            docker tag node:18-alpine builder
-            docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged builder sh -c "$DOCKERCMD"
+            docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "$DOCKERCMD"
 
     - template: artifacts.yml
       parameters:
         artifact_name: linux-x64-musl
         prebuild_folder_name: 'linux-x64'
         output_node_file: 'node.napi.musl.node'
-        test: false
-
-- job: publish
-  pool:
-    vmImage: 'ubuntu-latest'
-  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
-  dependsOn:
-  - win32_x64
-  - win32_ia32
-  - darwin_x64
-  - darwin_arm64
-  - linux_x64_glibc
-  - linux_arm64_glibc
-  - linux_arm_glibc
-  - linux_x64_musl
-  steps:
-    - template: publish.yml

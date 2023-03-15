@@ -1,4 +1,4 @@
-# ripgrep-prebuilt
+# zeromq-prebuilt
 
 [![Build Status](https://dev.azure.com/monacotools/Monaco/_apis/build/status/Extensions/ms-toolsai/zeromq-prebuilt?branchName=main)](https://dev.azure.com/monacotools/Monaco/_build/latest?definitionId=466&branchName=main)
 
