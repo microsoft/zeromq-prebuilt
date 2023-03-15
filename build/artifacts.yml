@@ -2,12 +2,18 @@ parameters:
   artifact_name: ''
   prebuild_folder_name: ''
   output_node_file: ''
+  test: true
 
 steps:
 
 - bash: |
     cp '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}-${{ parameters.output_node_file }}'
   displayName: Copy output file
+
+- bash: |
+    node -r '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' -e 'console.log(1)'
+  displayName: Test Node Module
+  condition: and(succeeded(), eq(${{ parameters.test }}, true))
 
 - task: PublishPipelineArtifact@0
   displayName: 'Publish Pipeline Artifact'

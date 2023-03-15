@@ -26,17 +26,30 @@ jobs:
         artifact_name: 'win32-ia32'
         prebuild_folder_name: 'win32-ia32'
         output_node_file: 'node.napi.glibc.node'
+        test: false
 
-- job: darwin_x64_arm64
+- job: darwin_x64
+  pool:
+    vmImage: 'macOS-latest'
+  steps:
+    - template: build.yml
+      parameters:
+        ARCH: ''
+        artifact_name: 'darwin-x64'
+        prebuild_folder_name: 'darwin-x64'
+        output_node_file: 'node.napi.glibc.node'
+
+- job: darwin_arm64
   pool:
     vmImage: 'macOS-latest'
   steps:
     - template: build.yml
       parameters:
         ARCH: arm64
-        artifact_name: 'darwin-x64+arm64'
+        artifact_name: 'darwin-arm64'
         prebuild_folder_name: 'darwin-arm64'
         output_node_file: 'node.napi.glibc.node'
+        test: false
 
 - job: linux_x64_glibc
   pool:
@@ -57,6 +70,7 @@ jobs:
     - template: build.yml
       parameters:
         build: false
+        test: false
 
     - task: Bash@3
       displayName: Install dependencies
@@ -82,6 +96,7 @@ jobs:
         artifact_name: linux-arm64-glibc
         prebuild_folder_name: 'linux-arm64'
         output_node_file: 'node.napi.glibc.node'
+        test: false
 
 
 # The build configurations have been taken from here:
@@ -93,6 +108,7 @@ jobs:
     - template: build.yml
       parameters:
         build: false
+        test: false
 
     - task: Bash@3
       displayName: Install dependencies
@@ -118,6 +134,7 @@ jobs:
         artifact_name: linux-arm-glibc
         prebuild_folder_name: 'linux-arm'
         output_node_file: 'node.napi.glibc.node'
+        test: false
 
 - job: linux_x64_musl
   pool:
@@ -126,6 +143,7 @@ jobs:
     - template: build.yml
       parameters:
         build: false
+        test: false
 
     - task: DockerInstaller@0
       inputs:
@@ -149,15 +167,17 @@ jobs:
         artifact_name: linux-x64-musl
         prebuild_folder_name: 'linux-x64'
         output_node_file: 'node.napi.musl.node'
+        test: false
 
 - job: publish
   pool:
     vmImage: 'ubuntu-latest'
-  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+  # condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
   dependsOn:
   - win32_x64
   - win32_ia32
-  - darwin_x64_arm64
+  - darwin_x64
+  - darwin_arm64
   - linux_x64_glibc
   - linux_arm64_glibc
   - linux_arm_glibc
