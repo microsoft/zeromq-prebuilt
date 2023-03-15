@@ -172,7 +172,7 @@ jobs:
 - job: publish
   pool:
     vmImage: 'ubuntu-latest'
-  # condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
   dependsOn:
   - win32_x64
   - win32_ia32
