@@ -14,8 +14,6 @@ jobs:
         test: false
 
     - task: DockerInstaller@0
-      inputs:
-        dockerVersion: '17.09.0-ce'
 
     - task: Docker@2
       displayName: 'Login'
@@ -28,7 +26,6 @@ jobs:
     - task: Docker@0
       displayName: 'Run'
       inputs:
-      # Container Repository
         azureContainerRegistry: VSCodeHub
         repository:  'vscode-linux-build-agent'
         imageName:  'vscode-linux-build-agent'
@@ -41,13 +38,11 @@ jobs:
         # customCommand: 'sh -c "pwd && apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild"'
         customCommand: 'run --volume $(Build.SourcesDirectory)/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "pwd && apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild"'
 
-    - task: DockerInstaller@0
-
     - task: Bash@3
       displayName: Build
       env:
         CURRENDIR: $(Build.SourcesDirectory)
-        DOCKERCMD: yum install -y musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild
+        DOCKERCMD: yum install -y musl-devel && npm i -g pnpm && pnpm install && pnpm run prebuild
         # DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild
       inputs:
         targetType: 'inline'
