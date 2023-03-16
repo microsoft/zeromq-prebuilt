@@ -36,20 +36,20 @@ jobs:
           $(Build.SourcesDirectory)/zeromq.js:/app
         # arguments: '--volume $(Build.SourcesDirectory)/zeromq.js:/app --workdir /app --privileged builder sh -c "apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild"'
         # customCommand: 'sh -c "pwd && apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild"'
-        customCommand: 'run --volume $(Build.SourcesDirectory)/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "pwd && apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild"'
+        customCommand: 'run --volume $(Build.SourcesDirectory)/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "pwd && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild"'
 
-    - task: Bash@3
-      displayName: Build
-      env:
-        CURRENDIR: $(Build.SourcesDirectory)
-        # DOCKERCMD: yum install -y uuid-devel pkgconfig libtool gcc-c++ glib* && npm i -g pnpm && pnpm install && pnpm run prebuild
-        DOCKERCMD: yum install -y zeromq-devel && npm i -g pnpm && pnpm install && pnpm run prebuild
-        # DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild
-      inputs:
-        targetType: 'inline'
-        workingDirectory: zeromq.js
-        script: |
-            docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "$DOCKERCMD"
+    # - task: Bash@3
+    #   displayName: Build
+    #   env:
+    #     CURRENDIR: $(Build.SourcesDirectory)
+    #     # DOCKERCMD: yum install -y uuid-devel pkgconfig libtool gcc-c++ glib* && npm i -g pnpm && pnpm install && pnpm run prebuild
+    #     DOCKERCMD: yum install -y zeromq-devel && npm i -g pnpm && pnpm install && pnpm run prebuild
+    #     # DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild
+    #   inputs:
+    #     targetType: 'inline'
+    #     workingDirectory: zeromq.js
+    #     script: |
+    #         docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "$DOCKERCMD"
 
     - template: artifacts.yml
       parameters:
