@@ -8,6 +8,7 @@ parameters:
   prebuild_folder_name: ''
   build: true
   test: true
+  docker: false
   output_node_file: ''
 
 steps:
@@ -42,24 +43,89 @@ steps:
     script: |
       node ./build/patch.js
 
-- bash: |
-    npm install
-    npm run prebuild
-  displayName: Build
-  condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), ne('${{ parameters.ARCH }}', ''))
-  workingDirectory: zeromq.js
-  env:
-    ARCH: ${{ parameters.ARCH }}
-    npm_config_arch: ${{ parameters.npm_config_arch }}
+- ${{ if and(eq(parameters.docker, false), eq(parameters.build, true), ne(parameters.ARCH, '')) }}:
+  - bash: |
+      npm install
+      npm run prebuild
+    displayName: Build
+    condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), eq('${{ parameters.docker }}', 'false'), ne('${{ parameters.ARCH }}', ''))
+    workingDirectory: zeromq.js
+    env:
+      ARCH: ${{ parameters.ARCH }}
+      npm_config_arch: ${{ parameters.npm_config_arch }}
 
-- bash: |
-    npm install
-    npm run prebuild
-  displayName: Build
-  condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), eq('${{ parameters.ARCH }}', ''))
-  workingDirectory: zeromq.js
-  env:
-    npm_config_arch: ${{ parameters.npm_config_arch }}
+- ${{ if and(eq(parameters.docker, false), eq(parameters.build, true), eq(parameters.ARCH, '')) }}:
+  - bash: |
+      npm install
+      npm run prebuild
+    displayName: Build
+    condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), eq('${{ parameters.docker }}', 'false'), eq('${{ parameters.ARCH }}', ''))
+    workingDirectory: zeromq.js
+    env:
+      npm_config_arch: ${{ parameters.npm_config_arch }}
+
+- ${{ if and(eq(parameters.docker, true), eq(parameters.build, true)) }}:
+  - task: DockerInstaller@0
+
+- ${{ if and(eq(parameters.docker, true), eq(parameters.build, true)) }}:
+  - task: Docker@2
+    displayName: 'Log into VSCodeHub'
+    inputs:
+      containerRegistry: VSCodeHub
+      repository:  'vscode-linux-build-agent'
+      command: 'login'
+
+- ${{ if and(eq(parameters.docker, true), eq(parameters.build, true)) }}:
+  - task: Docker@0
+    displayName: 'Run vscode-linux-build-agent'
+    inputs:
+      azureContainerRegistry: VSCodeHub
+      repository:  'vscode-linux-build-agent'
+      imageName:  'vscode-linux-build-agent'
+      command: 'Run a Docker command'
+      workingDirectory: zeromq.js
+      # workingDirectory: '/app'
+      volumes:
+        $(Build.SourcesDirectory)/zeromq.js:/app
+      # arguments: '--volume $(Build.SourcesDirectory)/zeromq.js:/app --workdir /app --privileged builder sh -c "apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild"'
+      # customCommand: 'sh -c "pwd && apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild"'
+      customCommand: 'run --volume $(Build.SourcesDirectory)/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "pwd && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild"'
+
+- ${{ if and(eq(parameters.docker, true), eq(parameters.build, true), eq('${{ parameters.ARCH }}', 'x64')) }}:
+  - task: Bash@3
+    displayName: 'Build x64 in Docker'
+    env:
+      CURRENDIR: $(Build.SourcesDirectory)
+      DOCKERCMD: cmake --version && pwd && npm i -g pnpm && GCC=8 pnpm install && GCC=8 pnpm run prebuild
+    inputs:
+      targetType: 'inline'
+      workingDirectory: zeromq.js
+      script: |
+          docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "$DOCKERCMD"
+
+- ${{ if and(eq(parameters.docker, true), eq(parameters.build, true), eq('${{ parameters.ARCH }}', 'arm64')) }}:
+  - task: Bash@3
+    displayName: 'Build arm64 in Docker'
+    env:
+      CURRENDIR: $(Build.SourcesDirectory)
+      DOCKERCMD: cmake --version && pwd && npm i -g pnpm && ARCH=arm64 npm_config_arch=arm64 TRIPLE=aarch64-linux-gnu GCC=8 ARCHIVE_SUFFIX=-armv8 pnpm install && ARCH=arm64 npm_config_arch=arm64 TRIPLE=aarch64-linux-gnu GCC=8 ARCHIVE_SUFFIX=-armv8 pnpm run prebuild
+    inputs:
+      targetType: 'inline'
+      workingDirectory: zeromq.js
+      script: |
+          docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "$DOCKERCMD"
+
+- ${{ if and(eq(parameters.docker, true), eq(parameters.build, true), eq('${{ parameters.ARCH }}', 'arm')) }}:
+  - task: Bash@3
+    displayName: 'Build arm64 in Docker'
+    env:
+      CURRENDIR: $(Build.SourcesDirectory)
+      DOCKERCMD: cmake --version && pwd && npm i -g pnpm && ARCH=arm npm_config_arch=arm TRIPLE=aarch-linux-gnueabihf GCC=8 ARCHIVE_SUFFIX=-armv7 pnpm install && ARCH=arm npm_config_arch=arm TRIPLE=aarch-linux-gnueabihf GCC=8 ARCHIVE_SUFFIX=-armv7 pnpm run prebuild
+    inputs:
+      targetType: 'inline'
+      workingDirectory: zeromq.js
+      script: |
+          docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "$DOCKERCMD"
 
 - ${{ if eq(parameters.build, true) }}:
   - template: artifacts.yml

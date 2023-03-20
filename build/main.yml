@@ -60,6 +60,7 @@ jobs:
         artifact_name: 'linux-x64'
         prebuild_folder_name: 'linux-x64'
         output_node_file: 'node.napi.glibc.node'
+        docker: true
 
 # The build configurations have been taken from here:
 # https://github.com/zeromq/zeromq.js/blob/47bb35c1941cb4fa8b510fb7da4d40b37cfa2e5f/.travis.yml#L94
@@ -69,30 +70,13 @@ jobs:
   steps:
     - template: build.yml
       parameters:
-        build: false
+        docker: true
         test: false
-
-    - task: Bash@3
-      displayName: Install dependencies
-      inputs:
-        targetType: 'inline'
-        script: |
-          sudo apt install gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu
-
-    - bash: |
-        npm install
-        npm run prebuild
-      displayName: Build
-      workingDirectory: zeromq.js
-      env:
         ARCH: arm64
         npm_config_arch: arm64
         TRIPLE: aarch64-linux-gnu
-        GCC: 9
+        GCC: 8
         ARCHIVE_SUFFIX: -armv8
-
-    - template: artifacts.yml
-      parameters:
         artifact_name: linux-arm64-glibc
         prebuild_folder_name: 'linux-arm64'
         output_node_file: 'node.napi.glibc.node'
@@ -107,34 +91,16 @@ jobs:
   steps:
     - template: build.yml
       parameters:
-        build: false
+        docker: true
         test: false
-
-    - task: Bash@3
-      displayName: Install dependencies
-      inputs:
-        targetType: 'inline'
-        script: |
-          sudo apt install gcc-9-arm-linux-gnueabihf g++-9-arm-linux-gnueabihf
-
-    - bash: |
-        npm install
-        npm run prebuild
-      displayName: Build
-      workingDirectory: zeromq.js
-      env:
         ARCH: arm
         npm_config_arch: arm
         TRIPLE: arm-linux-gnueabihf
         GCC: 9
         ARCHIVE_SUFFIX: -armv7
-
-    - template: artifacts.yml
-      parameters:
         artifact_name: linux-arm-glibc
         prebuild_folder_name: 'linux-arm'
         output_node_file: 'node.napi.glibc.node'
-        test: false
 
 - job: linux_x64_musl
   pool:
