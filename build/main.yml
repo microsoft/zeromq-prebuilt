@@ -42,7 +42,7 @@ jobs:
       displayName: Build
       env:
         CURRENDIR: $(Build.SourcesDirectory)
-        DOCKERCMD: pwd && npm i -g pnpm && pnpm install && pnpm run prebuild
+        DOCKERCMD: pwd && git clone https://gitlab.kitware.com/cmake/cmake.git && cd cmake && git checkout v3.26.0 && ./bootstrap --prefix=/usr/local -- -DCMAKE_USE_OPENSSL=OFF make && make install && cd /app && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild
       inputs:
         targetType: 'inline'
         workingDirectory: zeromq.js
