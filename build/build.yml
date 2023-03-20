@@ -82,7 +82,7 @@ steps:
       azureContainerRegistry: VSCodeHub
       repository:  'vscode-linux-build-agent'
       imageName:  'vscode-linux-build-agent:centos7-devtoolset8-x64'
-      command: 'Run a Docker command'
+      command: "Run an image"
       workingDirectory: zeromq.js
       volumes:
         $(Build.SourcesDirectory)/zeromq.js:/app
