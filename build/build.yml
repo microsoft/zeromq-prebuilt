@@ -84,11 +84,8 @@ steps:
       imageName:  'vscode-linux-build-agent'
       command: 'Run a Docker command'
       workingDirectory: zeromq.js
-      # workingDirectory: '/app'
       volumes:
         $(Build.SourcesDirectory)/zeromq.js:/app
-      # arguments: '--volume $(Build.SourcesDirectory)/zeromq.js:/app --workdir /app --privileged builder sh -c "apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild"'
-      # customCommand: 'sh -c "pwd && apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild"'
       customCommand: 'run --volume $(Build.SourcesDirectory)/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "pwd && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild"'
 
 - ${{ if and(eq(parameters.docker, true), eq(parameters.build, true), eq('${{ parameters.ARCH }}', 'x64')) }}:
