@@ -39,7 +39,7 @@ jobs:
   - task: PublishPipelineArtifact@0
     displayName: 'Publish Pipeline Artifact'
     inputs:
-      artifactName: ${{ parameters.artifact_name }}
+      artifactName: zeromq
       targetPath: $(Build.ArtifactStagingDirectory)
 
   - task: DownloadPipelineArtifact@2
