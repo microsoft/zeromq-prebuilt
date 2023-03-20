@@ -81,12 +81,25 @@ steps:
     inputs:
       azureContainerRegistry: VSCodeHub
       repository:  'vscode-linux-build-agent'
-      imageName:  'vscode-linux-build-agent'
+      imageName:  'vscode-linux-build-agent:centos7-devtoolset8-x64'
       command: 'Run a Docker command'
       workingDirectory: zeromq.js
       volumes:
         $(Build.SourcesDirectory)/zeromq.js:/app
-      customCommand: 'run --volume $(Build.SourcesDirectory)/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "pwd && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild"'
+      containerCommand: 'uname -a'
+
+- ${{ if and(eq(parameters.docker, true), eq(parameters.build, true)) }}:
+  - task: Docker@0
+    displayName: 'Run vscode-linux-build-agent'
+    inputs:
+      azureContainerRegistry: VSCodeHub
+      repository:  'vscode-linux-build-agent'
+      imageName:  'vscode-linux-build-agent:centos7-devtoolset8-x64'
+      command: 'Run a Docker command'
+      workingDirectory: zeromq.js
+      volumes:
+        $(Build.SourcesDirectory)/zeromq.js:/app
+      containerCommand: 'run --volume $(Build.SourcesDirectory)/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "pwd && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild"'
 
 - ${{ if and(eq(parameters.docker, true), eq(parameters.build, true), eq('${{ parameters.ARCH }}', 'x64')) }}:
   - task: Bash@3
@@ -98,7 +111,7 @@ steps:
       targetType: 'inline'
       workingDirectory: zeromq.js
       script: |
-          docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "$DOCKERCMD"
+          docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged vscodehub.azurecr.io/vscode-linux-build-agent sh -c "$DOCKERCMD"
 
 - ${{ if and(eq(parameters.docker, true), eq(parameters.build, true), eq('${{ parameters.ARCH }}', 'arm64')) }}:
   - task: Bash@3
