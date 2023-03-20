@@ -42,7 +42,7 @@ jobs:
       displayName: Build
       env:
         CURRENDIR: $(Build.SourcesDirectory)
-        DOCKERCMD: pwd && git clone https://gitlab.kitware.com/cmake/cmake.git && cd cmake && git checkout v3.26.0 && ./bootstrap --prefix=/usr/local -- -DCMAKE_USE_OPENSSL=OFF make && make install && cd /app && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild
+        DOCKERCMD: pwd && git clone https://gitlab.kitware.com/cmake/cmake.git && cd cmake && git checkout v3.26.0 && ./bootstrap --prefix=/usr/local -- -DCMAKE_USE_OPENSSL=OFF make && make install && cd /app && cmake --version && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild
       inputs:
         targetType: 'inline'
         workingDirectory: zeromq.js
@@ -51,9 +51,9 @@ jobs:
 
     - template: artifacts.yml
       parameters:
-        artifact_name: linux-x64-musl
+        artifact_name: linux-x64-glibc
         prebuild_folder_name: 'linux-x64'
-        output_node_file: 'node.napi.musl.node'
+        output_node_file: 'node.napi.glibc.node'
 
 - job: linux_arm64_glibc
   pool:
@@ -93,7 +93,7 @@ jobs:
       displayName: Build
       env:
         CURRENDIR: $(Build.SourcesDirectory)
-        DOCKERCMD: pwd && git clone https://gitlab.kitware.com/cmake/cmake.git && cd cmake && git checkout v3.26.0 && ./bootstrap --prefix=/usr/local -- -DCMAKE_USE_OPENSSL=OFF make && make install && cd /app && npm i -g pnpm && ARCH=arm64 npm_config_arch=arm64 TRIPLE=aarch64-linux-gnu GCC=8 ARCHIVE_SUFFIX=-armv8 pnpm install && ARCH=arm64 npm_config_arch=arm64 TRIPLE=aarch64-linux-gnu GCC=8 ARCHIVE_SUFFIX=-armv8 pnpm run prebuild
+        DOCKERCMD: pwd && git clone https://gitlab.kitware.com/cmake/cmake.git && cd cmake && git checkout v3.26.0 && ./bootstrap --prefix=/usr/local -- -DCMAKE_USE_OPENSSL=OFF make && make install && cd /app && cmake --version && npm i -g pnpm && ARCH=arm64 npm_config_arch=arm64 TRIPLE=aarch64-linux-gnu GCC=8 ARCHIVE_SUFFIX=-armv8 pnpm install && ARCH=arm64 npm_config_arch=arm64 TRIPLE=aarch64-linux-gnu GCC=8 ARCHIVE_SUFFIX=-armv8 pnpm run prebuild
       inputs:
         targetType: 'inline'
         workingDirectory: zeromq.js
