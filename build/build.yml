@@ -83,10 +83,10 @@ steps:
       repository:  'vscode-linux-build-agent'
       imageName:  'vscode-linux-build-agent:centos7-devtoolset8-x64'
       command: "Run an image"
-      workingDirectory: zeromq.js
+      # workingDirectory: $(Build.SourcesDirectory)/zeromq.js
       volumes:
         $(Build.SourcesDirectory)/zeromq.js:/app
-      containerCommand: 'uname -a'
+      containerCommand: 'pwd && uname -a'
 
 - ${{ if and(eq(parameters.docker, true), eq(parameters.build, true)) }}:
   - task: Docker@0
@@ -96,7 +96,7 @@ steps:
       repository:  'vscode-linux-build-agent'
       imageName:  'vscode-linux-build-agent:centos7-devtoolset8-x64'
       command: 'Run a Docker command'
-      workingDirectory: zeromq.js
+      workingDirectory: $(Build.SourcesDirectory)/zeromq.js
       volumes:
         $(Build.SourcesDirectory)/zeromq.js:/app
       containerCommand: 'run --volume $(Build.SourcesDirectory)/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "pwd && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild"'
