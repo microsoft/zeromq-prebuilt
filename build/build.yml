@@ -76,7 +76,7 @@ steps:
       command: 'login'
 
 - ${{ if and(eq(parameters.docker, true), eq(parameters.build, true)) }}:
-  - task: Docker@0
+  - task: Docker@1
     displayName: 'Run vscode-linux-build-agent'
     inputs:
       azureContainerRegistry: VSCodeHub
