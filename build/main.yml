@@ -42,7 +42,7 @@ jobs:
       displayName: Build
       env:
         CURRENDIR: $(Build.SourcesDirectory)
-        DOCKERCMD: yum install -y zeromq-devel && npm i -g pnpm && pnpm install && pnpm run prebuild
+        DOCKERCMD: pwd && npm i -g pnpm && pnpm install && pnpm run prebuild
       inputs:
         targetType: 'inline'
         workingDirectory: zeromq.js
