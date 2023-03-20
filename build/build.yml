@@ -81,7 +81,7 @@ steps:
   - task: Docker@1
     displayName: 'Login'
     inputs:
-      # azureSubscriptionEndpoint: "vscode-builds-subscription"
+      azureSubscriptionEndpoint: "vscode-builds-subscription"
       azureContainerRegistry: vscodehub.azurecr.io
       imageName:  'vscode-linux-build-agent:centos7-devtoolset8-x64'
       command: "login"
@@ -90,7 +90,7 @@ steps:
   - task: Docker@1
     displayName: 'Run vscode-linux-build-agent'
     inputs:
-      # azureSubscriptionEndpoint: "vscode-builds-subscription"
+      azureSubscriptionEndpoint: "vscode-builds-subscription"
       azureContainerRegistry: vscodehub.azurecr.io
       imageName:  'vscode-linux-build-agent:centos7-devtoolset8-x64'
       command: "Run an image"
