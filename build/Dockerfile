@@ -7,6 +7,7 @@ ARG INSTALL_PKGS="devtoolset-8-gcc \
     devtoolset-8-gcc-gfortran \
     devtoolset-8-gdb \
     pkgconfig \
+	make \
     curl \
     tar \
     git \
