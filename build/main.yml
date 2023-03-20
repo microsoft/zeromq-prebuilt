@@ -73,14 +73,9 @@ jobs:
         docker: true
         test: false
         ARCH: arm64
-        npm_config_arch: arm64
-        TRIPLE: aarch64-linux-gnu
-        GCC: 8
-        ARCHIVE_SUFFIX: -armv8
         artifact_name: linux-arm64-glibc
         prebuild_folder_name: 'linux-arm64'
         output_node_file: 'node.napi.glibc.node'
-        test: false
 
 
 # The build configurations have been taken from here:
@@ -94,10 +89,6 @@ jobs:
         docker: true
         test: false
         ARCH: arm
-        npm_config_arch: arm
-        TRIPLE: arm-linux-gnueabihf
-        GCC: 9
-        ARCHIVE_SUFFIX: -armv7
         artifact_name: linux-arm-glibc
         prebuild_folder_name: 'linux-arm'
         output_node_file: 'node.napi.glibc.node'
