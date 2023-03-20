@@ -54,3 +54,54 @@ jobs:
         artifact_name: linux-x64-musl
         prebuild_folder_name: 'linux-x64'
         output_node_file: 'node.napi.musl.node'
+
+- job: linux_arm64_musl
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    - template: build.yml
+      parameters:
+        build: false
+        test: false
+
+    - task: DockerInstaller@0
+
+    - task: Docker@2
+      displayName: 'Login'
+      inputs:
+      # Container Repository
+        containerRegistry: VSCodeHub
+        repository:  'vscode-linux-build-agent'
+        command: 'login'
+
+    - task: Docker@0
+      displayName: 'Run'
+      inputs:
+        azureContainerRegistry: VSCodeHub
+        repository:  'vscode-linux-build-agent'
+        imageName:  'vscode-linux-build-agent'
+        command: 'Run a Docker command'
+        workingDirectory: zeromq.js
+        # workingDirectory: '/app'
+        volumes:
+          $(Build.SourcesDirectory)/zeromq.js:/app
+        # arguments: '--volume $(Build.SourcesDirectory)/zeromq.js:/app --workdir /app --privileged builder sh -c "apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild"'
+        # customCommand: 'sh -c "pwd && apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild"'
+        customCommand: 'run --volume $(Build.SourcesDirectory)/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "pwd && pwd && npm i -g pnpm && pnpm install && pnpm run prebuild"'
+
+    - task: Bash@3
+      displayName: Build
+      env:
+        CURRENDIR: $(Build.SourcesDirectory)
+        DOCKERCMD: pwd && git clone https://gitlab.kitware.com/cmake/cmake.git && RUN cd cmake && git checkout v3.26.0 && ./bootstrap --prefix=/usr/local -- -DCMAKE_USE_OPENSSL=OFF make && make install && cd /app && npm i -g pnpm && pnpm install && pnpm run prebuild
+      inputs:
+        targetType: 'inline'
+        workingDirectory: zeromq.js
+        script: |
+            docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged vscode-linux-build-agent sh -c "$DOCKERCMD"
+
+    - template: artifacts.yml
+      parameters:
+        artifact_name: linux-x64-musl
+        prebuild_folder_name: 'linux-x64'
+        output_node_file: 'node.napi.musl.node'
