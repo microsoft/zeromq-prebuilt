@@ -28,13 +28,10 @@ jobs:
     inputs:
       targetType: 'inline'
       script: |
-        cp '$(Build.SourcesDirectory)/node_modules/zeromq/prebuilds/darwin-x64/node.napi.node' '$(Build.ArtifactStagingDirectory)/darwin_x64_node.napi.node'
         cp '$(Build.SourcesDirectory)/node_modules/zeromq/prebuilds/linux-arm/node.napi.glibc.node' '$(Build.ArtifactStagingDirectory)/linux_arm_node.napi.glibc.node'
         cp '$(Build.SourcesDirectory)/node_modules/zeromq/prebuilds/linux-arm64/node.napi.glibc.node' '$(Build.ArtifactStagingDirectory)/linux_arm64_node.napi.glibc.node'
         cp '$(Build.SourcesDirectory)/node_modules/zeromq/prebuilds/linux-x64/node.napi.glibc.node' '$(Build.ArtifactStagingDirectory)/linux_x64_node.napi.glibc.node'
         cp '$(Build.SourcesDirectory)/node_modules/zeromq/prebuilds/linux-x64/node.napi.musl.node' '$(Build.ArtifactStagingDirectory)/linux_x64_node.napi.musl.node'
-        cp '$(Build.SourcesDirectory)/node_modules/zeromq/prebuilds/win32-ia32/node.napi.node' '$(Build.ArtifactStagingDirectory)/win32_ia32_node.napi.node'
-        cp '$(Build.SourcesDirectory)/node_modules/zeromq/prebuilds/win32-x64/node.napi.node' '$(Build.ArtifactStagingDirectory)/win32_x64_node.napi.node'
 
   - task: PublishPipelineArtifact@0
     displayName: 'Publish Pipeline Artifact'
