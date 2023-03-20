@@ -55,7 +55,7 @@ jobs:
         prebuild_folder_name: 'linux-x64'
         output_node_file: 'node.napi.musl.node'
 
-- job: linux_arm64_musl
+- job: linux_arm64_glibc
   pool:
     vmImage: 'ubuntu-latest'
   steps:
@@ -93,7 +93,7 @@ jobs:
       displayName: Build
       env:
         CURRENDIR: $(Build.SourcesDirectory)
-        DOCKERCMD: pwd && git clone https://gitlab.kitware.com/cmake/cmake.git && RUN cd cmake && git checkout v3.26.0 && ./bootstrap --prefix=/usr/local -- -DCMAKE_USE_OPENSSL=OFF make && make install && cd /app && npm i -g pnpm && pnpm install && pnpm run prebuild
+        DOCKERCMD: pwd && git clone https://gitlab.kitware.com/cmake/cmake.git && RUN cd cmake && git checkout v3.26.0 && ./bootstrap --prefix=/usr/local -- -DCMAKE_USE_OPENSSL=OFF make && make install && cd /app && npm i -g pnpm && ARCH=arm npm_config_arch=arm TRIPLE=arm-linux-gnueabihf GCC=8 ARCHIVE_SUFFIX=-armv7 pnpm install && ARCH=arm npm_config_arch=arm TRIPLE=arm-linux-gnueabihf GCC=8 ARCHIVE_SUFFIX=-armv7 pnpm run prebuild
       inputs:
         targetType: 'inline'
         workingDirectory: zeromq.js
@@ -102,6 +102,6 @@ jobs:
 
     - template: artifacts.yml
       parameters:
-        artifact_name: linux-x64-musl
+        artifact_name: linux-x64-glibc
         prebuild_folder_name: 'linux-x64'
         output_node_file: 'node.napi.musl.node'
