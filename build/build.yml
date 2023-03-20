@@ -67,13 +67,24 @@ steps:
 - ${{ if and(eq(parameters.docker, true), eq(parameters.build, true)) }}:
   - task: DockerInstaller@0
 
+# - ${{ if and(eq(parameters.docker, true), eq(parameters.build, true)) }}:
+#   - task: Docker@2
+#     displayName: 'Log into VSCodeHub'
+#     inputs:
+#       # containerRegistry: VSCodeHub
+#       containerRegistry: vscodehub.azurecr.io
+#       # azureContainerRegistry: vscodehub.azurecr.io
+#       repository:  'vscode-linux-build-agent'
+#       command: 'login'
+
 - ${{ if and(eq(parameters.docker, true), eq(parameters.build, true)) }}:
-  - task: Docker@2
-    displayName: 'Log into VSCodeHub'
+  - task: Docker@1
+    displayName: 'Login'
     inputs:
-      containerRegistry: VSCodeHub
-      repository:  'vscode-linux-build-agent'
-      command: 'login'
+      # azureSubscriptionEndpoint: "vscode-builds-subscription"
+      azureContainerRegistry: vscodehub.azurecr.io
+      imageName:  'vscode-linux-build-agent:centos7-devtoolset8-x64'
+      command: "login"
 
 - ${{ if and(eq(parameters.docker, true), eq(parameters.build, true)) }}:
   - task: Docker@1
