@@ -1,0 +1,56 @@
+
+jobs:
+- job: win32_x64
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSource: 'spec'
+      versionSpec: '18.x'
+
+  - task: UsePythonVersion@0
+    displayName: Use Python 3
+    inputs:
+      versionSpec: '3.x'
+      addToPath: true
+
+  - task: Bash@3
+    displayName: Install zeromq
+    inputs:
+      targetType: 'inline'
+      script: |
+        npm init -y
+        npm install zeromq@6.0.0-beta.6 --ignore-scripts
+
+  - task: Bash@3
+    displayName: Copy prebuilds
+    inputs:
+      targetType: 'inline'
+      script: |
+        cp '$(Build.SourcesDirectory)/node_modules/zeromq/prebuilds/linux-arm/node.napi.glibc.node' '$(Build.ArtifactStagingDirectory)/linux_arm_node.napi.glibc.node'
+        cp '$(Build.SourcesDirectory)/node_modules/zeromq/prebuilds/linux-arm64/node.napi.glibc.node' '$(Build.ArtifactStagingDirectory)/linux_arm64_node.napi.glibc.node'
+        cp '$(Build.SourcesDirectory)/node_modules/zeromq/prebuilds/linux-x64/node.napi.glibc.node' '$(Build.ArtifactStagingDirectory)/linux_x64_node.napi.glibc.node'
+        cp '$(Build.SourcesDirectory)/node_modules/zeromq/prebuilds/linux-x64/node.napi.musl.node' '$(Build.ArtifactStagingDirectory)/linux_x64_node.napi.musl.node'
+
+  - task: PublishPipelineArtifact@0
+    displayName: 'Publish Pipeline Artifact'
+    inputs:
+      artifactName: zeromq
+      targetPath: $(Build.ArtifactStagingDirectory)
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      path: '$(System.ArtifactsDirectory)'
+
+  - task: GitHubRelease@0
+    inputs:
+      gitHubConnection: 'zeromq-prebuilt'
+      repositoryName: '$(Build.Repository.Name)'
+      action: 'edit'
+      target: '$(Build.SourceVersion)'
+      tagSource: 'auto'
+      tag: 'Non-Azure-Pipeline-6.0.0-beta.6'
+      assets: '$(System.ArtifactsDirectory)/**'
+      assetUploadMode: 'replace'
+      addChangeLog: true
