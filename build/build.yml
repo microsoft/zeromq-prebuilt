@@ -86,7 +86,10 @@ steps:
       # workingDirectory: $(Build.SourcesDirectory)/zeromq.js
       volumes:
         $(Build.SourcesDirectory)/zeromq.js:/app
-      containerCommand: 'pwd && uname -a'
+      containerCommand: 'pwd && uname -a && $DOCKERCMD'
+      envVars:
+        CURRENDIR: $(Build.SourcesDirectory)
+        DOCKERCMD: cmake --version && pwd && npm i -g pnpm && GCC=8 pnpm install && GCC=8 pnpm run prebuild
 
 - ${{ if and(eq(parameters.docker, true), eq(parameters.build, true)) }}:
   - task: Docker@0
