@@ -79,10 +79,8 @@ steps:
   - task: Docker@1
     displayName: 'Run vscode-linux-build-agent'
     inputs:
-      azureContainerRegistry: VSCodeHub
-      # azureSubscriptionEndpoint: "vscode-builds-subscription"
-      # azureContainerRegistry: vscodehub.azurecr.io
-      # repository:  'vscode-linux-build-agent'
+      azureSubscriptionEndpoint: "vscode-builds-subscription"
+      azureContainerRegistry: vscodehub.azurecr.io
       imageName:  'vscode-linux-build-agent:centos7-devtoolset8-x64'
       command: "Run an image"
       # workingDirectory: $(Build.SourcesDirectory)/zeromq.js
