@@ -16,12 +16,19 @@ steps:
 #     versionSource: 'spec'
 #     versionSpec: '18.x'
 
-- task: UsePythonVersion@0
-  displayName: Use Python 3 ${{ parameters.python_arch }}
+# - task: UsePythonVersion@0
+#   displayName: Use Python 3 ${{ parameters.python_arch }}
+#   inputs:
+#     versionSpec: '3.x'
+#     addToPath: true
+#     architecture: ${{ parameters.python_arch }}
+
+- task: Bash@3
+  displayName: Install Python3
   inputs:
-    versionSpec: '3.x'
-    addToPath: true
-    architecture: ${{ parameters.python_arch }}
+    targetType: 'inline'
+    script: |
+      yum install -y python3
 
 - task: Bash@3
   displayName: Git Clone
