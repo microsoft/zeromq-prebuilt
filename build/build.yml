@@ -28,7 +28,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      yum install -y python3
+      sudo yum install -y python3
 
 - task: Bash@3
   displayName: Git Clone
