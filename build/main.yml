@@ -67,6 +67,8 @@ jobs:
       parameters:
         artifact_name: 'linux-x64'
         prebuild_folder_name: 'linux-x64'
+        yum_install_python: true
+        install_node: false
         output_node_file: 'node.napi.glibc.node'
 
 # # The build configurations have been taken from here:
