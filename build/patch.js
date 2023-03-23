@@ -13,6 +13,12 @@ const sourceFolder = path.join(__dirname, "..", "zeromq.js");
     replacement: "",
   },
   {
+    // Try for windows arm64
+    file: path.join(sourceFolder, "binding.gyp"),
+    searchText: `                'ws2_32.lib',`,
+    replacement: "",
+  },
+  {
     // Turn off libsodium, as there are complication issues with this. When not used a fallback is used.
     file: path.join(sourceFolder, "script", "build.ts"),
     searchText:
