@@ -3,6 +3,13 @@ trigger:
     include:
     - '*'
 
+resources:
+  containers:
+    - container: centos7-devtoolset8-x64
+      image: vscodehub.azurecr.io/vscode-linux-build-agent:centos7-devtoolset8-x64
+      endpoint: VSCodeHub
+      options: --user 0:0 --cap-add SYS_ADMIN
+
 jobs:
 # - job: win32_x64
 #   pool:
