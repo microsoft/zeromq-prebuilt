@@ -138,37 +138,37 @@ jobs:
 #         test: false
 
 # - job: linux_x64_musl
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:
-    - template: build.yml
-      parameters:
-        build: false
-        test: false
+  # pool:
+  #   vmImage: 'ubuntu-latest'
+  # steps:
+  #   - template: build.yml
+  #     parameters:
+  #       build: false
+  #       test: false
 
-    - task: DockerInstaller@0
-      inputs:
-        dockerVersion: '17.09.0-ce'
+  #   - task: DockerInstaller@0
+  #     inputs:
+  #       dockerVersion: '17.09.0-ce'
 
-    - task: Bash@3
-      displayName: Build
-      env:
-        CURRENDIR: $(Build.SourcesDirectory)
-        DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild
-      inputs:
-        targetType: 'inline'
-        workingDirectory: zeromq.js
-        script: |
-            docker pull node:18-alpine
-            docker tag node:18-alpine builder
-            docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged builder sh -c "$DOCKERCMD"
+  #   - task: Bash@3
+  #     displayName: Build
+  #     env:
+  #       CURRENDIR: $(Build.SourcesDirectory)
+  #       DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && pnpm install && pnpm run prebuild
+  #     inputs:
+  #       targetType: 'inline'
+  #       workingDirectory: zeromq.js
+  #       script: |
+  #           docker pull node:18-alpine
+  #           docker tag node:18-alpine builder
+  #           docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged builder sh -c "$DOCKERCMD"
 
-    - template: artifacts.yml
-      parameters:
-        artifact_name: linux-x64-musl
-        prebuild_folder_name: 'linux-x64'
-        output_node_file: 'node.napi.musl.node'
-        test: false
+  #   - template: artifacts.yml
+  #     parameters:
+  #       artifact_name: linux-x64-musl
+  #       prebuild_folder_name: 'linux-x64'
+  #       output_node_file: 'node.napi.musl.node'
+  #       test: false
 
 # - job: publish
 #   pool:
