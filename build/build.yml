@@ -11,10 +11,10 @@ parameters:
   output_node_file: ''
 
 steps:
-- task: NodeTool@0
-  inputs:
-    versionSource: 'spec'
-    versionSpec: '18.x'
+# - task: NodeTool@0
+#   inputs:
+#     versionSource: 'spec'
+#     versionSpec: '18.x'
 
 - task: UsePythonVersion@0
   displayName: Use Python 3 ${{ parameters.python_arch }}
