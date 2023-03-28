@@ -8,20 +8,32 @@ parameters:
   prebuild_folder_name: ''
   build: true
   test: true
+  install_node: true
+  yum_install_python: false
   output_node_file: ''
 
 steps:
 - task: NodeTool@0
+  condition: eq('${{ parameters.installNode }}', 'true')
   inputs:
     versionSource: 'spec'
     versionSpec: '18.x'
 
 - task: UsePythonVersion@0
+  condition: eq('${{ parameters.yum_install_python }}', 'false')
   displayName: Use Python 3 ${{ parameters.python_arch }}
   inputs:
     versionSpec: '3.x'
     addToPath: true
     architecture: ${{ parameters.python_arch }}
+
+- task: Bash@3
+  condition: eq('${{ parameters.yum_install_python }}', 'true')
+  displayName: Install Python3
+  inputs:
+    targetType: 'inline'
+    script: |
+      sudo yum install -y python3
 
 - task: Bash@3
   displayName: Git Clone

@@ -3,6 +3,13 @@ trigger:
     include:
     - '*'
 
+resources:
+  containers:
+    - container: centos7-devtoolset8-x64
+      image: vscodehub.azurecr.io/vscode-linux-build-agent:centos7-devtoolset8-x64
+      endpoint: VSCodeHub
+      options: --user 0:0 --cap-add SYS_ADMIN
+
 jobs:
 - job: win32_x64
   pool:
@@ -54,11 +61,14 @@ jobs:
 - job: linux_x64_glibc
   pool:
     vmImage: 'ubuntu-latest'
+  container: centos7-devtoolset8-x64
   steps:
     - template: build.yml
       parameters:
         artifact_name: 'linux-x64'
         prebuild_folder_name: 'linux-x64'
+        yum_install_python: true
+        install_node: false
         output_node_file: 'node.napi.glibc.node'
 
 # The build configurations have been taken from here:
