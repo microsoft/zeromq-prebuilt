@@ -53,6 +53,7 @@ steps:
     targetType: 'inline'
     script: |
       git apply --whitespace=fix ../build/patch.patch
+      git diff
       # node ./build/patch.js
 
 - bash: |
