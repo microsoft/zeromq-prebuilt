@@ -1,5 +1,5 @@
 diff --git a/binding.gyp b/binding.gyp
-index 68a8f58..280b468 100644
+index 68a8f58..e5958fe 100644
 --- a/binding.gyp
 +++ b/binding.gyp
 @@ -82,7 +82,6 @@
@@ -10,6 +10,14 @@ index 68a8f58..280b468 100644
                ],
              }],
  
+@@ -155,7 +154,6 @@
+                       # 1 - MultiThreadedDebug (/MTd)
+                       # 2 - MultiThreadedDLL (/MD)
+                       # 3 - MultiThreadedDebugDLL (/MDd)
+-                      'RuntimeLibrary': 3,
+                       'AdditionalOptions': [
+                         '-std:c++17',
+                         "/DEBUG",
 diff --git a/package.json b/package.json
 index 058ecd1..12fcd8a 100644
 --- a/package.json
