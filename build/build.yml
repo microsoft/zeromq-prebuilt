@@ -48,9 +48,9 @@ steps:
       git checkout $TREEISH
 
 - bash: |
+    node ./build/patch.js
     git apply --whitespace=fix ../build/patch.patch
     git diff
-    # node ./build/patch.js
   displayName: Patch zeromq.js
   workingDirectory: zeromq.js
 
