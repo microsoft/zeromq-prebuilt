@@ -52,7 +52,8 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      node ./build/patch.js
+		  git apply --whitespace=fix ../build/patch.patch
+      # node ./build/patch.js
 
 - bash: |
     npm install
