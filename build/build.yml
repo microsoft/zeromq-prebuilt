@@ -47,12 +47,12 @@ steps:
       cd zeromq.js
       git checkout $TREEISH
 
-- task: Bash@3
+- bash: |
+    node ../build/patch.js
+    git apply --whitespace=fix ../build/patch.patch
+    git diff
   displayName: Patch zeromq.js
-  inputs:
-    targetType: 'inline'
-    script: |
-      node ./build/patch.js
+  workingDirectory: zeromq.js
 
 - bash: |
     npm install
