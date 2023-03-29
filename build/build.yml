@@ -52,7 +52,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-		  git apply --whitespace=fix ../build/patch.patch
+      git apply --whitespace=fix ../build/patch.patch
       # node ./build/patch.js
 
 - bash: |
