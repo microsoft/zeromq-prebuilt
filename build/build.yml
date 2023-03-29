@@ -49,6 +49,7 @@ steps:
 
 - task: Bash@3
   displayName: Patch zeromq.js
+  workingDirectory: zeromq.js
   inputs:
     targetType: 'inline'
     script: |
