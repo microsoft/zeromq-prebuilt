@@ -2,8 +2,7 @@
 // Licensed under the MIT License.
 
 const platform = require('os').platform;
-
-if (platform === 'win32') {
+if (platform() === 'win32') {
   const fs = require("fs");
   const { platform } = require("os");
   const path = require("path");
