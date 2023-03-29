@@ -1,5 +1,5 @@
 diff --git a/binding.gyp b/binding.gyp
-index 68a8f58..e5958fe 100644
+index 68a8f58..e24e5d0 100644
 --- a/binding.gyp
 +++ b/binding.gyp
 @@ -82,7 +82,6 @@
@@ -18,6 +18,14 @@ index 68a8f58..e5958fe 100644
                        'AdditionalOptions': [
                          '-std:c++17',
                          "/DEBUG",
+@@ -172,7 +170,6 @@
+                     # # C:/Program Files (x86)/Microsoft Visual Studio/2019/Preview/VC/Tools/MSVC/14.29.29917/bin/Hostx64/x64/
+                     'VCCLCompilerTool': {
+                       'ExceptionHandling': 2,       # /EHsc
+-                      'RuntimeLibrary': 3,
+                       "DebugInformationFormat": "ProgramDatabase", # /Zi
+                       'AdditionalOptions': [
+                         '-std:c++17',
 diff --git a/package.json b/package.json
 index 058ecd1..12fcd8a 100644
 --- a/package.json
