@@ -5,9 +5,26 @@ steps:
     versionSource: 'spec'
     versionSpec: '18.x'
 
+- task: Bash@3
+  inputs:
+    filePath: 'build/system32.sh'
+  name: SYSTEM32
+
+- bash: |
+    echo '$SYSTEM32/msvcp140.dll'
+    echo '$(SYSTEM32)/msvcp140.dll'
+    echo '$(env:SYSTEM32)/msvcp140.dll'
+    echo '$(env.SYSTEM32)/msvcp140.dll'
+  displayName: Copy files
+
+- bash: |
+    echo '$(SYSTEM32.value)/msvcp140.dll'
+  displayName: Copy files
+
 - displayName: Get SYSTEM32 directory
-  id: system32
+  # id: system32
   bash: |
+    echo $(node -p -e "process.env.SYSTEM32")
     echo ::set-output name=result::$(node -p -e "process.env.SYSTEM32")
 
 - bash: |
