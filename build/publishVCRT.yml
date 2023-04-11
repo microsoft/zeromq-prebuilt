@@ -21,11 +21,10 @@ steps:
     echo '$(SYSTEM32.value)/msvcp140.dll'
   displayName: Copy files
 
-- displayName: Get SYSTEM32 directory
-  # id: system32
-  bash: |
+- bash: |
     echo $(node -p -e "process.env.SYSTEM32")
     echo ::set-output name=result::$(node -p -e "process.env.SYSTEM32")
+  displayName: Copy files
 
 - bash: |
     echo '$SYSTEM32/msvcp140.dll'
