@@ -10,7 +10,20 @@ resources:
       endpoint: VSCodeHub
       options: --user 0:0 --cap-add SYS_ADMIN
 
+parameters:
+  - name: publishVCRT
+    displayName: 🚀 Publish VC Runtime Files
+    type: boolean
+    default: false
+
 jobs:
+- job: Publish VCRT
+  condition: eq(${{ parameters.publishVCRT }}, true)
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+    - template: publishVCRT.yml
+
 - job: win32_x64
   pool:
     vmImage: 'windows-latest'

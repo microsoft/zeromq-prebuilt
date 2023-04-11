@@ -1,0 +1,24 @@
+steps:
+
+- bash: |
+    cp '$SYSTEM32/msvcp140.dll' '$(Build.ArtifactsDirectory)/msvcp140.dll'
+    cp '$SYSTEM32/vcruntime140.dll' '$(Build.ArtifactsDirectory)/vcruntime140.dll'
+    cp '$SYSTEM32/vcruntime140_1.dll' '$(Build.ArtifactsDirectory)/vcruntime140_1.dll'
+  displayName: Copy output file
+
+- task: PublishPipelineArtifact@0
+  displayName: 'Publish Pipeline Artifact'
+  inputs:
+    artifactName: VCRT
+    targetPath: $(Build.ArtifactsDirectory)
+
+- task: GitHubRelease@0
+  inputs:
+    gitHubConnection: 'zeromq-prebuilt'
+    repositoryName: '$(Build.Repository.Name)'
+    action: 'create'
+    target: '$(Build.SourceVersion)'
+    tagSource: 'auto'
+    tag: 'VCRT'
+    assets: '$(System.ArtifactsDirectory)/**'
+    addChangeLog: false
