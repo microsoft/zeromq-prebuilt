@@ -2,6 +2,9 @@ steps:
 
 - bash: |
     echo '$SYSTEM32/msvcp140.dll'
+    echo '$(SYSTEM32)/msvcp140.dll'
+    echo '%SYSTEM32%/msvcp140.dll'
+    echo '$(env:SYSTEM32)/msvcp140.dll'
   displayName: Copy files
   env:
     SYSTEM32: $(SYSTEM32)
