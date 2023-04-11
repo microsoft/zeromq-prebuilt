@@ -33,7 +33,7 @@ steps:
     echo '$(env.SYSTEM32)/msvcp140.dll'
   displayName: Copy files
   env:
-      SYSTEM32: ${{steps.system32.outputs.result}}
+    SYSTEM32: ${{steps.system32.outputs.result}}
 
 - bash: |
     echo '$SYSTEM32/msvcp140.dll'
