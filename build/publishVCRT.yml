@@ -1,9 +1,13 @@
 steps:
 
 - bash: |
-    cp '$SYSTEM32/msvcp140.dll' '$(Build.ArtifactsDirectory)/msvcp140.dll'
-    cp '$SYSTEM32/vcruntime140.dll' '$(Build.ArtifactsDirectory)/vcruntime140.dll'
-    cp '$SYSTEM32/vcruntime140_1.dll' '$(Build.ArtifactsDirectory)/vcruntime140_1.dll'
+    echo '$env:SYSTEM32/msvcp140.dll'
+  displayName: Copy files
+
+- bash: |
+    cp '$env:SYSTEM32/msvcp140.dll' '$(Build.ArtifactsDirectory)/msvcp140.dll'
+    cp '$env:SYSTEM32/vcruntime140.dll' '$(Build.ArtifactsDirectory)/vcruntime140.dll'
+    cp '$env:SYSTEM32/vcruntime140_1.dll' '$(Build.ArtifactsDirectory)/vcruntime140_1.dll'
   displayName: Copy output file
 
 - task: PublishPipelineArtifact@0
