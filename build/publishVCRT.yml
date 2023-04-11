@@ -1,72 +1,11 @@
 steps:
-
-- task: NodeTool@0
-  inputs:
-    versionSource: 'spec'
-    versionSpec: '18.x'
-
-- task: Bash@3
-  inputs:
-    filePath: 'build/system32.sh'
-  name: SYSTEM32
-
-- bash: |
-    node -p -e "console.log(process.env.SYSTEM32)"
-    node -p -e "console.log(JSON.stringify(process.env))"
-  displayName: Copy files
-
-- bash: |
-    echo '$SYSTEM32/msvcp140.dll'
-    echo '$(SYSTEM32)/msvcp140.dll'
-    echo '$(env:SYSTEM32)/msvcp140.dll'
-    echo '$(env.SYSTEM32)/msvcp140.dll'
-  displayName: Copy files
-
-- bash: |
-    echo '$SYSTEM32/msvcp140.dll'
-    echo '$(SYSTEM32)/msvcp140.dll'
-    echo '$(env:SYSTEM32)/msvcp140.dll'
-    echo '$(env.SYSTEM32)/msvcp140.dll'
-  displayName: Copy files
-
-- bash: |
-    echo '$(SYSTEM32.value)/msvcp140.dll'
-  displayName: Copy files
-
-- bash: |
-    echo '$SYSTEM32/msvcp140.dll'
-    echo '$(SYSTEM32)/msvcp140.dll'
-    echo '%SYSTEM32%/msvcp140.dll'
-    echo '$(env:SYSTEM32)/msvcp140.dll'
-  displayName: Copy files
-  env:
-    SYSTEM32: $SYSTEM32
-
-- bash: |
-    echo '$SYSTEM32/msvcp140.dll'
-    echo '$(SYSTEM32)/msvcp140.dll'
-    echo '%SYSTEM32%/msvcp140.dll'
-    echo '$(env:SYSTEM32)/msvcp140.dll'
-  displayName: Copy files
-  env:
-    SYSTEM32: $env:SYSTEM32
-
-- bash: |
-    echo '$SYSTEM32/msvcp140.dll'
-    echo '$(SYSTEM32)/msvcp140.dll'
-    echo '%SYSTEM32%/msvcp140.dll'
-    echo '$(env:SYSTEM32)/msvcp140.dll'
-  displayName: Copy files
-  env:
-    SYSTEM32: $(SYSTEM32)
-
 - bash: |
     cp '$SYSTEM32/msvcp140.dll' '$(Build.ArtifactsDirectory)/msvcp140.dll'
     cp '$SYSTEM32/vcruntime140.dll' '$(Build.ArtifactsDirectory)/vcruntime140.dll'
     cp '$SYSTEM32/vcruntime140_1.dll' '$(Build.ArtifactsDirectory)/vcruntime140_1.dll'
   displayName: Copy files
   env:
-    SYSTEM32: $(SYSTEM32)
+    SYSTEM32: 'C:/Windows/System32'
 
 - task: PublishPipelineArtifact@0
   displayName: 'Publish Pipeline Artifact'
