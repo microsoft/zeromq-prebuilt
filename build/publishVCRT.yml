@@ -1,5 +1,25 @@
 steps:
 
+- task: NodeTool@0
+  inputs:
+    versionSource: 'spec'
+    versionSpec: '18.x'
+
+- name: Get SYSTEM32 directory
+  id: system32
+  run: |
+    echo ::set-output name=result::$(node -p -e "process.env.SYSTEM32")
+  shell: bash
+
+- bash: |
+    echo '$SYSTEM32/msvcp140.dll'
+    echo '$(SYSTEM32)/msvcp140.dll'
+    echo '$(env:SYSTEM32)/msvcp140.dll'
+    echo '$(env.SYSTEM32)/msvcp140.dll'
+  displayName: Copy files
+  env:
+      SYSTEM32: ${{steps.system32.outputs.result}}
+
 - bash: |
     echo '$SYSTEM32/msvcp140.dll'
     echo '$(SYSTEM32)/msvcp140.dll'
