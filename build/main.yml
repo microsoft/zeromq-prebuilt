@@ -17,7 +17,7 @@ parameters:
     default: false
 
 jobs:
-- job: Publish VCRT
+- job: Publish_VCRT
   condition: eq(${{ parameters.publishVCRT }}, true)
   pool:
     vmImage: 'windows-latest'
