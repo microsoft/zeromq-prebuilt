@@ -11,6 +11,18 @@ steps:
   name: SYSTEM32
 
 - bash: |
+    node -p -e "console.log(process.env.SYSTEM32)"
+    node -p -e "console.log(JSON.stringify(process.env))"
+  displayName: Copy files
+
+- bash: |
+    echo '$SYSTEM32/msvcp140.dll'
+    echo '$(SYSTEM32)/msvcp140.dll'
+    echo '$(env:SYSTEM32)/msvcp140.dll'
+    echo '$(env.SYSTEM32)/msvcp140.dll'
+  displayName: Copy files
+
+- bash: |
     echo '$SYSTEM32/msvcp140.dll'
     echo '$(SYSTEM32)/msvcp140.dll'
     echo '$(env:SYSTEM32)/msvcp140.dll'
