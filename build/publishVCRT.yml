@@ -7,6 +7,24 @@ steps:
     echo '$(env:SYSTEM32)/msvcp140.dll'
   displayName: Copy files
   env:
+    SYSTEM32: $SYSTEM32
+
+- bash: |
+    echo '$SYSTEM32/msvcp140.dll'
+    echo '$(SYSTEM32)/msvcp140.dll'
+    echo '%SYSTEM32%/msvcp140.dll'
+    echo '$(env:SYSTEM32)/msvcp140.dll'
+  displayName: Copy files
+  env:
+    SYSTEM32: $env:SYSTEM32
+
+- bash: |
+    echo '$SYSTEM32/msvcp140.dll'
+    echo '$(SYSTEM32)/msvcp140.dll'
+    echo '%SYSTEM32%/msvcp140.dll'
+    echo '$(env:SYSTEM32)/msvcp140.dll'
+  displayName: Copy files
+  env:
     SYSTEM32: $(SYSTEM32)
 
 - bash: |
