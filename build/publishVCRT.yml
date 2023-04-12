@@ -17,7 +17,7 @@ steps:
     repositoryName: '$(Build.Repository.Name)'
     action: 'create'
     target: '$(Build.SourceVersion)'
-    tagSource: 'userSpecifiedTag'
+    tagSource: 'manual'
     tag: 'VCRT'
     assets: '$(System.ArtifactStagingDirectory)/**'
     addChangeLog: false
