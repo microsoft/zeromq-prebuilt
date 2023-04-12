@@ -11,6 +11,10 @@ steps:
     artifactName: VCRT
     targetPath: $(Build.ArtifactStagingDirectory)
 
+- task: DownloadPipelineArtifact@2
+  inputs:
+    path: '$(System.ArtifactsDirectory)'
+
 - task: GitHubRelease@0
   inputs:
     gitHubConnection: 'zeromq-prebuilt'
@@ -19,5 +23,5 @@ steps:
     target: '$(Build.SourceVersion)'
     tagSource: 'manual'
     tag: 'VCRT'
-    assets: '$(System.ArtifactStagingDirectory)/**'
+    assets: '$(System.ArtifactsDirectory)/**'
     addChangeLog: false
