@@ -10,22 +10,14 @@ resources:
       endpoint: VSCodeHub
       options: --user 0:0 --cap-add SYS_ADMIN
 
-parameters:
-  - name: publishVCRT
-    displayName: 🚀 Publish Only VC Runtime Files
-    type: boolean
-    default: false
-
 jobs:
 - job: Publish_VCRT
-  condition: eq(${{ parameters.publishVCRT }}, true)
   pool:
     vmImage: 'windows-latest'
   steps:
     - template: publishVCRT.yml
 
 - job: win32_x64
-  condition: eq(${{ parameters.publishVCRT }}, false)
   pool:
     vmImage: 'windows-latest'
   steps:
@@ -36,7 +28,6 @@ jobs:
         output_node_file: 'node.napi.glibc.node'
 
 - job: win32_ia32
-  condition: eq(${{ parameters.publishVCRT }}, false)
   pool:
     vmImage: 'windows-latest'
   steps:
@@ -51,7 +42,6 @@ jobs:
         test: false
 
 - job: darwin_x64
-  condition: eq(${{ parameters.publishVCRT }}, false)
   pool:
     vmImage: 'macOS-latest'
   steps:
@@ -63,7 +53,6 @@ jobs:
         output_node_file: 'node.napi.glibc.node'
 
 - job: darwin_arm64
-  condition: eq(${{ parameters.publishVCRT }}, false)
   pool:
     vmImage: 'macOS-latest'
   steps:
@@ -76,7 +65,6 @@ jobs:
         test: false
 
 - job: linux_x64_glibc
-  condition: eq(${{ parameters.publishVCRT }}, false)
   pool:
     vmImage: 'ubuntu-latest'
   container: centos7-devtoolset8-x64
@@ -92,7 +80,6 @@ jobs:
 # The build configurations have been taken from here:
 # https://github.com/zeromq/zeromq.js/blob/47bb35c1941cb4fa8b510fb7da4d40b37cfa2e5f/.travis.yml#L94
 - job: linux_arm64_glibc
-  condition: eq(${{ parameters.publishVCRT }}, false)
   pool:
     vmImage: 'ubuntu-latest'
   steps:
@@ -131,7 +118,6 @@ jobs:
 # The build configurations have been taken from here:
 # https://github.com/zeromq/zeromq.js/blob/47bb35c1941cb4fa8b510fb7da4d40b37cfa2e5f/.travis.yml#L94
 - job: linux_arm_glibc
-  condition: eq(${{ parameters.publishVCRT }}, false)
   pool:
     vmImage: 'ubuntu-latest'
   steps:
@@ -167,7 +153,6 @@ jobs:
         test: false
 
 - job: linux_x64_musl
-  condition: eq(${{ parameters.publishVCRT }}, false)
   pool:
     vmImage: 'ubuntu-latest'
   steps:
