@@ -1,0 +1,24 @@
+steps:
+- bash: |
+    cp 'C:/Windows/System32/msvcp140.dll' '$(Build.ArtifactStagingDirectory)/msvcp140.dll'
+    cp 'C:/Windows/System32/vcruntime140.dll' '$(Build.ArtifactStagingDirectory)/vcruntime140.dll'
+    cp 'C:/Windows/System32/vcruntime140_1.dll' '$(Build.ArtifactStagingDirectory)/vcruntime140_1.dll'
+  displayName: Copy files
+
+- task: PublishPipelineArtifact@0
+  displayName: 'Publish Pipeline Artifact'
+  inputs:
+    artifactName: win32_x64_msvcp140.dll
+    targetPath: $(Build.ArtifactStagingDirectory)/msvcp140.dll
+
+- task: PublishPipelineArtifact@0
+  displayName: 'Publish Pipeline Artifact'
+  inputs:
+    artifactName: win32_x64_vcruntime140.dll
+    targetPath: $(Build.ArtifactStagingDirectory)/vcruntime140.dll
+
+- task: PublishPipelineArtifact@0
+  displayName: 'Publish Pipeline Artifact'
+  inputs:
+    artifactName: win32_x64_vcruntime140_1.dll
+    targetPath: $(Build.ArtifactStagingDirectory)/vcruntime140_1.dll

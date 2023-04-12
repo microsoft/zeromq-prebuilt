@@ -11,6 +11,12 @@ resources:
       options: --user 0:0 --cap-add SYS_ADMIN
 
 jobs:
+- job: win32_x64_VCRT
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+    - template: publishVCRT.yml
+
 - job: win32_x64
   pool:
     vmImage: 'windows-latest'
@@ -184,6 +190,7 @@ jobs:
     vmImage: 'ubuntu-latest'
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
   dependsOn:
+  - win32_x64_VCRT
   - win32_x64
   - win32_ia32
   - darwin_x64
