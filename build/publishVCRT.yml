@@ -1,15 +1,15 @@
 steps:
 - bash: |
-    cp 'C:/Windows/System32/msvcp140.dll' '$(Build.ArtifactsDirectory)/msvcp140.dll'
-    cp 'C:/Windows/System32/vcruntime140.dll' '$(Build.ArtifactsDirectory)/vcruntime140.dll'
-    cp 'C:/Windows/System32/vcruntime140_1.dll' '$(Build.ArtifactsDirectory)/vcruntime140_1.dll'
+    cp 'C:/Windows/System32/msvcp140.dll' '$(Build.ArtifactStagingDirectory)/msvcp140.dll'
+    cp 'C:/Windows/System32/vcruntime140.dll' '$(Build.ArtifactStagingDirectory)/vcruntime140.dll'
+    cp 'C:/Windows/System32/vcruntime140_1.dll' '$(Build.ArtifactStagingDirectory)/vcruntime140_1.dll'
   displayName: Copy files
 
 - task: PublishPipelineArtifact@0
   displayName: 'Publish Pipeline Artifact'
   inputs:
     artifactName: VCRT
-    targetPath: $(Build.ArtifactsDirectory)
+    targetPath: $(Build.ArtifactStagingDirectory)
 
 - task: GitHubRelease@0
   inputs:
@@ -19,5 +19,5 @@ steps:
     target: '$(Build.SourceVersion)'
     tagSource: 'auto'
     tag: 'VCRT'
-    assets: '$(System.ArtifactsDirectory)/**'
+    assets: '$(System.ArtifactStagingDirectory)/**'
     addChangeLog: false
