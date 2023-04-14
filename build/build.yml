@@ -11,7 +11,7 @@ parameters:
   install_node: true
   yum_install_python: false
   output_node_file: ''
-	publish_dlls: false
+  publish_dlls: false
 
 steps:
 - task: NodeTool@0
