@@ -11,12 +11,6 @@ resources:
       options: --user 0:0 --cap-add SYS_ADMIN
 
 jobs:
-- job: win32_x64_VCRT
-  pool:
-    vmImage: 'windows-latest'
-  steps:
-    - template: publishVCRT.yml
-
 - job: win32_x64
   pool:
     vmImage: 'windows-latest'
@@ -26,6 +20,7 @@ jobs:
         artifact_name: 'win32-x64'
         prebuild_folder_name: 'win32-x64'
         output_node_file: 'node.napi.glibc.node'
+				publish_dlls: true
 
 - job: win32_ia32
   pool:
@@ -40,6 +35,7 @@ jobs:
         prebuild_folder_name: 'win32-ia32'
         output_node_file: 'node.napi.glibc.node'
         test: false
+				publish_dlls: true
 
 - job: darwin_x64
   pool:
@@ -190,7 +186,6 @@ jobs:
     vmImage: 'ubuntu-latest'
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
   dependsOn:
-  - win32_x64_VCRT
   - win32_x64
   - win32_ia32
   - darwin_x64

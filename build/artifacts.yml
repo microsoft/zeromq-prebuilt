@@ -3,6 +3,7 @@ parameters:
   prebuild_folder_name: ''
   output_node_file: ''
   test: true
+  publish_dlls: false
 
 steps:
 
@@ -14,6 +15,30 @@ steps:
     node -r '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' -e 'console.log(1)'
   displayName: Test Node Module
   condition: and(succeeded(), eq(${{ parameters.test }}, true))
+
+- bash: |
+    mkdir -p '$(Build.ArtifactStagingDirectory)/dlls'
+    cp './zeromq.js/build/libzmq/*.dll' '$(Build.ArtifactStagingDirectory)/dlls'
+  displayName: Copy dlls
+	condition: and(eq('${{ parameters.publish_dlls }}', 'true'))
+
+- task: PublishPipelineArtifact@0
+  displayName: 'Publish Pipeline Artifact'
+  inputs:
+    artifactName: win32_x64_msvcp140.dll
+    targetPath: $(Build.ArtifactStagingDirectory)/msvcp140.dll
+
+- task: PublishPipelineArtifact@0
+  displayName: 'Publish Pipeline Artifact'
+  inputs:
+    artifactName: win32_x64_vcruntime140.dll
+    targetPath: $(Build.ArtifactStagingDirectory)/vcruntime140.dll
+
+- task: PublishPipelineArtifact@0
+  displayName: 'Publish Pipeline Artifact'
+  inputs:
+    artifactName: win32_x64_vcruntime140_1.dll
+    targetPath: $(Build.ArtifactStagingDirectory)/vcruntime140_1.dll
 
 - task: PublishPipelineArtifact@0
   displayName: 'Publish Pipeline Artifact'
