@@ -10,6 +10,12 @@ resources:
       endpoint: VSCodeHub
       options: --user 0:0 --cap-add SYS_ADMIN
 
+parameters:
+  - name: testGitHubRelease
+    displayName: 🚀 Test Github Release
+    type: boolean
+    default: false
+
 jobs:
 - job: win32_x64
   pool:
@@ -196,3 +202,5 @@ jobs:
   - linux_x64_musl
   steps:
     - template: publish.yml
+      parameters:
+        testGitHubRelease: ${{ parameters.testGitHubRelease }}
