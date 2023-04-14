@@ -22,7 +22,7 @@ steps:
   inputs:
     contents: 'zeromq.js\build\libzmq\bin\*.dll'
     flattenFolders: true
-    targetFolder: '$(Build.ArtifactStagingDirectory)'
+    targetFolder: '$(Build.ArtifactStagingDirectory)/${{ parameters.prebuild_folder_name }}'
 
 - task: PublishPipelineArtifact@0
   displayName: 'Publish Pipeline Artifact'
