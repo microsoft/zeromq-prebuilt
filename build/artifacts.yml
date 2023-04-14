@@ -19,6 +19,7 @@ steps:
 
 - task: CopyFiles@2
   displayName: 'Copy dlls'
+  condition: eq('${{ parameters.publish_dlls }}', 'true')
   inputs:
     contents: 'zeromq.js/build/libzmq/bin/*.dll'
     targetFolder: '$(Build.ArtifactStagingDirectory)'
