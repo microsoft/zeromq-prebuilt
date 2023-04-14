@@ -17,8 +17,15 @@ steps:
   condition: and(succeeded(), eq(${{ parameters.test }}, true))
 
 - bash: |
+    cd './zeromq.js/build/libzmq/bin'
+    ls
+    cp './zeromq.js/build/libzmq/bin/*.dll' '$(Build.ArtifactStagingDirectory)/dlls'
+  displayName: Copy dlls
+  condition: eq('${{ parameters.publish_dlls }}', 'true')
+
+- bash: |
     mkdir -p '$(Build.ArtifactStagingDirectory)/dlls'
-    cp '$(Build.SourcesDirectory)/zeromq.js/build/libzmq/bin/*.dll' '$(Build.ArtifactStagingDirectory)/dlls'
+    cp './zeromq.js/build/libzmq/bin/*.dll' '$(Build.ArtifactStagingDirectory)/dlls'
   displayName: Copy dlls
   condition: eq('${{ parameters.publish_dlls }}', 'true')
 
