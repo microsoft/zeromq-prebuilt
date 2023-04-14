@@ -190,7 +190,7 @@ jobs:
 - job: publish
   pool:
     vmImage: 'ubuntu-latest'
-  condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq('${{ parameters.testGitHubRelease }}', 'true'))
+  condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq('${{ parameters.testGitHubRelease }}', 'true')))
   dependsOn:
   - win32_x64
   - win32_ia32
