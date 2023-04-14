@@ -21,7 +21,8 @@ steps:
   displayName: 'Copy dlls'
   condition: eq('${{ parameters.publish_dlls }}', 'true')
   inputs:
-    contents: 'zeromq.js\build\libzmq\bin\*.dll'
+    contents: 'zeromq.js\build\libzmq\bin\**'
+    flattenFolders: true
     targetFolder: '$(Build.ArtifactStagingDirectory)'
 
 - bash: |
