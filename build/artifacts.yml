@@ -16,13 +16,21 @@ steps:
   displayName: Test Node Module
   condition: and(succeeded(), eq(${{ parameters.test }}, true))
 
-- task: CopyFiles@2
-  displayName: 'Copy dlls'
+# - task: CopyFiles@2
+#   displayName: 'Copy dlls'
+#   condition: eq('${{ parameters.publish_dlls }}', 'true')
+#   inputs:
+#     contents: 'zeromq.js\build\libzmq\bin\*.dll'
+#     flattenFolders: true
+#     targetFolder: '$(Build.ArtifactStagingDirectory)/${{ parameters.prebuild_folder_name }}'
+
+- powershell:
+    $name="${env:TARGET}.zip"
+    Compress-Archive -Update -Path .\zeromq.js\build\libzmq\bin -DestinationPath $env:BUILD_ARTIFACTSTAGINGDIRECTORY\$name
+  displayName: 'Zip and Copy dlls'
   condition: eq('${{ parameters.publish_dlls }}', 'true')
-  inputs:
-    contents: 'zeromq.js\build\libzmq\bin\*.dll'
-    flattenFolders: true
-    targetFolder: '$(Build.ArtifactStagingDirectory)/${{ parameters.prebuild_folder_name }}'
+  env:
+    TARGET: ${{ parameters.prebuild_folder_name }}
 
 - task: PublishPipelineArtifact@0
   displayName: 'Publish Pipeline Artifact'
