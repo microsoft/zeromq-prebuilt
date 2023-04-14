@@ -25,6 +25,7 @@ steps:
 #     targetFolder: '$(Build.ArtifactStagingDirectory)/${{ parameters.prebuild_folder_name }}'
 
 - powershell:
+
     $name="${env:TARGET}.zip"
     Compress-Archive -Update -Path .\zeromq.js\build\libzmq\bin\*.dll -DestinationPath $env:BUILD_ARTIFACTSTAGINGDIRECTORY\$name
   displayName: 'Zip and Copy dlls'
