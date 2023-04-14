@@ -16,21 +16,13 @@ steps:
   displayName: Test Node Module
   condition: and(succeeded(), eq(${{ parameters.test }}, true))
 
-
 - task: CopyFiles@2
   displayName: 'Copy dlls'
   condition: eq('${{ parameters.publish_dlls }}', 'true')
   inputs:
-    contents: 'zeromq.js\build\libzmq\bin\**'
+    contents: 'zeromq.js\build\libzmq\bin\*.dll'
     flattenFolders: true
     targetFolder: '$(Build.ArtifactStagingDirectory)'
-
-- bash: |
-    cd './zeromq.js/build/libzmq/bin'
-    ls
-    cp './zeromq.js/build/libzmq/bin/*.dll' '$(Build.ArtifactStagingDirectory)/dlls'
-  displayName: Copy dlls
-  condition: eq('${{ parameters.publish_dlls }}', 'true')
 
 - bash: |
     mkdir -p '$(Build.ArtifactStagingDirectory)/dlls'
