@@ -20,7 +20,7 @@ steps:
     mkdir -p '$(Build.ArtifactStagingDirectory)/dlls'
     cp './zeromq.js/build/libzmq/*.dll' '$(Build.ArtifactStagingDirectory)/dlls'
   displayName: Copy dlls
-  condition: and(eq('${{ parameters.publish_dlls }}', 'true'))
+  condition: eq('${{ parameters.publish_dlls }}', 'true')
 
 - task: PublishPipelineArtifact@0
   displayName: 'Publish Pipeline Artifact'
