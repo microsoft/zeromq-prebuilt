@@ -24,12 +24,6 @@ steps:
     flattenFolders: true
     targetFolder: '$(Build.ArtifactStagingDirectory)'
 
-- bash: |
-    mkdir -p '$(Build.ArtifactStagingDirectory)/dlls'
-    cp './zeromq.js/build/libzmq/bin/*.dll' '$(Build.ArtifactStagingDirectory)/dlls'
-  displayName: Copy dlls
-  condition: eq('${{ parameters.publish_dlls }}', 'true')
-
 - task: PublishPipelineArtifact@0
   displayName: 'Publish Pipeline Artifact'
   inputs:
