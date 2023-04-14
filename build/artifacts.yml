@@ -26,7 +26,7 @@ steps:
 
 - powershell:
     $name="${env:TARGET}.zip"
-    Compress-Archive -Update -Path .\zeromq.js\build\libzmq\bin -DestinationPath $env:BUILD_ARTIFACTSTAGINGDIRECTORY\$name
+    Compress-Archive -Update -Path .\zeromq.js\build\libzmq\bin\*.dll -DestinationPath $env:BUILD_ARTIFACTSTAGINGDIRECTORY\$name
   displayName: 'Zip and Copy dlls'
   condition: eq('${{ parameters.publish_dlls }}', 'true')
   env:
