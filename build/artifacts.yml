@@ -14,7 +14,7 @@ steps:
 
 - bash: |
     # cp '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}-${{ parameters.output_node_file }}'
-    tar czvf "$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}.tar.gz" '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}'
+    tar czvf "$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}.tar.gz" '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' rg
   displayName: 'Zip and Copy dlls'
   condition: and(succeeded(), not(contains('${{ parameters.artifact_name }}', 'win32')))
 
