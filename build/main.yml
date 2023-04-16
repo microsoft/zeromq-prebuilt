@@ -28,20 +28,20 @@ jobs:
         output_node_file: 'node.napi.glibc.node'
         publish_dlls: true
 
-- job: win32_ia32
-  pool:
-    vmImage: 'windows-latest'
-  steps:
-    - template: build.yml
-      parameters:
-        python_arch: x86
-        ARCH: x86
-        npm_config_arch: ia32
-        artifact_name: 'win32-ia32'
-        prebuild_folder_name: 'win32-ia32'
-        output_node_file: 'node.napi.glibc.node'
-        test: false
-        publish_dlls: true
+# - job: win32_ia32
+#   pool:
+#     vmImage: 'windows-latest'
+#   steps:
+#     - template: build.yml
+#       parameters:
+#         python_arch: x86
+#         ARCH: x86
+#         npm_config_arch: ia32
+#         artifact_name: 'win32-ia32'
+#         prebuild_folder_name: 'win32-ia32'
+#         output_node_file: 'node.napi.glibc.node'
+#         test: false
+#         publish_dlls: true
 
 # - job: darwin_x64
 #   pool:
