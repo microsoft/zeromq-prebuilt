@@ -24,7 +24,7 @@ steps:
   inputs:
     gitHubConnection: 'zeromq-prebuilt'
     repositoryName: '$(Build.Repository.Name)'
-    action: 'create'
+    action: 'edit'
     target: '$(Build.SourceVersion)'
     tagSource: 'manual'
     tag: 'Test'
