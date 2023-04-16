@@ -27,6 +27,7 @@ steps:
     action: 'edit'
     target: '$(Build.SourceVersion)'
     tagSource: 'manual'
+    isDraft: true
     tag: 'Test'
     assets: '$(System.ArtifactsDirectory)/**'
     assetUploadMode: 'replace'
