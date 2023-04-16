@@ -11,7 +11,6 @@ parameters:
   install_node: true
   yum_install_python: false
   output_node_file: ''
-  publish_dlls: false
 
 steps:
 - task: NodeTool@0
@@ -81,4 +80,3 @@ steps:
       prebuild_folder_name: ${{ parameters.prebuild_folder_name }}
       output_node_file: ${{ parameters.output_node_file }}
       test: ${{ parameters.test }}
-      publish_dlls: ${{ parameters.publish_dlls }}

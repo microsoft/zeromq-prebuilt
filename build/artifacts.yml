@@ -3,7 +3,6 @@ parameters:
   prebuild_folder_name: ''
   output_node_file: ''
   test: true
-  publish_dlls: false
 
 steps:
 
