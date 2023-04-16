@@ -7,14 +7,35 @@ parameters:
 
 steps:
 
-- bash: |
-    cp '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}-${{ parameters.output_node_file }}'
-  displayName: Copy output file
+# # Archive files v2
+# # Compress files into .7z, .tar.gz, or .zip.
+# - task: ArchiveFiles@2
+#   inputs:
+#     rootFolderOrFile: '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}' # string. Required. Root folder or file to archive. Default: $(Build.BinariesDirectory).
+#     #includeRootFolder: true # boolean. Prepend root folder name to archive paths. Default: true.
+#   # Archive
+#     archiveType: 'zip' # 'zip' | '7z' | 'tar' | 'wim'. Required. Archive type. Default: zip.
+#     #sevenZipCompression: 'normal' # 'ultra' | 'maximum' | 'normal' | 'fast' | 'fastest' | 'none'. Optional. Use when archiveType = 7z. 7z compression. Default: normal.
+#     #tarCompression: 'gz' # 'gz' | 'bz2' | 'xz' | 'none'. Optional. Use when archiveType = tar. Tar compression. Default: gz.
+#     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip' # string. Required. Archive file to create. Default: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip.
+#     #replaceExistingArchive: true # boolean. Replace existing archive. Default: true.
+#     #verbose: false # boolean. Force verbose output. Default: false.
+#     #quiet: false # boolean. Force quiet output. Default: false.
 
 - bash: |
     node -r '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' -e 'console.log(1)'
   displayName: Test Node Module
   condition: and(succeeded(), eq(${{ parameters.test }}, true))
+
+# - bash: |
+#     cp '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}-${{ parameters.output_node_file }}'
+#   displayName: Copy output file
+
+- bash: |
+    # cp '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}-${{ parameters.output_node_file }}'
+    tar czvf "$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}" '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}'
+  displayName: 'Zip and Copy dlls'
+  condition: and(succeeded(), ne(contains(${{ parameters.artifact_name }}, 'win32')))
 
 # - task: CopyFiles@2
 #   displayName: 'Copy dlls'
@@ -24,12 +45,21 @@ steps:
 #     flattenFolders: true
 #     targetFolder: '$(Build.ArtifactStagingDirectory)/${{ parameters.prebuild_folder_name }}'
 
+
 - powershell:
 
-    $name="${env:TARGET}.zip"
-    Compress-Archive -Update -Path .\zeromq.js\build\libzmq\bin\*.dll -DestinationPath $env:BUILD_ARTIFACTSTAGINGDIRECTORY\$name
-  displayName: 'Zip and Copy dlls'
-  condition: eq('${{ parameters.publish_dlls }}', 'true')
+    Compress-Archive -Path $(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }} -DestinationPath "$env:BUILD_ARTIFACTSTAGINGDIRECTORY\${env:TARGET}.zip"
+  displayName: 'Archive Binary'
+  condition: and(succeeded(), eq(contains(${{ parameters.artifact_name }}, 'win32')))
+  env:
+    TARGET: ${{ parameters.prebuild_folder_name }}
+
+
+- powershell:
+
+    Compress-Archive -Path .\zeromq.js\build\libzmq\bin\*.dll -DestinationPath "$env:BUILD_ARTIFACTSTAGINGDIRECTORY\${env:TARGET}.zip"
+  displayName: 'Archive dlls'
+  condition: and(succeeded(), eq(contains(${{ parameters.artifact_name }}, 'win32')))
   env:
     TARGET: ${{ parameters.prebuild_folder_name }}
 
