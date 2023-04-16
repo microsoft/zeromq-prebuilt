@@ -35,7 +35,7 @@ steps:
     # cp '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}-${{ parameters.output_node_file }}'
     tar czvf "$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}" '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}'
   displayName: 'Zip and Copy dlls'
-  condition: and(succeeded(), ne(contains(${{ parameters.artifact_name }}, 'win32')))
+  condition: and(succeeded(), ne(contains('${{ parameters.artifact_name }}', 'win32')))
 
 # - task: CopyFiles@2
 #   displayName: 'Copy dlls'
@@ -50,7 +50,7 @@ steps:
 
     Compress-Archive -Path $(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }} -DestinationPath "$env:BUILD_ARTIFACTSTAGINGDIRECTORY\${env:TARGET}.zip"
   displayName: 'Archive Binary'
-  condition: and(succeeded(), eq(contains(${{ parameters.artifact_name }}, 'win32')))
+  condition: and(succeeded(), eq(contains('${{ parameters.artifact_name }}', 'win32')))
   env:
     TARGET: ${{ parameters.prebuild_folder_name }}
 
@@ -59,7 +59,7 @@ steps:
 
     Compress-Archive -Path .\zeromq.js\build\libzmq\bin\*.dll -DestinationPath "$env:BUILD_ARTIFACTSTAGINGDIRECTORY\${env:TARGET}.zip"
   displayName: 'Archive dlls'
-  condition: and(succeeded(), eq(contains(${{ parameters.artifact_name }}, 'win32')))
+  condition: and(succeeded(), eq(contains('${{ parameters.artifact_name }}', 'win32')))
   env:
     TARGET: ${{ parameters.prebuild_folder_name }}
 
