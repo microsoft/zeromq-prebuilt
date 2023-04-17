@@ -7,13 +7,33 @@ parameters:
 steps:
 
 - bash: |
-    cp '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}-${{ parameters.output_node_file }}'
-  displayName: Copy output file
-
-- bash: |
     node -r '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' -e 'console.log(1)'
   displayName: Test Node Module
   condition: and(succeeded(), eq(${{ parameters.test }}, true))
+
+- task: ArchiveFiles@2
+  condition: and(succeeded(), not(contains('${{ parameters.artifact_name }}', 'win32')))
+  displayName: 'Archive Binary'
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}'
+    includeRootFolder: false
+    archiveType: 'tar'
+    tarCompression: 'gz'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}.tar.gz'
+
+- powershell:
+    Compress-Archive -Path $(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }} -DestinationPath "$env:BUILD_ARTIFACTSTAGINGDIRECTORY\${env:TARGET}.zip"
+  displayName: 'Archive Binary'
+  condition: and(succeeded(), contains('${{ parameters.artifact_name }}', 'win32'))
+  env:
+    TARGET: ${{ parameters.prebuild_folder_name }}
+
+- powershell:
+    Compress-Archive -Update -Path .\zeromq.js\build\libzmq\bin\*.dll -DestinationPath "$env:BUILD_ARTIFACTSTAGINGDIRECTORY\${env:TARGET}.zip"
+  displayName: 'Archive dlls'
+  condition: and(succeeded(), contains('${{ parameters.artifact_name }}', 'win32'))
+  env:
+    TARGET: ${{ parameters.prebuild_folder_name }}
 
 - task: PublishPipelineArtifact@0
   displayName: 'Publish Pipeline Artifact'

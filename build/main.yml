@@ -10,13 +10,13 @@ resources:
       endpoint: VSCodeHub
       options: --user 0:0 --cap-add SYS_ADMIN
 
-jobs:
-- job: win32_x64_VCRT
-  pool:
-    vmImage: 'windows-latest'
-  steps:
-    - template: publishVCRT.yml
+parameters:
+  - name: testGitHubRelease
+    displayName: 🚀 Test Github Release
+    type: boolean
+    default: false
 
+jobs:
 - job: win32_x64
   pool:
     vmImage: 'windows-latest'
@@ -188,9 +188,8 @@ jobs:
 - job: publish
   pool:
     vmImage: 'ubuntu-latest'
-  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+  condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq('${{ parameters.testGitHubRelease }}', 'true')))
   dependsOn:
-  - win32_x64_VCRT
   - win32_x64
   - win32_ia32
   - darwin_x64
@@ -201,3 +200,5 @@ jobs:
   - linux_x64_musl
   steps:
     - template: publish.yml
+      parameters:
+        testGitHubRelease: ${{ parameters.testGitHubRelease }}

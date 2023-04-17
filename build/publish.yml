@@ -1,8 +1,13 @@
+parameters:
+  testGitHubRelease: false
+
 steps:
 - task: DownloadPipelineArtifact@2
   inputs:
     path: '$(System.ArtifactsDirectory)'
+
 - task: GitHubRelease@0
+  condition: eq('${{ parameters.testGitHubRelease }}', 'false')
   inputs:
     gitHubConnection: 'zeromq-prebuilt'
     repositoryName: '$(Build.Repository.Name)'
@@ -13,3 +18,17 @@ steps:
     assets: '$(System.ArtifactsDirectory)/**'
     assetUploadMode: 'replace'
     addChangeLog: true
+
+- task: GitHubRelease@0
+  condition: eq('${{ parameters.testGitHubRelease }}', 'true')
+  inputs:
+    gitHubConnection: 'zeromq-prebuilt'
+    repositoryName: '$(Build.Repository.Name)'
+    action: 'edit'
+    target: '$(Build.SourceVersion)'
+    tagSource: 'manual'
+    isDraft: true
+    tag: 'Test'
+    assets: '$(System.ArtifactsDirectory)/**'
+    assetUploadMode: 'replace'
+    addChangeLog: false
