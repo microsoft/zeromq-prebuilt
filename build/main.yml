@@ -152,7 +152,7 @@ jobs:
         output_node_file: 'node.napi.glibc.node'
         test: false
 
-- job: linux_x64_musl
+- job: alpine_x64_musl
   pool:
     vmImage: 'ubuntu-latest'
   steps:
@@ -180,7 +180,7 @@ jobs:
 
     - template: artifacts.yml
       parameters:
-        artifact_name: linux-x64-musl
+        artifact_name: alpine-x64-musl
         prebuild_folder_name: 'linux-x64'
         output_node_file: 'node.napi.musl.node'
         test: false
@@ -197,7 +197,7 @@ jobs:
   - linux_x64_glibc
   - linux_arm64_glibc
   - linux_arm_glibc
-  - linux_x64_musl
+  - alpine_x64_musl
   steps:
     - template: publish.yml
       parameters:

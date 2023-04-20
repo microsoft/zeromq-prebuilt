@@ -6,6 +6,24 @@ steps:
   inputs:
     path: '$(System.ArtifactsDirectory)'
 
+- bash: ls -LR
+  displayName: List Files
+  workingDirectory: $(System.ArtifactsDirectory)
+
+- task: ExtractFiles@1
+  displayName: Extract linux-x64 tar.gz
+  inputs:
+    archiveFilePatterns: '$(System.ArtifactsDirectory)/linux-x64/linux-x64.tar.gz'
+    destinationFolder: '$(System.ArtifactsDirectory)/linux-x64-files'
+
+- task: ArchiveFiles@2
+  displayName: Archive linux-x64 as zip
+  inputs:
+    rootFolderOrFile: '$(System.ArtifactsDirectory)/linux-x64-files'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(System.ArtifactsDirectory)/linux-x64.zip'
+
 - task: GitHubRelease@0
   condition: eq('${{ parameters.testGitHubRelease }}', 'false')
   inputs:
@@ -15,7 +33,7 @@ steps:
     target: '$(Build.SourceVersion)'
     tagSource: 'auto'
     tag: '$(Build.SourceBranchName)'
-    assets: '$(System.ArtifactsDirectory)/**'
+    assets: '$(System.ArtifactsDirectory)/**/*.zip'
     assetUploadMode: 'replace'
     addChangeLog: true
 
@@ -29,6 +47,6 @@ steps:
     tagSource: 'manual'
     isDraft: true
     tag: 'Test'
-    assets: '$(System.ArtifactsDirectory)/**'
+    assets: '$(System.ArtifactsDirectory)/**/*.zip'
     assetUploadMode: 'replace'
     addChangeLog: false
