@@ -7,8 +7,8 @@ steps:
     path: '$(System.ArtifactsDirectory)'
 
 - bash: ls -LR
-	displayName: List Files
-	workingDirectory: $(System.ArtifactsDirectory)
+  displayName: List Files
+  workingDirectory: $(System.ArtifactsDirectory)
 
 - task: ExtractFiles@1
   displayName: Extract linux-x64 tar.gz
