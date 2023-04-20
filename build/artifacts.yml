@@ -12,7 +12,7 @@ steps:
   condition: and(succeeded(), eq(${{ parameters.test }}, true))
 
 - task: ArchiveFiles@2
-  condition: and(succeeded(), not(contains('${{ parameters.artifact_name }}', 'win32')))
+  condition: and(succeeded(), eq('${{ parameters.artifact_name }}', 'linux-x64'))
   displayName: 'Archive Binary'
   inputs:
     rootFolderOrFile: '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}'
@@ -20,6 +20,15 @@ steps:
     archiveType: 'tar'
     tarCompression: 'gz'
     archiveFile: '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}.tar.gz'
+
+- task: ArchiveFiles@2
+  condition: and(succeeded(), not(contains('${{ parameters.artifact_name }}', 'win32')), ne('${{ parameters.artifact_name }}', 'linux-x64'))
+  displayName: 'Archive Binary'
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}.zip'
 
 - powershell:
     Compress-Archive -Path $(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }} -DestinationPath "$env:BUILD_ARTIFACTSTAGINGDIRECTORY\${env:TARGET}.zip"
