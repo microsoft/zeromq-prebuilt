@@ -185,6 +185,40 @@ jobs:
         output_node_file: 'node.napi.musl.node'
         test: false
 
+
+- job: alpine_arm64_musl
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    - template: build.yml
+      parameters:
+        build: false
+        test: false
+
+    - task: DockerInstaller@0
+      inputs:
+        dockerVersion: '17.09.0-ce'
+
+    - task: Bash@3
+      displayName: Build
+      env:
+        CURRENDIR: $(Build.SourcesDirectory)
+        DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && cross-env ARCH=arm64 npm_config_arch=arm64 ARCHIVE_SUFFIX=-armv8 pnpm install && cross-env ARCH=arm64 npm_config_arch=arm64 ARCHIVE_SUFFIX=-armv8 pnpm run prebuild
+      inputs:
+        targetType: 'inline'
+        workingDirectory: zeromq.js
+        script: |
+            docker pull node:18-alpine
+            docker tag node:18-alpine builder
+            docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged builder sh -c "$DOCKERCMD"
+
+    - template: artifacts.yml
+      parameters:
+        artifact_name: alpine-arm64-musl
+        prebuild_folder_name: 'linux-arm64'
+        output_node_file: 'node.napi.musl.node'
+        test: false
+
 - job: publish
   pool:
     vmImage: 'ubuntu-latest'
@@ -198,6 +232,7 @@ jobs:
   - linux_arm64_glibc
   - linux_arm_glibc
   - alpine_x64_musl
+  - alpine_arm64_musl
   steps:
     - template: publish.yml
       parameters:

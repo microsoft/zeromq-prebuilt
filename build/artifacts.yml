@@ -7,6 +7,10 @@ parameters:
 steps:
 
 - bash: |
+    ls -LR
+  workingDirectory: zeromq.js
+
+- bash: |
     node -r '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' -e 'console.log(1)'
   displayName: Test Node Module
   condition: and(succeeded(), eq(${{ parameters.test }}, true))
