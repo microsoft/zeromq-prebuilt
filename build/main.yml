@@ -117,7 +117,7 @@ jobs:
 
 # The build configurations have been taken from here:
 # https://github.com/zeromq/zeromq.js/blob/47bb35c1941cb4fa8b510fb7da4d40b37cfa2e5f/.travis.yml#L94
-- job: linux_arm_glibc
+- job: linux_armhf_glibc
   pool:
     vmImage: 'ubuntu-latest'
   steps:
@@ -147,7 +147,7 @@ jobs:
 
     - template: artifacts.yml
       parameters:
-        artifact_name: linux-arm-glibc
+        artifact_name: linux-armhf-glibc
         prebuild_folder_name: 'linux-arm'
         output_node_file: 'node.napi.glibc.node'
         test: false
@@ -203,7 +203,7 @@ jobs:
       displayName: Build
       env:
         CURRENDIR: $(Build.SourcesDirectory)
-        DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm && cross-env ARCH=arm64 npm_config_arch=arm64 ARCHIVE_SUFFIX=-armv8 pnpm install && cross-env ARCH=arm64 npm_config_arch=arm64 ARCHIVE_SUFFIX=-armv8 pnpm run prebuild
+        DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm cross-env && cross-env ARCH=arm64 npm_config_arch=arm64 ARCHIVE_SUFFIX=-armv8 pnpm install && cross-env ARCH=arm64 npm_config_arch=arm64 ARCHIVE_SUFFIX=-armv8 pnpm run prebuild
       inputs:
         targetType: 'inline'
         workingDirectory: zeromq.js
@@ -230,7 +230,7 @@ jobs:
   - darwin_arm64
   - linux_x64_glibc
   - linux_arm64_glibc
-  - linux_arm_glibc
+  - linux_armhf_glibc
   - alpine_x64_musl
   - alpine_arm64_musl
   steps:
