@@ -174,8 +174,8 @@ jobs:
         targetType: 'inline'
         workingDirectory: zeromq.js
         script: |
-            docker pull node:18-alpine
-            docker tag node:18-alpine builder
+            docker pull node:14.16.0-alpine
+            docker tag node:14.16.0-alpine builder
             docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged builder sh -c "$DOCKERCMD"
 
     - template: artifacts.yml
