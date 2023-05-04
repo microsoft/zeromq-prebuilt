@@ -11,7 +11,7 @@ index 68a8f58..280b468 100644
              }],
  
 diff --git a/package.json b/package.json
-index 058ecd1..12fcd8a 100644
+index 058ecd1..cd2e3d9 100644
 --- a/package.json
 +++ b/package.json
 @@ -20,7 +20,7 @@
@@ -23,6 +23,14 @@ index 058ecd1..12fcd8a 100644
      "shelljs": "^0.8.5",
      "shx": "^0.3.4"
    },
+@@ -35,7 +35,6 @@
+     "@types/which": "^2.0.1",
+     "benchmark": "^2.1.4",
+     "chai": "^4.3.7",
+-    "deasync": "^0.1.28",
+     "downlevel-dts": "^0.11.0",
+     "electron-mocha": "^11.0.2",
+     "eslint-config-atomic": "^1.18.1",
 diff --git a/script/build.ts b/script/build.ts
 index c055ebc..693d914 100644
 --- a/script/build.ts
