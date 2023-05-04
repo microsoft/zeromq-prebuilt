@@ -3,6 +3,7 @@ parameters:
   tag: ''
   python_arch: 'x64'
   npm_config_arch: 'x64'
+  node_version: '18.x'
   ARCH: 'x64'
   artifact_name: ''
   prebuild_folder_name: ''
@@ -14,10 +15,10 @@ parameters:
 
 steps:
 - task: NodeTool@0
-  condition: eq('${{ parameters.installNode }}', 'true')
+  condition: eq('${{ parameters.install_node }}', 'true')
   inputs:
     versionSource: 'spec'
-    versionSpec: '18.x'
+    versionSpec: ${{ parameters.node_version }}
 
 - task: UsePythonVersion@0
   condition: eq('${{ parameters.yum_install_python }}', 'false')

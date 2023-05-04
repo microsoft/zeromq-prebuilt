@@ -41,6 +41,20 @@ jobs:
         output_node_file: 'node.napi.glibc.node'
         test: false
 
+- job: win32_arm64
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+    - template: build.yml
+      parameters:
+        ARCH: arm64
+        npm_config_arch: arm64
+        node_version: '19.x'
+        artifact_name: 'win32-arm64'
+        prebuild_folder_name: 'win32-arm64'
+        output_node_file: 'node.napi.glibc.node'
+        test: false
+
 - job: darwin_x64
   pool:
     vmImage: 'macOS-latest'
