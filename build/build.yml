@@ -15,7 +15,7 @@ parameters:
 
 steps:
 - task: NodeTool@0
-  condition: eq('${{ parameters.installNode }}', 'true')
+  condition: eq('${{ parameters.install_node }}', 'true')
   inputs:
     versionSource: 'spec'
     versionSpec: ${{ parameters.node_version }}
