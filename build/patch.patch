@@ -41,9 +41,18 @@ index 058ecd1..cd2e3d9 100644
      "electron-mocha": "^11.0.2",
      "eslint-config-atomic": "^1.18.1",
 diff --git a/script/build.ts b/script/build.ts
-index c055ebc..693d914 100644
+index c055ebc..fb0af81 100644
 --- a/script/build.ts
 +++ b/script/build.ts
+@@ -37,7 +37,7 @@ function main() {
+   build_options += archCMakeOptions()
+
+   if (process.platform === "darwin") {
+-    const MACOSX_DEPLOYMENT_TARGET = "10.15"]
++    const MACOSX_DEPLOYMENT_TARGET = (process.env.ARCH || process.arch).toLowerCase() === "arm64" ? "10.15" : "10.9"
+     process.env.MACOSX_DEPLOYMENT_TARGET = MACOSX_DEPLOYMENT_TARGET
+     build_options += ` -DCMAKE_OSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET}`
+   }
 @@ -78,7 +78,7 @@ function main() {
      writeFileSync(clang_format_file, "")
    }
