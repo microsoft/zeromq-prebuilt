@@ -48,7 +48,7 @@ index c055ebc..fb0af81 100644
    build_options += archCMakeOptions()
 
    if (process.platform === "darwin") {
--    const MACOSX_DEPLOYMENT_TARGET = "10.15"]
+-    const MACOSX_DEPLOYMENT_TARGET = "10.15"
 +    const MACOSX_DEPLOYMENT_TARGET = (process.env.ARCH || process.arch).toLowerCase() === "arm64" ? "10.15" : "10.9"
      process.env.MACOSX_DEPLOYMENT_TARGET = MACOSX_DEPLOYMENT_TARGET
      build_options += ` -DCMAKE_OSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET}`
