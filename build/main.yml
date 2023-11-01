@@ -226,7 +226,6 @@ jobs:
   condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq('${{ parameters.testGitHubRelease }}', 'true')))
   dependsOn:
   - win32_x64
-  - win32_ia32
   - darwin_x64
   - darwin_arm64
   - linux_x64_glibc
