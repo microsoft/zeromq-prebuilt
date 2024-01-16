@@ -4,11 +4,12 @@ trigger:
     - '*'
 
 resources:
-  containers:
-    - container: centos7-devtoolset8-x64
-      image: vscodehub.azurecr.io/vscode-linux-build-agent:centos7-devtoolset8-x64
-      endpoint: VSCodeHub
-      options: --user 0:0 --cap-add SYS_ADMIN
+  repositories:
+    - repository: templates
+      type: github
+      name: microsoft/vscode-engineering
+      ref: robo/setup_sysroot
+      endpoint: Monaco
 
 parameters:
   - name: testGitHubRelease
@@ -64,18 +65,20 @@ jobs:
         output_node_file: 'node.napi.glibc.node'
         test: false
 
-- job: linux_x64_glibc
-  pool:
-    vmImage: 'ubuntu-latest'
-  container: centos7-devtoolset8-x64
-  steps:
-    - template: build.yml
-      parameters:
-        artifact_name: 'linux-x64'
-        prebuild_folder_name: 'linux-x64'
-        yum_install_python: true
-        install_node: false
-        output_node_file: 'node.napi.glibc.node'
+- template: azure-pipelines/npm-package/templates/jobs/compile.yml@templates
+  parameters:
+    jobDisplayName: linux_x64_glibc
+    jobPlatformName: Linux
+    testNodeVersion: '18.x'
+    timeoutInMinutes: 30
+    testSteps:
+      - template: build.yml
+        parameters:
+          artifact_name: 'linux-x64'
+          prebuild_folder_name: 'linux-x64'
+          yum_install_python: false
+          install_node: false
+          output_node_file: 'node.napi.glibc.node'
 
 # The build configurations have been taken from here:
 # https://github.com/zeromq/zeromq.js/blob/47bb35c1941cb4fa8b510fb7da4d40b37cfa2e5f/.travis.yml#L94
@@ -228,7 +231,6 @@ jobs:
   - win32_x64
   - darwin_x64
   - darwin_arm64
-  - linux_x64_glibc
   - linux_arm64_glibc
   - linux_armhf_glibc
   - alpine_x64_musl
