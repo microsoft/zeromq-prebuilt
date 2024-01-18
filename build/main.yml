@@ -4,11 +4,12 @@ trigger:
     - '*'
 
 resources:
-  containers:
-    - container: centos7-devtoolset8-x64
-      image: vscodehub.azurecr.io/vscode-linux-build-agent:centos7-devtoolset8-x64
-      endpoint: VSCodeHub
-      options: --user 0:0 --cap-add SYS_ADMIN
+  repositories:
+    - repository: templates
+      type: github
+      name: microsoft/vscode-engineering
+      ref: main
+      endpoint: Monaco
 
 parameters:
   - name: testGitHubRelease
@@ -64,93 +65,61 @@ jobs:
         output_node_file: 'node.napi.glibc.node'
         test: false
 
-- job: linux_x64_glibc
-  pool:
-    vmImage: 'ubuntu-latest'
-  container: centos7-devtoolset8-x64
-  steps:
-    - template: build.yml
-      parameters:
-        artifact_name: 'linux-x64'
-        prebuild_folder_name: 'linux-x64'
-        yum_install_python: true
-        install_node: false
-        output_node_file: 'node.napi.glibc.node'
+- template: azure-pipelines/npm-package/templates/jobs/compile.yml@templates
+  parameters:
+    jobDisplayName: linux_x64_glibc
+    jobPlatformName: Linux_x64_glibc
+    testNodeVersion: '18.x'
+    timeoutInMinutes: 30
+    testSteps:
+      - template: build.yml
+        parameters:
+          ARCH: x64
+          artifact_name: 'linux-x64'
+          prebuild_folder_name: 'linux-x64'
+          yum_install_python: false
+          install_node: false
+          output_node_file: 'node.napi.glibc.node'
 
-# The build configurations have been taken from here:
-# https://github.com/zeromq/zeromq.js/blob/47bb35c1941cb4fa8b510fb7da4d40b37cfa2e5f/.travis.yml#L94
-- job: linux_arm64_glibc
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:
-    - template: build.yml
-      parameters:
-        build: false
-        test: false
+- template: azure-pipelines/npm-package/templates/jobs/compile.yml@templates
+  parameters:
+    jobDisplayName: linux_arm64_glibc
+    jobPlatformName: Linux_arm64_glibc
+    testNodeVersion: '18.x'
+    timeoutInMinutes: 30
+    targetArch: arm64
+    testSteps:
+      - template: build.yml
+        parameters:
+          ARCH: arm64
+          npm_config_arch: arm64
+          ARCHIVE_SUFFIX: -armv8
+          artifact_name: linux-arm64-glibc
+          prebuild_folder_name: 'linux-arm64'
+          yum_install_python: false
+          test: false
+          install_node: false
+          output_node_file: 'node.napi.glibc.node'
 
-    - task: Bash@3
-      displayName: Install dependencies
-      inputs:
-        targetType: 'inline'
-        script: |
-          sudo apt install gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu
-
-    - bash: |
-        npm install
-        npm run prebuild
-      displayName: Build
-      workingDirectory: zeromq.js
-      env:
-        ARCH: arm64
-        npm_config_arch: arm64
-        TRIPLE: aarch64-linux-gnu
-        GCC: 9
-        ARCHIVE_SUFFIX: -armv8
-
-    - template: artifacts.yml
-      parameters:
-        artifact_name: linux-arm64-glibc
-        prebuild_folder_name: 'linux-arm64'
-        output_node_file: 'node.napi.glibc.node'
-        test: false
-
-
-# The build configurations have been taken from here:
-# https://github.com/zeromq/zeromq.js/blob/47bb35c1941cb4fa8b510fb7da4d40b37cfa2e5f/.travis.yml#L94
-- job: linux_armhf_glibc
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:
-    - template: build.yml
-      parameters:
-        build: false
-        test: false
-
-    - task: Bash@3
-      displayName: Install dependencies
-      inputs:
-        targetType: 'inline'
-        script: |
-          sudo apt install gcc-9-arm-linux-gnueabihf g++-9-arm-linux-gnueabihf
-
-    - bash: |
-        npm install
-        npm run prebuild
-      displayName: Build
-      workingDirectory: zeromq.js
-      env:
-        ARCH: arm
-        npm_config_arch: arm
-        TRIPLE: arm-linux-gnueabihf
-        GCC: 9
-        ARCHIVE_SUFFIX: -armv7
-
-    - template: artifacts.yml
-      parameters:
-        artifact_name: linux-armhf-glibc
-        prebuild_folder_name: 'linux-arm'
-        output_node_file: 'node.napi.glibc.node'
-        test: false
+- template: azure-pipelines/npm-package/templates/jobs/compile.yml@templates
+  parameters:
+    jobDisplayName: linux_armhf_glibc
+    jobPlatformName: Linux_armhf_glibc
+    testNodeVersion: '18.x'
+    timeoutInMinutes: 30
+    targetArch: armhf
+    testSteps:
+      - template: build.yml
+        parameters:
+          ARCH: arm
+          npm_config_arch: arm
+          ARCHIVE_SUFFIX: -armv7
+          artifact_name: linux-armhf-glibc
+          prebuild_folder_name: 'linux-arm'
+          yum_install_python: false
+          test: false
+          install_node: false
+          output_node_file: 'node.napi.glibc.node'
 
 - job: alpine_x64_musl
   pool:
@@ -228,9 +197,9 @@ jobs:
   - win32_x64
   - darwin_x64
   - darwin_arm64
-  - linux_x64_glibc
-  - linux_arm64_glibc
-  - linux_armhf_glibc
+  - Linux_x64_glibc_Node_18_x
+  - Linux_arm64_glibc_Node_18_x
+  - Linux_armhf_glibc_Node_18_x
   - alpine_x64_musl
   - alpine_arm64_musl
   steps:
