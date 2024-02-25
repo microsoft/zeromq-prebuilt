@@ -1,0 +1,143 @@
+parameters:
+  repo: ''
+  tag: ''
+  python_arch: 'x64'
+  npm_config_arch: 'x64'
+  node_version: '18.x'
+  ARCH: 'x64'
+  artifact_name: ''
+  prebuild_folder_name: ''
+  build: true
+  test: true
+  install_node: true
+  yum_install_python: false
+  output_node_file: ''
+
+steps:
+- task: NodeTool@0
+  condition: eq('${{ parameters.install_node }}', 'true')
+  inputs:
+    versionSource: 'spec'
+    versionSpec: ${{ parameters.node_version }}
+
+- task: UsePythonVersion@0
+  condition: eq('${{ parameters.yum_install_python }}', 'false')
+  displayName: Use Python 3 ${{ parameters.python_arch }}
+  inputs:
+    versionSpec: '3.11'
+    addToPath: true
+    architecture: ${{ parameters.python_arch }}
+
+- task: Bash@3
+  displayName: Git Clone
+  inputs:
+    targetType: 'inline'
+    script: |
+      set -ex
+      REPO=`[ "${{ parameters.repo }}" ] &&  echo ${{ parameters.repo }} || echo $(node -p "require('./config.json').zeromqRepo")`
+      TREEISH=`[ "${{ parameters.tag }}" ] && echo ${{ parameters.tag }} || echo $(node -p "require('./config.json').zeromqTag")`
+      git clone https://github.com/${REPO}.git zeromq.js
+      cd zeromq.js
+      git checkout $TREEISH
+
+- bash: |
+    node ../build/patch.js
+    git apply --whitespace=fix ../build/patch.patch
+    git diff
+  displayName: Patch zeromq.js
+  workingDirectory: zeromq.js
+
+- pwsh: |
+    $includes = @'
+      {
+        'target_defaults': {
+          'conditions': [
+            ['OS=="win"', {
+              'msvs_settings': {
+                'VCCLCompilerTool': {
+                  'AdditionalOptions': [
+                    '/Zi',
+                    '/FS'
+                  ],
+                },
+                'VCLinkerTool': {
+                  'AdditionalOptions': [
+                    '/profile'
+                  ]
+                }
+              }
+            }]
+          ]
+        }
+      }
+    '@
+
+    if (!(Test-Path "~/.gyp")) {
+      mkdir "~/.gyp"
+      echo $includes > "~/.gyp/include.gypi"
+    }
+  displayName: Create include.gypi
+
+- bash: |
+    export PREBUILD_STRIP_BIN=0
+    npm install
+    npm run prebuild
+  displayName: Build
+  condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), ne('${{ parameters.ARCH }}', ''))
+  workingDirectory: zeromq.js
+  env:
+    ARCH: ${{ parameters.ARCH }}
+    npm_config_arch: ${{ parameters.npm_config_arch }}
+    PREBUILD_ARCH: ${{ parameters.ARCH }}
+
+- bash: |
+    npm install
+    npm run prebuild
+  displayName: Build
+  condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), eq('${{ parameters.ARCH }}', ''))
+  workingDirectory: zeromq.js
+  env:
+    npm_config_arch: ${{ parameters.npm_config_arch }}
+
+- pwsh: |
+    if (Test-Path "$(Agent.TempDirectory)/apiscan") {
+      echo "Directory already exists"
+      exit 1
+    }
+    mkdir $(Agent.TempDirectory)/apiscan
+    if (Test-Path "zeromq.js/out") {
+      mv "zeromq.js/out" $(Agent.TempDirectory)/apiscan
+    }
+    if (Test-Path "zeromq.js/build") {
+      mv "zeromq.js/build" $(Agent.TempDirectory)/apiscan
+    }
+  displayName: Move out files to APIScan dir
+
+- task: APIScan@2
+  inputs:
+    softwareFolder: $(Agent.TempDirectory)/apiscan
+    softwareName: 'zeromq-prebuilt'
+    softwareVersionNum: '1'
+    isLargeApp: false
+    toolVersion: 'Latest'
+  displayName: Run APIScan
+  condition: succeeded()
+  env:
+    AzureServicesAuthConnectionString: $(apiscan-connectionstring)
+
+- task: PublishSecurityAnalysisLogs@3
+  displayName: Publish security logs
+  inputs:
+    ArtifactName: 'CodeAnalysisLogs'
+    ArtifactType: 'Container'
+    AllTools: true
+    ToolLogsNotFoundAction: 'Standard'
+
+# TSA Upload
+# - ${{ if eq(parameters.tsa.enabled, true) }}:
+#   - task: securedevelopmentteam.vss-secure-development-tools.build-task-uploadtotsa.TSAUpload@2
+#     displayName: 🔒 TSA Upload
+#     continueOnError: true
+#     inputs:
+#       GdnPublishTsaConfigFile: $(Build.SourcesDirectory)/.config/tsaoptions.json
+#       GdnPublishTsaOnboard: True
