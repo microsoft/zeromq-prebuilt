@@ -14,6 +14,16 @@ parameters:
   output_node_file: ''
 
 steps:
+- pwsh: |
+    if(!(Test-Path ".config\tsaoptions.json")) {
+      $codebaseName = '${{ parameters.tsa.options.codebaseName }}' -replace '[-/]', '_'
+      $tsaOptions = '${{ convertToJson(parameters.tsa.options) }}' -replace '(?<="codebaseName": ")[^"]+', $codebaseName
+
+      New-Item -Path ".config\tsaoptions.json" -ItemType File -Value $tsaOptions -Force
+    }
+    Get-Content -Path ".config\tsaoptions.json"
+  displayName: 📤 Generate tsaoptions.json
+
 - task: NodeTool@0
   condition: eq('${{ parameters.install_node }}', 'true')
   inputs:
@@ -134,10 +144,9 @@ steps:
     ToolLogsNotFoundAction: 'Standard'
 
 # TSA Upload
-# - ${{ if eq(parameters.tsa.enabled, true) }}:
-#   - task: securedevelopmentteam.vss-secure-development-tools.build-task-uploadtotsa.TSAUpload@2
-#     displayName: 🔒 TSA Upload
-#     continueOnError: true
-#     inputs:
-#       GdnPublishTsaConfigFile: $(Build.SourcesDirectory)/.config/tsaoptions.json
-#       GdnPublishTsaOnboard: True
+- task: securedevelopmentteam.vss-secure-development-tools.build-task-uploadtotsa.TSAUpload@2
+  displayName: 🔒 TSA Upload
+  continueOnError: true
+  inputs:
+    GdnPublishTsaConfigFile: $(Build.SourcesDirectory)/.config/tsaoptions.json
+    GdnPublishTsaOnboard: True
