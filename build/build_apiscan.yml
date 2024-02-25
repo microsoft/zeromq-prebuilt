@@ -17,7 +17,7 @@ steps:
 - pwsh: |
     if(!(Test-Path ".config\tsaoptions.json")) {
       $codebaseName = 'zeromq-prebuilt' -replace '[-/]', '_'
-      $tsaOptions = '@{
+      $tsaOptions = @'{
         "codebaseName": "devdiv_microsoft_vscode_zeromq_prebuilt",
         "instanceUrl": "https://devdiv.visualstudio.com/defaultcollection",
         "projectName": "DevDiv",
