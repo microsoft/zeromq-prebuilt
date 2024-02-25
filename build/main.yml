@@ -29,6 +29,8 @@ jobs:
         output_node_file: 'node.napi.glibc.node'
 
 - job: win32_x64_apiscan
+  variables:
+    - group: 'API Scan'
   pool:
     vmImage: 'windows-latest'
   steps:
