@@ -125,12 +125,8 @@ steps:
       exit 1
     }
     mkdir $(Agent.TempDirectory)/apiscan
-    if (Test-Path "zeromq.js/out") {
-      mv "zeromq.js/out" $(Agent.TempDirectory)/apiscan
-    }
-    if (Test-Path "zeromq.js/build") {
-      mv "zeromq.js/build" $(Agent.TempDirectory)/apiscan
-    }
+    mv zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }} $(Agent.TempDirectory)/apiscan
+    mv zeromq.js/build/libzmq/bin/*.dll $(Agent.TempDirectory)/apiscan
   displayName: Move out files to APIScan dir
 
 - task: APIScan@2
