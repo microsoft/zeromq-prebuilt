@@ -28,6 +28,17 @@ jobs:
         prebuild_folder_name: 'win32-x64'
         output_node_file: 'node.napi.glibc.node'
 
+- job: win32_x64_apiscan
+  variables:
+    - group: 'API Scan'
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+    - template: build_apiscan.yml
+      parameters:
+        prebuild_folder_name: 'win32-x64'
+        output_node_file: 'node.napi.glibc.node'
+
 - job: win32_arm64
   pool:
     vmImage: 'windows-latest'
