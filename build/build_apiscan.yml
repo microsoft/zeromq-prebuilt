@@ -5,7 +5,6 @@ parameters:
   npm_config_arch: 'x64'
   node_version: '18.x'
   ARCH: 'x64'
-  artifact_name: ''
   prebuild_folder_name: ''
   build: true
   test: true
