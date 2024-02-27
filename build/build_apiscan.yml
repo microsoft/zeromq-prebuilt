@@ -111,7 +111,7 @@ steps:
   inputs:
     softwareFolder: $(Agent.TempDirectory)/apiscan
     softwareName: 'zeromq'
-    softwareVersionNum: '1'
+    softwareVersionNum: '0.2'
     isLargeApp: false
     toolVersion: 'Latest'
   displayName: Run APIScan
