@@ -110,7 +110,7 @@ steps:
 - task: APIScan@2
   inputs:
     softwareFolder: $(Agent.TempDirectory)/apiscan
-    softwareName: 'zeromq'
+    softwareName: 'vscode-zeromq-prebuilt'
     softwareVersionNum: '0.2'
     isLargeApp: false
     toolVersion: 'Latest'
