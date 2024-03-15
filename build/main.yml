@@ -105,12 +105,12 @@ extends:
                   test: false
 
           - template: azure-pipelines/npm-package/templates/jobs/compile.yml@templates
-            templateContext:
-              outputs:
-                - output: pipelineArtifact
-                  targetPath: $(Build.ArtifactStagingDirectory)
-                  artifactName: 'linux-x64'
             parameters:
+              templateContext:
+                outputs:
+                  - output: pipelineArtifact
+                    targetPath: $(Build.ArtifactStagingDirectory)
+                    artifactName: 'linux-x64'
               jobDisplayName: linux_x64_glibc
               jobPlatformName: Linux_x64_glibc
               testNodeVersion: '18.x'
@@ -126,12 +126,12 @@ extends:
                     output_node_file: 'node.napi.glibc.node'
 
           - template: azure-pipelines/npm-package/templates/jobs/compile.yml@templates
-            templateContext:
-              outputs:
-                - output: pipelineArtifact
-                  targetPath: $(Build.ArtifactStagingDirectory)
-                  artifactName: 'linux-arm64-glibc'
             parameters:
+              templateContext:
+                outputs:
+                  - output: pipelineArtifact
+                    targetPath: $(Build.ArtifactStagingDirectory)
+                    artifactName: 'linux-arm64-glibc'
               jobDisplayName: linux_arm64_glibc
               jobPlatformName: Linux_arm64_glibc
               testNodeVersion: '18.x'
@@ -151,12 +151,12 @@ extends:
                     output_node_file: 'node.napi.glibc.node'
 
           - template: azure-pipelines/npm-package/templates/jobs/compile.yml@templates
-            templateContext:
-              outputs:
-                - output: pipelineArtifact
-                  targetPath: $(Build.ArtifactStagingDirectory)
-                  artifactName: 'linux-armhf-glibc'
             parameters:
+              templateContext:
+                outputs:
+                  - output: pipelineArtifact
+                    targetPath: $(Build.ArtifactStagingDirectory)
+                    artifactName: 'linux-armhf-glibc'
               jobDisplayName: linux_armhf_glibc
               jobPlatformName: Linux_armhf_glibc
               testNodeVersion: '18.x'
