@@ -25,9 +25,9 @@ extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
   parameters:
     sdl:
-        sourceAnalysisPool: 1es-windows-2019-x64
-        tsa:
-          enabled: true
+      sourceAnalysisPool: 1es-windows-2019-x64
+      tsa:
+        enabled: true
     stages:
       - stage: Build
         jobs:
