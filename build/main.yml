@@ -142,6 +142,11 @@ extends:
             pool:
               vmImage: '1es-ubuntu-22.04-x64'
               os: linux
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)
+                  artifactName: alpine-x64-musl
             steps:
               - template: build/build.yml@self
                 parameters:
@@ -177,6 +182,11 @@ extends:
             pool:
               vmImage: '1es-ubuntu-22.04-x64'
               os: linux
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)
+                  artifactName: alpine-arm64-musl
             steps:
               - template: build/build.yml@self
                 parameters:

@@ -47,9 +47,3 @@ steps:
   condition: and(succeeded(), contains('${{ parameters.artifact_name }}', 'win32'))
   env:
     TARGET: ${{ parameters.prebuild_folder_name }}
-
-- task: PublishPipelineArtifact@0
-  displayName: 'Publish Pipeline Artifact'
-  inputs:
-    artifactName: ${{ parameters.artifact_name }}
-    targetPath: $(Build.ArtifactStagingDirectory)
