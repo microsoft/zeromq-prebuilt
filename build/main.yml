@@ -104,26 +104,28 @@ extends:
                   output_node_file: 'node.napi.glibc.node'
                   test: false
 
-          - template: azure-pipelines/npm-package/templates/jobs/compile.yml@templates
-            parameters:
-              templateContext:
-                outputs:
-                  - output: pipelineArtifact
-                    targetPath: $(Build.ArtifactStagingDirectory)
-                    artifactName: 'linux-x64'
-              jobDisplayName: linux_x64_glibc
-              jobPlatformName: Linux_x64_glibc
-              testNodeVersion: '18.x'
-              timeoutInMinutes: 30
-              testSteps:
-                - template: build/build.yml@self
-                  parameters:
-                    ARCH: x64
-                    artifact_name: 'linux-x64'
-                    prebuild_folder_name: 'linux-x64'
-                    yum_install_python: false
-                    install_node: false
-                    output_node_file: 'node.napi.glibc.node'
+          - job: linux_x64_glibc
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)
+                  artifactName: 'linux-x64'
+            steps:
+              - template: azure-pipelines/npm-package/templates/jobs/compile.yml@templates
+                parameters:
+                  jobDisplayName: linux_x64_glibc
+                  jobPlatformName: Linux_x64_glibc
+                  testNodeVersion: '18.x'
+                  timeoutInMinutes: 30
+                  testSteps:
+                    - template: build/build.yml@self
+                      parameters:
+                        ARCH: x64
+                        artifact_name: 'linux-x64'
+                        prebuild_folder_name: 'linux-x64'
+                        yum_install_python: false
+                        install_node: false
+                        output_node_file: 'node.napi.glibc.node'
 
           - template: azure-pipelines/npm-package/templates/jobs/compile.yml@templates
             parameters:
