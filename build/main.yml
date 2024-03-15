@@ -113,8 +113,8 @@ extends:
             steps:
               - template: azure-pipelines/common/steps/setup-linux-toolchains.yml@templates
                 parameters:
-                  testNodeVersion: '18.x'
-                  targetArch: x64
+                  arch: x64
+                  nodeVersion: '18.x'
               - template: build/build.yml@self
                 parameters:
                   ARCH: x64
@@ -125,7 +125,7 @@ extends:
                   output_node_file: 'node.napi.glibc.node'
               - template: azure-pipelines/common/steps/verify-platform-requirements.yml@templates
                 parameters:
-                  targetArch: x64
+                  arch: x64
 
           - job: linux_arm64_glibc
             templateContext:
@@ -136,8 +136,8 @@ extends:
             steps:
               - template: azure-pipelines/common/steps/setup-linux-toolchains.yml@templates
                 parameters:
-                  testNodeVersion: '18.x'
-                  targetArch: arm64
+                  arch: arm64
+                  nodeVersion: '18.x'
               - template: build/build.yml@self
                 parameters:
                   ARCH: arm64
@@ -151,7 +151,7 @@ extends:
                   output_node_file: 'node.napi.glibc.node'
               - template: azure-pipelines/common/steps/verify-platform-requirements.yml@templates
                 parameters:
-                  targetArch: arm64
+                  arch: arm64
 
           - job: linux_armhf_glibc
             templateContext:
@@ -162,8 +162,8 @@ extends:
             steps:
               - template: azure-pipelines/common/steps/setup-linux-toolchains.yml@templates
                 parameters:
-                  testNodeVersion: '18.x'
-                  targetArch: armhf
+                  arch: armhf
+                  nodeVersion: '18.x'
               - template: build/build.yml@self
                 parameters:
                   ARCH: arm
@@ -177,7 +177,7 @@ extends:
                   output_node_file: 'node.napi.glibc.node'
               - template: azure-pipelines/common/steps/verify-platform-requirements.yml@templates
                 parameters:
-                  targetArch: armhf
+                  arch: armhf
 
           - job: alpine_x64_musl
             pool:
