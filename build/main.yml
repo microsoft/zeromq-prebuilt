@@ -35,6 +35,11 @@ extends:
             pool:
               name: 1es-windows-2019-x64
               os: windows
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)
+                  artifactName: 'win32-x64'
             steps:
               - template: build/build.yml@self
                 parameters:
@@ -46,6 +51,11 @@ extends:
             pool:
               name: 1es-windows-2019-x64
               os: windows
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)
+                  artifactName: 'win32-arm64'
             steps:
               - template: build/build.yml@self
                 parameters:
@@ -62,6 +72,11 @@ extends:
               name: Azure Pipelines
               vmImage: 'macOS-latest'
               os: macOS
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)
+                  artifactName: 'darwin-x64'
             steps:
               - template: build/build.yml@self
                 parameters:
@@ -75,6 +90,11 @@ extends:
               name: Azure Pipelines
               vmImage: 'macOS-latest'
               os: macOS
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)
+                  artifactName: 'darwin-arm64'
             steps:
               - template: build/build.yml@self
                 parameters:
@@ -85,6 +105,11 @@ extends:
                   test: false
 
           - template: azure-pipelines/npm-package/templates/jobs/compile.yml@templates
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)
+                  artifactName: 'linux-x64'
             parameters:
               jobDisplayName: linux_x64_glibc
               jobPlatformName: Linux_x64_glibc
@@ -101,6 +126,11 @@ extends:
                     output_node_file: 'node.napi.glibc.node'
 
           - template: azure-pipelines/npm-package/templates/jobs/compile.yml@templates
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)
+                  artifactName: 'linux-arm64-glibc'
             parameters:
               jobDisplayName: linux_arm64_glibc
               jobPlatformName: Linux_arm64_glibc
@@ -113,7 +143,7 @@ extends:
                     ARCH: arm64
                     npm_config_arch: arm64
                     ARCHIVE_SUFFIX: -armv8
-                    artifact_name: linux-arm64-glibc
+                    artifact_name: 'linux-arm64-glibc'
                     prebuild_folder_name: 'linux-arm64'
                     yum_install_python: false
                     test: false
@@ -121,6 +151,11 @@ extends:
                     output_node_file: 'node.napi.glibc.node'
 
           - template: azure-pipelines/npm-package/templates/jobs/compile.yml@templates
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)
+                  artifactName: 'linux-armhf-glibc'
             parameters:
               jobDisplayName: linux_armhf_glibc
               jobPlatformName: Linux_armhf_glibc
@@ -133,7 +168,7 @@ extends:
                     ARCH: arm
                     npm_config_arch: arm
                     ARCHIVE_SUFFIX: -armv7
-                    artifact_name: linux-armhf-glibc
+                    artifact_name: 'linux-armhf-glibc'
                     prebuild_folder_name: 'linux-arm'
                     yum_install_python: false
                     test: false
@@ -142,7 +177,7 @@ extends:
 
           - job: alpine_x64_musl
             pool:
-              vmImage: '1es-ubuntu-20.04-x64'
+              name: '1es-ubuntu-22.04-x64'
               os: linux
             templateContext:
               outputs:
@@ -182,7 +217,7 @@ extends:
 
           - job: alpine_arm64_musl
             pool:
-              vmImage: '1es-ubuntu-20.04-x64'
+              name: '1es-ubuntu-22.04-x64'
               os: linux
             templateContext:
               outputs:
@@ -223,7 +258,7 @@ extends:
       - stage: publish
         dependsOn: Build
         pool:
-          vmImage: '1es-ubuntu-20.04-x64'
+          name: '1es-ubuntu-22.04-x64'
           os: linux
         condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq('${{ parameters.testGitHubRelease }}', 'true')))
         jobs:
