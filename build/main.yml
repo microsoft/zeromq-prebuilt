@@ -111,71 +111,73 @@ extends:
                   targetPath: $(Build.ArtifactStagingDirectory)
                   artifactName: 'linux-x64'
             steps:
-              - template: azure-pipelines/npm-package/templates/jobs/compile.yml@templates
+              - template: azure-pipelines/common/steps/setup-linux-toolchains.yml@templates
                 parameters:
-                  jobDisplayName: linux_x64_glibc
-                  jobPlatformName: Linux_x64_glibc
                   testNodeVersion: '18.x'
-                  timeoutInMinutes: 30
-                  testSteps:
-                    - template: build/build.yml@self
-                      parameters:
-                        ARCH: x64
-                        artifact_name: 'linux-x64'
-                        prebuild_folder_name: 'linux-x64'
-                        yum_install_python: false
-                        install_node: false
-                        output_node_file: 'node.napi.glibc.node'
+                  targetArch: x64
+              - template: build/build.yml@self
+                parameters:
+                  ARCH: x64
+                  artifact_name: 'linux-x64'
+                  prebuild_folder_name: 'linux-x64'
+                  yum_install_python: false
+                  install_node: false
+                  output_node_file: 'node.napi.glibc.node'
+              - template: azure-pipelines/common/steps/verify-platform-requirements.yml@templates
+                parameters:
+                  targetArch: x64
 
-          - template: azure-pipelines/npm-package/templates/jobs/compile.yml@templates
-            parameters:
-              templateContext:
-                outputs:
-                  - output: pipelineArtifact
-                    targetPath: $(Build.ArtifactStagingDirectory)
-                    artifactName: 'linux-arm64-glibc'
-              jobDisplayName: linux_arm64_glibc
-              jobPlatformName: Linux_arm64_glibc
-              testNodeVersion: '18.x'
-              timeoutInMinutes: 30
-              targetArch: arm64
-              testSteps:
-                - template: build/build.yml@self
-                  parameters:
-                    ARCH: arm64
-                    npm_config_arch: arm64
-                    ARCHIVE_SUFFIX: -armv8
-                    artifact_name: 'linux-arm64-glibc'
-                    prebuild_folder_name: 'linux-arm64'
-                    yum_install_python: false
-                    test: false
-                    install_node: false
-                    output_node_file: 'node.napi.glibc.node'
+          - job: linux_arm64_glibc
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)
+                  artifactName: 'linux-arm64-glibc'
+            steps:
+              - template: azure-pipelines/common/steps/setup-linux-toolchains.yml@templates
+                parameters:
+                  testNodeVersion: '18.x'
+                  targetArch: arm64
+              - template: build/build.yml@self
+                parameters:
+                  ARCH: arm64
+                  npm_config_arch: arm64
+                  ARCHIVE_SUFFIX: -armv8
+                  artifact_name: 'linux-arm64-glibc'
+                  prebuild_folder_name: 'linux-arm64'
+                  yum_install_python: false
+                  test: false
+                  install_node: false
+                  output_node_file: 'node.napi.glibc.node'
+              - template: azure-pipelines/common/steps/verify-platform-requirements.yml@templates
+                parameters:
+                  targetArch: arm64
 
-          - template: azure-pipelines/npm-package/templates/jobs/compile.yml@templates
-            parameters:
-              templateContext:
-                outputs:
-                  - output: pipelineArtifact
-                    targetPath: $(Build.ArtifactStagingDirectory)
-                    artifactName: 'linux-armhf-glibc'
-              jobDisplayName: linux_armhf_glibc
-              jobPlatformName: Linux_armhf_glibc
-              testNodeVersion: '18.x'
-              timeoutInMinutes: 30
-              targetArch: armhf
-              testSteps:
-                - template: build/build.yml@self
-                  parameters:
-                    ARCH: arm
-                    npm_config_arch: arm
-                    ARCHIVE_SUFFIX: -armv7
-                    artifact_name: 'linux-armhf-glibc'
-                    prebuild_folder_name: 'linux-arm'
-                    yum_install_python: false
-                    test: false
-                    install_node: false
-                    output_node_file: 'node.napi.glibc.node'
+          - job: linux_armhf_glibc
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)
+                  artifactName: 'linux-armhf-glibc'
+            steps:
+              - template: azure-pipelines/common/steps/setup-linux-toolchains.yml@templates
+                parameters:
+                  testNodeVersion: '18.x'
+                  targetArch: armhf
+              - template: build/build.yml@self
+                parameters:
+                  ARCH: arm
+                  npm_config_arch: arm
+                  ARCHIVE_SUFFIX: -armv7
+                  artifact_name: 'linux-armhf-glibc'
+                  prebuild_folder_name: 'linux-arm'
+                  yum_install_python: false
+                  test: false
+                  install_node: false
+                  output_node_file: 'node.napi.glibc.node'
+              - template: azure-pipelines/common/steps/verify-platform-requirements.yml@templates
+                parameters:
+                  targetArch: armhf
 
           - job: alpine_x64_musl
             pool:
