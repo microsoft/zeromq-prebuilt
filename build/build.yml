@@ -79,7 +79,7 @@ steps:
       echo $includes > "~/.gyp/include.gypi"
     }
   displayName: Create include.gypi
-  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
 - bash: |
     export PREBUILD_STRIP_BIN=$STRIP
@@ -110,7 +110,7 @@ steps:
       zeromq.js/**/*.pdb
     TargetFolder: $(Agent.TempDirectory)/apiscan
   displayName: Copy files to APIScan dir
-  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
 - task: APIScan@2
   inputs:
@@ -120,7 +120,7 @@ steps:
     isLargeApp: false
     toolVersion: 'Latest'
   displayName: Run APIScan
-  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
   env:
     AzureServicesAuthConnectionString: $(apiscan-connectionstring)
 
@@ -131,7 +131,7 @@ steps:
     AllTools: true
     ToolLogsNotFoundAction: 'Standard'
   displayName: Publish security logs
-  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
 - ${{ if eq(parameters.build, true) }}:
   - template: artifacts.yml
