@@ -55,6 +55,32 @@ steps:
   displayName: Patch zeromq.js
   workingDirectory: zeromq.js
 
+- pwsh: |
+    $includes = @'
+      {
+        'target_defaults': {
+          'conditions': [
+            ['OS=="win"', {
+              'msvs_settings': {
+                'VCLinkerTool': {
+                  'AdditionalOptions': [
+                    '/profile'
+                  ]
+                }
+              }
+            }]
+          ]
+        }
+      }
+    '@
+
+    if (!(Test-Path "~/.gyp")) {
+      mkdir "~/.gyp"
+      echo $includes > "~/.gyp/include.gypi"
+    }
+  displayName: Create include.gypi
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+
 - bash: |
     export PREBUILD_STRIP_BIN=$STRIP
     npm install
@@ -75,6 +101,37 @@ steps:
   workingDirectory: zeromq.js
   env:
     npm_config_arch: ${{ parameters.npm_config_arch }}
+
+- task: CopyFiles@2
+  inputs:
+    Contents: |
+      zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}
+      zeromq.js/build/libzmq/bin/*.dll
+      zeromq.js/**/*.pdb
+    TargetFolder: $(Agent.TempDirectory)/apiscan
+  displayName: Copy files to APIScan dir
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+
+- task: APIScan@2
+  inputs:
+    softwareFolder: $(Agent.TempDirectory)/apiscan
+    softwareName: 'zeromq'
+    softwareVersionNum: '1'
+    isLargeApp: false
+    toolVersion: 'Latest'
+  displayName: Run APIScan
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+  env:
+    AzureServicesAuthConnectionString: $(apiscan-connectionstring)
+
+- task: PublishSecurityAnalysisLogs@3
+  inputs:
+    ArtifactName: 'CodeAnalysisLogs'
+    ArtifactType: 'Container'
+    AllTools: true
+    ToolLogsNotFoundAction: 'Standard'
+  displayName: Publish security logs
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
 - ${{ if eq(parameters.build, true) }}:
   - template: artifacts.yml
