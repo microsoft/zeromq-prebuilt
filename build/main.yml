@@ -105,6 +105,9 @@ extends:
                   test: false
 
           - job: linux_x64_glibc
+            pool:
+              name: '1es-ubuntu-22.04-x64'
+              os: linux
             templateContext:
               outputs:
                 - output: pipelineArtifact
@@ -128,6 +131,9 @@ extends:
                   arch: x64
 
           - job: linux_arm64_glibc
+            pool:
+              name: '1es-ubuntu-22.04-x64'
+              os: linux
             templateContext:
               outputs:
                 - output: pipelineArtifact
@@ -154,6 +160,9 @@ extends:
                   arch: arm64
 
           - job: linux_armhf_glibc
+            pool:
+              name: '1es-ubuntu-22.04-x64'
+              os: linux
             templateContext:
               outputs:
                 - output: pipelineArtifact
