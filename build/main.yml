@@ -214,7 +214,9 @@ extends:
           vmImage: '1es-ubuntu-22.04-x64'
           os: linux
         condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq('${{ parameters.testGitHubRelease }}', 'true')))
-        steps:
-          - template: build/publish.yml@self
-            parameters:
-              testGitHubRelease: ${{ parameters.testGitHubRelease }}
+        jobs:
+          - job: win32_x64
+            steps:
+              - template: build/publish.yml@self
+                parameters:
+                  testGitHubRelease: ${{ parameters.testGitHubRelease }}
