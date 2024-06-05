@@ -47,7 +47,7 @@ extends:
                 parameters:
                   artifact_name: 'win32-x64'
                   prebuild_folder_name: 'win32-x64'
-                  output_node_file: 'node.napi.glibc.node'
+                  output_node_file: 'zeromq.glibc.node'
 
           - job: win32_arm64
             pool:
@@ -66,7 +66,7 @@ extends:
                   node_version: '20.x'
                   artifact_name: 'win32-arm64'
                   prebuild_folder_name: 'win32-arm64'
-                  output_node_file: 'node.napi.glibc.node'
+                  output_node_file: 'zeromq.glibc.node'
                   test: false
 
           - job: darwin_x64
@@ -85,7 +85,7 @@ extends:
                   ARCH: ''
                   artifact_name: 'darwin-x64'
                   prebuild_folder_name: 'darwin-x64'
-                  output_node_file: 'node.napi.glibc.node'
+                  output_node_file: 'zeromq.glibc.node'
 
           - job: darwin_arm64
             pool:
@@ -103,7 +103,7 @@ extends:
                   ARCH: arm64
                   artifact_name: 'darwin-arm64'
                   prebuild_folder_name: 'darwin-arm64'
-                  output_node_file: 'node.napi.glibc.node'
+                  output_node_file: 'zeromq.glibc.node'
                   test: false
 
           - job: linux_x64_glibc
@@ -127,7 +127,7 @@ extends:
                   prebuild_folder_name: 'linux-x64'
                   yum_install_python: false
                   install_node: false
-                  output_node_file: 'node.napi.glibc.node'
+                  output_node_file: 'zeromq.glibc.node'
               - template: azure-pipelines/common/steps/verify-platform-requirements.yml@templates
                 parameters:
                   arch: x64
@@ -156,7 +156,7 @@ extends:
                   yum_install_python: false
                   test: false
                   install_node: false
-                  output_node_file: 'node.napi.glibc.node'
+                  output_node_file: 'zeromq.glibc.node'
               - template: azure-pipelines/common/steps/verify-platform-requirements.yml@templates
                 parameters:
                   arch: arm64
@@ -185,7 +185,7 @@ extends:
                   yum_install_python: false
                   test: false
                   install_node: false
-                  output_node_file: 'node.napi.glibc.node'
+                  output_node_file: 'zeromq.glibc.node'
               - template: azure-pipelines/common/steps/verify-platform-requirements.yml@templates
                 parameters:
                   arch: armhf
@@ -226,7 +226,7 @@ extends:
                 parameters:
                   artifact_name: alpine-x64-musl
                   prebuild_folder_name: 'linux-x64'
-                  output_node_file: 'node.napi.musl.node'
+                  output_node_file: 'zeromq.musl.node'
                   test: false
 
 
@@ -267,7 +267,7 @@ extends:
                 parameters:
                   artifact_name: alpine-arm64-musl
                   prebuild_folder_name: 'linux-arm64'
-                  output_node_file: 'node.napi.musl.node'
+                  output_node_file: 'zeromq.musl.node'
                   test: false
 
       - stage: publish
