@@ -63,7 +63,6 @@ extends:
                 parameters:
                   ARCH: arm64
                   npm_config_arch: arm64
-                  node_version: '20.x'
                   artifact_name: 'win32-arm64'
                   prebuild_folder_name: 'win32-arm64'
                   output_node_file: 'node.napi.glibc.node'
