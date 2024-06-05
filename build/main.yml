@@ -63,7 +63,7 @@ extends:
                 parameters:
                   ARCH: arm64
                   npm_config_arch: arm64
-                  node_version: '19.x'
+                  node_version: '20.x'
                   artifact_name: 'win32-arm64'
                   prebuild_folder_name: 'win32-arm64'
                   output_node_file: 'node.napi.glibc.node'
@@ -119,7 +119,7 @@ extends:
               - template: azure-pipelines/common/steps/setup-linux-toolchains.yml@templates
                 parameters:
                   arch: x64
-                  nodeVersion: '18.x'
+                  nodeVersion: '20.x'
               - template: build/build.yml@self
                 parameters:
                   ARCH: x64
@@ -145,7 +145,7 @@ extends:
               - template: azure-pipelines/common/steps/setup-linux-toolchains.yml@templates
                 parameters:
                   arch: arm64
-                  nodeVersion: '18.x'
+                  nodeVersion: '20.x'
               - template: build/build.yml@self
                 parameters:
                   ARCH: arm64
@@ -174,7 +174,7 @@ extends:
               - template: azure-pipelines/common/steps/setup-linux-toolchains.yml@templates
                 parameters:
                   arch: armhf
-                  nodeVersion: '18.x'
+                  nodeVersion: '20.x'
               - template: build/build.yml@self
                 parameters:
                   ARCH: arm
