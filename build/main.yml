@@ -212,7 +212,7 @@ extends:
                 displayName: Build
                 env:
                   CURRENDIR: $(Build.SourcesDirectory)
-                  DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm install && npm run prebuild
+                  DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm@latest-8 && pnpm install && npm run prebuild
                 inputs:
                   targetType: 'inline'
                   workingDirectory: zeromq.js
@@ -252,7 +252,7 @@ extends:
                 displayName: Build
                 env:
                   CURRENDIR: $(Build.SourcesDirectory)
-                  DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g cross-env && cross-env ARCH=arm64 npm_config_arch=arm64 npm install && cross-env ARCH=arm64 npm_config_arch=arm64 npm run prebuild
+                  DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g cross-env pnpm@latest-8 && cross-env ARCH=arm64 npm_config_arch=arm64 pnpm install && cross-env ARCH=arm64 npm_config_arch=arm64 npm run prebuild
                 inputs:
                   targetType: 'inline'
                   workingDirectory: zeromq.js
