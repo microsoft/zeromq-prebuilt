@@ -47,7 +47,7 @@ extends:
                 parameters:
                   artifact_name: 'win32-x64'
                   prebuild_folder_name: 'win32-x64'
-                  output_node_file: 'node.napi.glibc.node'
+                  output_node_file: 'zeromq.glibc.node'
 
           - job: win32_arm64
             pool:
@@ -63,10 +63,10 @@ extends:
                 parameters:
                   ARCH: arm64
                   npm_config_arch: arm64
-                  node_version: '19.x'
+                  node_version: '20.x'
                   artifact_name: 'win32-arm64'
                   prebuild_folder_name: 'win32-arm64'
-                  output_node_file: 'node.napi.glibc.node'
+                  output_node_file: 'zeromq.glibc.node'
                   test: false
 
           - job: darwin_x64
@@ -85,7 +85,7 @@ extends:
                   ARCH: ''
                   artifact_name: 'darwin-x64'
                   prebuild_folder_name: 'darwin-x64'
-                  output_node_file: 'node.napi.glibc.node'
+                  output_node_file: 'zeromq.glibc.node'
 
           - job: darwin_arm64
             pool:
@@ -103,7 +103,7 @@ extends:
                   ARCH: arm64
                   artifact_name: 'darwin-arm64'
                   prebuild_folder_name: 'darwin-arm64'
-                  output_node_file: 'node.napi.glibc.node'
+                  output_node_file: 'zeromq.glibc.node'
                   test: false
 
           - job: linux_x64_glibc
@@ -119,7 +119,7 @@ extends:
               - template: azure-pipelines/common/steps/setup-linux-toolchains.yml@templates
                 parameters:
                   arch: x64
-                  nodeVersion: '18.x'
+                  nodeVersion: '20.x'
               - template: build/build.yml@self
                 parameters:
                   ARCH: x64
@@ -127,7 +127,7 @@ extends:
                   prebuild_folder_name: 'linux-x64'
                   yum_install_python: false
                   install_node: false
-                  output_node_file: 'node.napi.glibc.node'
+                  output_node_file: 'zeromq.glibc.node'
               - template: azure-pipelines/common/steps/verify-platform-requirements.yml@templates
                 parameters:
                   arch: x64
@@ -145,7 +145,7 @@ extends:
               - template: azure-pipelines/common/steps/setup-linux-toolchains.yml@templates
                 parameters:
                   arch: arm64
-                  nodeVersion: '18.x'
+                  nodeVersion: '20.x'
               - template: build/build.yml@self
                 parameters:
                   ARCH: arm64
@@ -156,7 +156,7 @@ extends:
                   yum_install_python: false
                   test: false
                   install_node: false
-                  output_node_file: 'node.napi.glibc.node'
+                  output_node_file: 'zeromq.glibc.node'
               - template: azure-pipelines/common/steps/verify-platform-requirements.yml@templates
                 parameters:
                   arch: arm64
@@ -174,7 +174,7 @@ extends:
               - template: azure-pipelines/common/steps/setup-linux-toolchains.yml@templates
                 parameters:
                   arch: armhf
-                  nodeVersion: '18.x'
+                  nodeVersion: '20.x'
               - template: build/build.yml@self
                 parameters:
                   ARCH: arm
@@ -185,7 +185,7 @@ extends:
                   yum_install_python: false
                   test: false
                   install_node: false
-                  output_node_file: 'node.napi.glibc.node'
+                  output_node_file: 'zeromq.glibc.node'
               - template: azure-pipelines/common/steps/verify-platform-requirements.yml@templates
                 parameters:
                   arch: armhf
@@ -207,26 +207,26 @@ extends:
 
               - task: DockerInstaller@0
                 inputs:
-                  dockerVersion: '17.09.0-ce'
+                  dockerVersion: '24.0.9'
 
               - task: Bash@3
                 displayName: Build
                 env:
                   CURRENDIR: $(Build.SourcesDirectory)
-                  DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm install && npm run prebuild
+                  DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm@latest-8 && pnpm install && npm run prebuild
                 inputs:
                   targetType: 'inline'
                   workingDirectory: zeromq.js
                   script: |
-                      docker pull node:14.16.0-alpine
-                      docker tag node:14.16.0-alpine builder
+                      docker pull node:18.20.3-alpine3.18
+                      docker tag node:18.20.3-alpine3.18 builder
                       docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged builder sh -c "$DOCKERCMD"
 
               - template: build/artifacts.yml@self
                 parameters:
                   artifact_name: alpine-x64-musl
                   prebuild_folder_name: 'linux-x64'
-                  output_node_file: 'node.napi.musl.node'
+                  output_node_file: 'zeromq.musl.node'
                   test: false
 
 
@@ -247,27 +247,27 @@ extends:
 
               - task: DockerInstaller@0
                 inputs:
-                  dockerVersion: '17.09.0-ce'
+                  dockerVersion: '24.0.9'
 
               - task: Bash@3
                 displayName: Build
                 env:
                   CURRENDIR: $(Build.SourcesDirectory)
-                  DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g cross-env && cross-env ARCH=arm64 npm_config_arch=arm64 npm install && cross-env ARCH=arm64 npm_config_arch=arm64 npm run prebuild
+                  DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g cross-env pnpm@latest-8 && cross-env ARCH=arm64 npm_config_arch=arm64 pnpm install && cross-env ARCH=arm64 npm_config_arch=arm64 npm run prebuild
                 inputs:
                   targetType: 'inline'
                   workingDirectory: zeromq.js
                   script: |
                       docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-                      docker pull arm64v8/node:14.16.0-alpine
-                      docker tag arm64v8/node:14.16.0-alpine builder
+                      docker pull --platform linux/arm64/v8 node:18.20.3-alpine3.18
+                      docker tag node:18.20.3-alpine3.18 builder
                       docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged builder sh -c "$DOCKERCMD"
 
               - template: build/artifacts.yml@self
                 parameters:
                   artifact_name: alpine-arm64-musl
                   prebuild_folder_name: 'linux-arm64'
-                  output_node_file: 'node.napi.musl.node'
+                  output_node_file: 'zeromq.musl.node'
                   test: false
 
       - stage: publish

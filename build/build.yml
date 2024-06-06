@@ -83,7 +83,8 @@ steps:
 
 - bash: |
     export PREBUILD_STRIP_BIN=$STRIP
-    npm install
+    npm install -g pnpm@latest-8
+    pnpm install
     npm run prebuild
   displayName: Build
   condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), ne('${{ parameters.ARCH }}', ''))
@@ -94,7 +95,8 @@ steps:
     PREBUILD_ARCH: ${{ parameters.ARCH }}
 
 - bash: |
-    npm install
+    npm install -g pnpm@latest-8
+    pnpm install
     npm run prebuild
   displayName: Build
   condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), eq('${{ parameters.ARCH }}', ''))
