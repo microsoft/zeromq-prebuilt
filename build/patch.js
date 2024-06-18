@@ -1,8 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-function fixWhitespace(fileName) {
-  const file = path.join(__dirname, fileName);
+function fixWhitespace(file) {
   const contents = fs.readFileSync(file).toString();
   fs.writeFileSync(file, contents.replace(/\r\n/g, "\n"));
 }
@@ -13,6 +12,6 @@ if (platform() === "win32") {
   const { platform } = require("os");
   const path = require("path");
 
-  fixWhitespace("zeromq.js.patch");
-  fixWhitespace("libzmq.patch");
+  fixWhitespace(path.join(__dirname, "zeromq.js.patch"));
+  fixWhitespace(path.join(__dirname, "libzmq.patch"));
 }
