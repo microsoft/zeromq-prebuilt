@@ -28,7 +28,7 @@ index 18594938..ef308772 100644
    endif()
  
 +  if(HAVE_WAITONADDRESS)
-+    target_link_libraries(libzmq "C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\api-ms-win-core-synch-l1-2-0.dll")
++    target_link_libraries(libzmq "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\api-ms-win-core-synch-l1-2-0.dll")
 +  endif()
 +
    if(RT_LIBRARY)
@@ -39,7 +39,7 @@ index 18594938..ef308772 100644
    endif()
  
 +  if(HAVE_WAITONADDRESS)
-+    target_link_libraries(libzmq-static "C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\api-ms-win-core-synch-l1-2-0.dll")
++    target_link_libraries(libzmq-static "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\api-ms-win-core-synch-l1-2-0.dll")
 +  endif()
 +
    if(RT_LIBRARY)
