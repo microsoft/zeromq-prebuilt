@@ -1,0 +1,153 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 18594938..ef308772 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -575,6 +575,9 @@ if(ZMQ_HAVE_WINDOWS)
+   check_cxx_symbol_exists(GetAdaptersAddresses "winsock2.h;iphlpapi.h" HAVE_IPHLAPI)
+   check_cxx_symbol_exists(if_nametoindex "iphlpapi.h" HAVE_IF_NAMETOINDEX)
+ 
++  set(CMAKE_REQUIRED_LIBRARIES "synchronization.lib")
++  check_cxx_symbol_exists(WaitOnAddress "windows.h" HAVE_WAITONADDRESS)
++
+   set(CMAKE_REQUIRED_LIBRARIES "")
+   # TODO: This not the symbol we're looking for. What is the symbol?
+   check_library_exists(ws2 fopen "" HAVE_WS2)
+@@ -606,6 +609,10 @@ if(WIN32 AND NOT CYGWIN)
+   if(NOT HAVE_IPHLAPI)
+     message(FATAL_ERROR "Cannot link to iphlapi")
+   endif()
++
++  if(NOT HAVE_WAITONADDRESS)
++    message(FATAL_ERROR "Cannot link to synchronization")
++  endif()
+ endif()
+ 
+ if(NOT MSVC)
+@@ -1523,6 +1530,10 @@ if(BUILD_SHARED)
+     target_link_libraries(libzmq iphlpapi)
+   endif()
+ 
++  if(HAVE_WAITONADDRESS)
++    target_link_libraries(libzmq synchronization)
++  endif()
++
+   if(RT_LIBRARY)
+     target_link_libraries(libzmq -lrt)
+   endif()
+@@ -1577,6 +1588,10 @@ if(BUILD_STATIC)
+     target_link_libraries(libzmq-static iphlpapi)
+   endif()
+ 
++  if(HAVE_WAITONADDRESS)
++    target_link_libraries(libzmq-static synchronization)
++  endif()
++
+   if(RT_LIBRARY)
+     target_link_libraries(libzmq-static -lrt)
+   endif()
+diff --git a/external/wepoll/wepoll.c b/external/wepoll/wepoll.c
+index 186d3f2d..d649ebd7 100644
+--- a/external/wepoll/wepoll.c
++++ b/external/wepoll/wepoll.c
+@@ -197,11 +197,6 @@ typedef struct _OBJECT_ATTRIBUTES {
+ #define FILE_OPEN 0x00000001UL
+ #endif
+ 
+-#define KEYEDEVENT_WAIT 0x00000001UL
+-#define KEYEDEVENT_WAKE 0x00000002UL
+-#define KEYEDEVENT_ALL_ACCESS \
+-  (STANDARD_RIGHTS_REQUIRED | KEYEDEVENT_WAIT | KEYEDEVENT_WAKE)
+-
+ #define NT_NTDLL_IMPORT_LIST(X)           \
+   X(NTSTATUS,                             \
+     NTAPI,                                \
+@@ -225,14 +220,6 @@ typedef struct _OBJECT_ATTRIBUTES {
+      PVOID EaBuffer,                      \
+      ULONG EaLength))                     \
+                                           \
+-  X(NTSTATUS,                             \
+-    NTAPI,                                \
+-    NtCreateKeyedEvent,                   \
+-    (PHANDLE KeyedEventHandle,            \
+-     ACCESS_MASK DesiredAccess,           \
+-     POBJECT_ATTRIBUTES ObjectAttributes, \
+-     ULONG Flags))                        \
+-                                          \
+   X(NTSTATUS,                             \
+     NTAPI,                                \
+     NtDeviceIoControlFile,                \
+@@ -247,22 +234,6 @@ typedef struct _OBJECT_ATTRIBUTES {
+      PVOID OutputBuffer,                  \
+      ULONG OutputBufferLength))           \
+                                           \
+-  X(NTSTATUS,                             \
+-    NTAPI,                                \
+-    NtReleaseKeyedEvent,                  \
+-    (HANDLE KeyedEventHandle,             \
+-     PVOID KeyValue,                      \
+-     BOOLEAN Alertable,                   \
+-     PLARGE_INTEGER Timeout))             \
+-                                          \
+-  X(NTSTATUS,                             \
+-    NTAPI,                                \
+-    NtWaitForKeyedEvent,                  \
+-    (HANDLE KeyedEventHandle,             \
+-     PVOID KeyValue,                      \
+-     BOOLEAN Alertable,                   \
+-     PLARGE_INTEGER Timeout))             \
+-                                          \
+   X(ULONG, WINAPI, RtlNtStatusToDosError, (NTSTATUS Status))
+ 
+ #define X(return_type, attributes, name, parameters) \
+@@ -1520,16 +1491,12 @@ bool queue_is_enqueued(const queue_node_t* node) {
+ #define REFLOCK__REF          ((long) 0x00000001UL)
+ #define REFLOCK__REF_MASK     ((long) 0x0fffffffUL)
+ #define REFLOCK__DESTROY      ((long) 0x10000000UL)
+-#define REFLOCK__DESTROY_MASK ((long) 0xf0000000UL)
++#define REFLOCK__DESTROY_MASK ((long) 0x10000000UL)
++#define REFLOCK__SIGNAL       ((long) 0x20000000UL)
++#define REFLOCK__SIGNAL_MASK  ((long) 0x20000000UL)
+ #define REFLOCK__POISON       ((long) 0x300dead0UL)
+ 
+-static HANDLE reflock__keyed_event = NULL;
+-
+ int reflock_global_init(void) {
+-  NTSTATUS status = NtCreateKeyedEvent(
+-      &reflock__keyed_event, KEYEDEVENT_ALL_ACCESS, NULL, 0);
+-  if (status != STATUS_SUCCESS)
+-    return_set_error(-1, RtlNtStatusToDosError(status));
+   return 0;
+ }
+ 
+@@ -1537,17 +1504,22 @@ void reflock_init(reflock_t* reflock) {
+   reflock->state = 0;
+ }
+ 
+-static void reflock__signal_event(void* address) {
+-  NTSTATUS status =
+-      NtReleaseKeyedEvent(reflock__keyed_event, address, FALSE, NULL);
+-  if (status != STATUS_SUCCESS)
+-    abort();
++static void reflock__signal_event(reflock_t* reflock) {
++  long state = InterlockedAdd(&reflock->state, REFLOCK__SIGNAL);
++  unused_var(state);
++  WakeByAddressSingle(reflock);
+ }
+ 
+-static void reflock__await_event(void* address) {
+-  NTSTATUS status =
+-      NtWaitForKeyedEvent(reflock__keyed_event, address, FALSE, NULL);
+-  if (status != STATUS_SUCCESS)
++static void reflock__await_event(reflock_t* reflock) {
++  BOOL status = TRUE;
++  do {
++    status = WaitOnAddress(reflock, reflock, sizeof(reflock_t*), INFINITE);
++  } while ((reflock->state & REFLOCK__SIGNAL_MASK) == 0);
++
++  long state = InterlockedAdd(&reflock->state, -REFLOCK__SIGNAL);
++  unused_var(state);
++
++  if (status != TRUE)
+     abort();
+ }
+ 
