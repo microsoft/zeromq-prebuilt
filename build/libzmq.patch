@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 18594938..ef308772 100644
+index 18594938..446cb1c4 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -575,6 +575,9 @@ if(ZMQ_HAVE_WINDOWS)
@@ -46,18 +46,10 @@ index 18594938..ef308772 100644
      target_link_libraries(libzmq-static -lrt)
    endif()
 diff --git a/external/wepoll/wepoll.c b/external/wepoll/wepoll.c
-index 186d3f2d..bcddaa06 100644
+index 186d3f2d..d649ebd7 100644
 --- a/external/wepoll/wepoll.c
 +++ b/external/wepoll/wepoll.c
-@@ -128,6 +128,7 @@ WEPOLL_EXPORT int epoll_wait(HANDLE ephnd,
- #undef _WIN32_WINNT
- #define _WIN32_WINNT 0x0600
- 
-+#include <synchapi.h>
- #include <winsock2.h>
- #include <ws2tcpip.h>
- #include <windows.h>
-@@ -197,11 +198,6 @@ typedef struct _OBJECT_ATTRIBUTES {
+@@ -197,11 +197,6 @@ typedef struct _OBJECT_ATTRIBUTES {
  #define FILE_OPEN 0x00000001UL
  #endif
  
@@ -69,7 +61,7 @@ index 186d3f2d..bcddaa06 100644
  #define NT_NTDLL_IMPORT_LIST(X)           \
    X(NTSTATUS,                             \
      NTAPI,                                \
-@@ -225,14 +221,6 @@ typedef struct _OBJECT_ATTRIBUTES {
+@@ -225,14 +220,6 @@ typedef struct _OBJECT_ATTRIBUTES {
       PVOID EaBuffer,                      \
       ULONG EaLength))                     \
                                            \
@@ -84,7 +76,7 @@ index 186d3f2d..bcddaa06 100644
    X(NTSTATUS,                             \
      NTAPI,                                \
      NtDeviceIoControlFile,                \
-@@ -247,22 +235,6 @@ typedef struct _OBJECT_ATTRIBUTES {
+@@ -247,22 +234,6 @@ typedef struct _OBJECT_ATTRIBUTES {
       PVOID OutputBuffer,                  \
       ULONG OutputBufferLength))           \
                                            \
@@ -107,7 +99,7 @@ index 186d3f2d..bcddaa06 100644
    X(ULONG, WINAPI, RtlNtStatusToDosError, (NTSTATUS Status))
  
  #define X(return_type, attributes, name, parameters) \
-@@ -1520,16 +1492,12 @@ bool queue_is_enqueued(const queue_node_t* node) {
+@@ -1520,16 +1491,12 @@ bool queue_is_enqueued(const queue_node_t* node) {
  #define REFLOCK__REF          ((long) 0x00000001UL)
  #define REFLOCK__REF_MASK     ((long) 0x0fffffffUL)
  #define REFLOCK__DESTROY      ((long) 0x10000000UL)
@@ -127,7 +119,7 @@ index 186d3f2d..bcddaa06 100644
    return 0;
  }
  
-@@ -1537,17 +1505,22 @@ void reflock_init(reflock_t* reflock) {
+@@ -1537,17 +1504,22 @@ void reflock_init(reflock_t* reflock) {
    reflock->state = 0;
  }
  
