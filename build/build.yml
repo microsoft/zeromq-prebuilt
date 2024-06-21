@@ -57,6 +57,14 @@ steps:
   workingDirectory: zeromq.js
 
 - pwsh: |
+    echo "Checking performance toolkit"
+    Get-ChildItem "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit"
+    echo "Checking Windows Kits/10"
+    Get-ChildItem -Recurse "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit"
+  displayName: Check SDK folders
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
+
+- pwsh: |
     $includes = @'
       {
         'target_defaults': {
