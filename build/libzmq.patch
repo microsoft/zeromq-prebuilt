@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 18594938..5e92bd84 100644
+index 18594938..ef308772 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -575,6 +575,9 @@ if(ZMQ_HAVE_WINDOWS)
@@ -12,7 +12,7 @@ index 18594938..5e92bd84 100644
    set(CMAKE_REQUIRED_LIBRARIES "")
    # TODO: This not the symbol we're looking for. What is the symbol?
    check_library_exists(ws2 fopen "" HAVE_WS2)
-@@ -606,6 +609,15 @@ if(WIN32 AND NOT CYGWIN)
+@@ -606,6 +609,10 @@ if(WIN32 AND NOT CYGWIN)
    if(NOT HAVE_IPHLAPI)
      message(FATAL_ERROR "Cannot link to iphlapi")
    endif()
@@ -20,31 +20,26 @@ index 18594938..5e92bd84 100644
 +  if(NOT HAVE_WAITONADDRESS)
 +    message(FATAL_ERROR "Cannot link to synchronization")
 +  endif()
-+
-+  find_library(SYNCH_LIB NAMES synchronization PATHS "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit")
-+  if(NOT SYNCH_LIB)
-+    message(FATAL_ERROR "synchronization.lib not found")
-+  endif()
  endif()
  
  if(NOT MSVC)
-@@ -1523,6 +1535,10 @@ if(BUILD_SHARED)
+@@ -1523,6 +1530,10 @@ if(BUILD_SHARED)
      target_link_libraries(libzmq iphlpapi)
    endif()
  
 +  if(HAVE_WAITONADDRESS)
-+    target_link_libraries(libzmq SYNCH_LIB)
++    target_link_libraries(libzmq synchronization)
 +  endif()
 +
    if(RT_LIBRARY)
      target_link_libraries(libzmq -lrt)
    endif()
-@@ -1577,6 +1593,10 @@ if(BUILD_STATIC)
+@@ -1577,6 +1588,10 @@ if(BUILD_STATIC)
      target_link_libraries(libzmq-static iphlpapi)
    endif()
  
 +  if(HAVE_WAITONADDRESS)
-+    target_link_libraries(libzmq-static SYNCH_LIB)
++    target_link_libraries(libzmq-static synchronization)
 +  endif()
 +
    if(RT_LIBRARY)
@@ -163,4 +158,4 @@ index 186d3f2d..b331d1f1 100644
 +  if (status != TRUE)
      abort();
  }
- 
+
