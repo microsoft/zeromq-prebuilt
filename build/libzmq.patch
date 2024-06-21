@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 18594938..446cb1c4 100644
+index 18594938..0d80b34a 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -575,6 +575,9 @@ if(ZMQ_HAVE_WINDOWS)
@@ -23,33 +23,43 @@ index 18594938..446cb1c4 100644
  endif()
  
  if(NOT MSVC)
-@@ -1523,6 +1530,10 @@ if(BUILD_SHARED)
+@@ -1523,6 +1530,11 @@ if(BUILD_SHARED)
      target_link_libraries(libzmq iphlpapi)
    endif()
  
 +  if(HAVE_WAITONADDRESS)
-+    target_link_libraries(libzmq "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\api-ms-win-core-synch-l1-2-0.dll")
++    find_library(SYNCH_LIB NAMES synchronization PATHS "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit")
++    target_link_libraries(libzmq SYNCH_LIB)
 +  endif()
 +
    if(RT_LIBRARY)
      target_link_libraries(libzmq -lrt)
    endif()
-@@ -1577,6 +1588,10 @@ if(BUILD_STATIC)
+@@ -1577,6 +1589,11 @@ if(BUILD_STATIC)
      target_link_libraries(libzmq-static iphlpapi)
    endif()
  
 +  if(HAVE_WAITONADDRESS)
-+    target_link_libraries(libzmq-static "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\api-ms-win-core-synch-l1-2-0.dll")
++    find_library(SYNCH_LIB NAMES synchronization PATHS "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit")
++    target_link_libraries(libzmq-static SYNCH_LIB)
 +  endif()
 +
    if(RT_LIBRARY)
      target_link_libraries(libzmq-static -lrt)
    endif()
 diff --git a/external/wepoll/wepoll.c b/external/wepoll/wepoll.c
-index 186d3f2d..d649ebd7 100644
+index 186d3f2d..b331d1f1 100644
 --- a/external/wepoll/wepoll.c
 +++ b/external/wepoll/wepoll.c
-@@ -197,11 +197,6 @@ typedef struct _OBJECT_ATTRIBUTES {
+@@ -131,6 +131,7 @@ WEPOLL_EXPORT int epoll_wait(HANDLE ephnd,
+ #include <winsock2.h>
+ #include <ws2tcpip.h>
+ #include <windows.h>
++#include <synchapi.h>
+ 
+ #if defined(__clang__)
+ #pragma clang diagnostic pop
+@@ -197,11 +198,6 @@ typedef struct _OBJECT_ATTRIBUTES {
  #define FILE_OPEN 0x00000001UL
  #endif
  
@@ -61,7 +71,7 @@ index 186d3f2d..d649ebd7 100644
  #define NT_NTDLL_IMPORT_LIST(X)           \
    X(NTSTATUS,                             \
      NTAPI,                                \
-@@ -225,14 +220,6 @@ typedef struct _OBJECT_ATTRIBUTES {
+@@ -225,14 +221,6 @@ typedef struct _OBJECT_ATTRIBUTES {
       PVOID EaBuffer,                      \
       ULONG EaLength))                     \
                                            \
@@ -76,7 +86,7 @@ index 186d3f2d..d649ebd7 100644
    X(NTSTATUS,                             \
      NTAPI,                                \
      NtDeviceIoControlFile,                \
-@@ -247,22 +234,6 @@ typedef struct _OBJECT_ATTRIBUTES {
+@@ -247,22 +235,6 @@ typedef struct _OBJECT_ATTRIBUTES {
       PVOID OutputBuffer,                  \
       ULONG OutputBufferLength))           \
                                            \
@@ -99,7 +109,7 @@ index 186d3f2d..d649ebd7 100644
    X(ULONG, WINAPI, RtlNtStatusToDosError, (NTSTATUS Status))
  
  #define X(return_type, attributes, name, parameters) \
-@@ -1520,16 +1491,12 @@ bool queue_is_enqueued(const queue_node_t* node) {
+@@ -1520,16 +1492,12 @@ bool queue_is_enqueued(const queue_node_t* node) {
  #define REFLOCK__REF          ((long) 0x00000001UL)
  #define REFLOCK__REF_MASK     ((long) 0x0fffffffUL)
  #define REFLOCK__DESTROY      ((long) 0x10000000UL)
@@ -119,7 +129,7 @@ index 186d3f2d..d649ebd7 100644
    return 0;
  }
  
-@@ -1537,17 +1504,22 @@ void reflock_init(reflock_t* reflock) {
+@@ -1537,17 +1505,22 @@ void reflock_init(reflock_t* reflock) {
    reflock->state = 0;
  }
  
