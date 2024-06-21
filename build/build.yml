@@ -93,6 +93,8 @@ steps:
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
 - bash: |
+    echo "Checking PATH"
+    echo $PATH
     export PREBUILD_STRIP_BIN=$STRIP
     npm install -g pnpm@latest-8
     pnpm install
