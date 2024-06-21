@@ -57,16 +57,6 @@ steps:
   workingDirectory: zeromq.js
 
 - pwsh: |
-    echo "Checking PATH"
-    echo $env:PATH
-    echo "Checking performance toolkit"
-    Get-ChildItem "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit"
-    echo "Checking Windows Kits/10"
-    Get-ChildItem -Recurse "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit"
-  displayName: Check SDK folders
-  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
-
-- pwsh: |
     $includes = @'
       {
         'target_defaults': {
@@ -93,27 +83,12 @@ steps:
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
 - bash: |
-    export CMAKE_LIBRARY_PATH="/c/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit":$CMAKE_LIBRARY_PATH
-    echo $CMAKE_LIBRARY_PATH
     export PREBUILD_STRIP_BIN=$STRIP
     npm install -g pnpm@latest-8
     pnpm install
     npm run prebuild
-  displayName: Build (Windows)
-  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.build }}', 'true'), ne('${{ parameters.ARCH }}', ''))
-  workingDirectory: zeromq.js
-  env:
-    ARCH: ${{ parameters.ARCH }}
-    npm_config_arch: ${{ parameters.npm_config_arch }}
-    PREBUILD_ARCH: ${{ parameters.ARCH }}
-
-- bash: |
-    export PREBUILD_STRIP_BIN=$STRIP
-    npm install -g pnpm@latest-8
-    pnpm install
-    npm run prebuild
-  displayName: Build (non-Windows)
-  condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.build }}', 'true'), ne('${{ parameters.ARCH }}', ''))
+  displayName: Build
+  condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), ne('${{ parameters.ARCH }}', ''))
   workingDirectory: zeromq.js
   env:
     ARCH: ${{ parameters.ARCH }}
