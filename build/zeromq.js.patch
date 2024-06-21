@@ -1,3 +1,15 @@
+diff --git a/binding.gyp b/binding.gyp
+index 280b468..cd410ff 100644
+--- a/binding.gyp
++++ b/binding.gyp
+@@ -90,6 +90,7 @@
+                 '<(module_root_dir)/build/libzmq/lib/libzmq',
+                 'ws2_32.lib',
+                 'iphlpapi',
++                'synchronization.lib'
+               ],
+             }],
+           ],
 diff --git a/package.json b/package.json
 index c9611cf..0441bb3 100644
 --- a/package.json
@@ -500,3 +512,18 @@ index 1acd1f1..db6ddfb 100644
        setimmediate-napi: 1.0.6
      dev: true
  
+diff --git a/script/build.ts b/script/build.ts
+index 693d914..c0d8ca5 100644
+--- a/script/build.ts
++++ b/script/build.ts
+@@ -65,6 +65,10 @@ function main() {
+     exec(`tar xzf "${tarball}"`, execOptions)
+   }
+ 
++  cd(src_dir)
++  exec(`patch -p1 < ${root}/libzmq.patch`)
++  cd(libzmq_build_prefix)
++
+   if (process.env.ZMQ_DRAFT === "true") {
+     console.log("Enabling draft support")
+     build_options += " -DENABLE_DRAFTS=ON"
