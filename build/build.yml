@@ -105,27 +105,27 @@ steps:
   env:
     npm_config_arch: ${{ parameters.npm_config_arch }}
 
-# - task: CopyFiles@2
-#   inputs:
-#     Contents: |
-#       zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}
-#       zeromq.js/build/libzmq/bin/*.dll
-#       zeromq.js/**/*.pdb
-#     TargetFolder: $(Agent.TempDirectory)/apiscan
-#   displayName: Copy files to APIScan dir
-#   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
+- task: CopyFiles@2
+  inputs:
+    Contents: |
+      zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}
+      zeromq.js/build/libzmq/bin/*.dll
+      zeromq.js/**/*.pdb
+    TargetFolder: $(Agent.TempDirectory)/apiscan
+  displayName: Copy files to APIScan dir
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
-# - task: APIScan@2
-#   inputs:
-#     softwareFolder: $(Agent.TempDirectory)/apiscan
-#     softwareName: 'zeromq'
-#     softwareVersionNum: '1'
-#     isLargeApp: false
-#     toolVersion: 'Latest'
-#   displayName: Run APIScan
-#   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
-#   env:
-#     AzureServicesAuthConnectionString: $(apiscan-connectionstring)
+- task: APIScan@2
+  inputs:
+    softwareFolder: $(Agent.TempDirectory)/apiscan
+    softwareName: 'zeromq'
+    softwareVersionNum: '1'
+    isLargeApp: false
+    toolVersion: 'Latest'
+  displayName: Run APIScan
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
+  env:
+    AzureServicesAuthConnectionString: $(apiscan-connectionstring)
 
 - task: PublishSecurityAnalysisLogs@3
   inputs:
