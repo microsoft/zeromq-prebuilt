@@ -212,16 +212,15 @@ extends:
               - task: Bash@3
                 displayName: Build
                 env:
-                  CURRENDIR: $(Build.SourcesDirectory)
-                  DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g pnpm@latest-8 && pnpm install && npm run prebuild
+                  CURRENTDIR: $(Build.SourcesDirectory)
+                  DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev nodejs && npm i -g pnpm@latest-8 && pnpm install && npm run prebuild
                 inputs:
                   targetType: 'inline'
                   workingDirectory: zeromq.js
                   script: |
-                      docker pull node:18.20.3-alpine3.18
-                      docker tag node:18.20.3-alpine3.18 builder
-                      docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged builder sh -c "$DOCKERCMD"
-
+                      docker pull mcr.microsoft.com/mirror/docker/library/alpine:3.16
+                      docker tag mcr.microsoft.com/mirror/docker/library/alpine:3.16 builder
+                      docker run --volume $CURRENTDIR/zeromq.js:/app --workdir /app --privileged builder sh -c "$DOCKERCMD"
               - template: build/artifacts.yml@self
                 parameters:
                   artifact_name: alpine-x64-musl
@@ -252,16 +251,16 @@ extends:
               - task: Bash@3
                 displayName: Build
                 env:
-                  CURRENDIR: $(Build.SourcesDirectory)
-                  DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev && npm i -g cross-env pnpm@latest-8 && cross-env ARCH=arm64 npm_config_arch=arm64 pnpm install && cross-env ARCH=arm64 npm_config_arch=arm64 npm run prebuild
+                  CURRENTDIR: $(Build.SourcesDirectory)
+                  DOCKERCMD: apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev nodejs && npm i -g cross-env pnpm@latest-8 && cross-env ARCH=arm64 npm_config_arch=arm64 pnpm install && cross-env ARCH=arm64 npm_config_arch=arm64 npm run prebuild
                 inputs:
                   targetType: 'inline'
                   workingDirectory: zeromq.js
                   script: |
                       docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-                      docker pull --platform linux/arm64/v8 node:18.20.3-alpine3.18
-                      docker tag node:18.20.3-alpine3.18 builder
-                      docker run --volume $CURRENDIR/zeromq.js:/app --workdir /app --privileged builder sh -c "$DOCKERCMD"
+                      docker pull --platform linux/arm64/v8 mcr.microsoft.com/mirror/docker/library/alpine:3.16
+                      docker tag mcr.microsoft.com/mirror/docker/library/alpine:3.16 builder
+                      docker run --volume $CURRENTDIR/zeromq.js:/app --workdir /app --privileged builder sh -c "$DOCKERCMD"
 
               - template: build/artifacts.yml@self
                 parameters:
