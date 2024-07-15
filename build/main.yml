@@ -207,7 +207,7 @@ extends:
 
               - task: DockerInstaller@0
                 inputs:
-                  dockerVersion: '24.0.9'
+                  dockerVersion: '27.0.3'
 
               - task: Bash@3
                 displayName: Build
