@@ -9,11 +9,12 @@ steps:
 - bash: |
     ls -LR
   workingDirectory: zeromq.js
+  displayName: List zeromq.js files
 
 - bash: |
     node -r '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' -e 'console.log(1)'
-  displayName: Test Node Module
   condition: and(succeeded(), eq(${{ parameters.test }}, true))
+  displayName: Test Node Module
 
 - task: ArchiveFiles@2
   condition: and(succeeded(), eq('${{ parameters.artifact_name }}', 'linux-x64'))
