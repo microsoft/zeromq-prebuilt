@@ -1,15 +1,3 @@
-diff --git a/binding.gyp b/binding.gyp
-index 280b468..cd410ff 100644
---- a/binding.gyp
-+++ b/binding.gyp
-@@ -90,6 +90,7 @@
-                 '<(module_root_dir)/build/libzmq/lib/libzmq',
-                 'ws2_32.lib',
-                 'iphlpapi',
-+                'synchronization.lib'
-               ],
-             }],
-           ],
 diff --git a/package.json b/package.json
 index c9611cf..0441bb3 100644
 --- a/package.json

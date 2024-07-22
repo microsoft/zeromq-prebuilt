@@ -1,63 +1,8 @@
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 18594938..ef308772 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -575,6 +575,9 @@ if(ZMQ_HAVE_WINDOWS)
-   check_cxx_symbol_exists(GetAdaptersAddresses "winsock2.h;iphlpapi.h" HAVE_IPHLAPI)
-   check_cxx_symbol_exists(if_nametoindex "iphlpapi.h" HAVE_IF_NAMETOINDEX)
- 
-+  set(CMAKE_REQUIRED_LIBRARIES "synchronization.lib")
-+  check_cxx_symbol_exists(WaitOnAddress "windows.h" HAVE_WAITONADDRESS)
-+
-   set(CMAKE_REQUIRED_LIBRARIES "")
-   # TODO: This not the symbol we're looking for. What is the symbol?
-   check_library_exists(ws2 fopen "" HAVE_WS2)
-@@ -606,6 +609,10 @@ if(WIN32 AND NOT CYGWIN)
-   if(NOT HAVE_IPHLAPI)
-     message(FATAL_ERROR "Cannot link to iphlapi")
-   endif()
-+
-+  if(NOT HAVE_WAITONADDRESS)
-+    message(FATAL_ERROR "Cannot link to synchronization")
-+  endif()
- endif()
- 
- if(NOT MSVC)
-@@ -1523,6 +1530,10 @@ if(BUILD_SHARED)
-     target_link_libraries(libzmq iphlpapi)
-   endif()
- 
-+  if(HAVE_WAITONADDRESS)
-+    target_link_libraries(libzmq synchronization)
-+  endif()
-+
-   if(RT_LIBRARY)
-     target_link_libraries(libzmq -lrt)
-   endif()
-@@ -1577,6 +1588,10 @@ if(BUILD_STATIC)
-     target_link_libraries(libzmq-static iphlpapi)
-   endif()
- 
-+  if(HAVE_WAITONADDRESS)
-+    target_link_libraries(libzmq-static synchronization)
-+  endif()
-+
-   if(RT_LIBRARY)
-     target_link_libraries(libzmq-static -lrt)
-   endif()
 diff --git a/external/wepoll/wepoll.c b/external/wepoll/wepoll.c
-index 186d3f2d..b331d1f1 100644
+index 186d3f2d..d440eeb8 100644
 --- a/external/wepoll/wepoll.c
 +++ b/external/wepoll/wepoll.c
-@@ -131,6 +131,7 @@ WEPOLL_EXPORT int epoll_wait(HANDLE ephnd,
- #include <winsock2.h>
- #include <ws2tcpip.h>
- #include <windows.h>
-+#include <synchapi.h>
- 
- #if defined(__clang__)
- #pragma clang diagnostic pop
-@@ -197,11 +198,6 @@ typedef struct _OBJECT_ATTRIBUTES {
+@@ -197,11 +197,6 @@ typedef struct _OBJECT_ATTRIBUTES {
  #define FILE_OPEN 0x00000001UL
  #endif
  
@@ -69,7 +14,7 @@ index 186d3f2d..b331d1f1 100644
  #define NT_NTDLL_IMPORT_LIST(X)           \
    X(NTSTATUS,                             \
      NTAPI,                                \
-@@ -225,14 +221,6 @@ typedef struct _OBJECT_ATTRIBUTES {
+@@ -225,14 +220,6 @@ typedef struct _OBJECT_ATTRIBUTES {
       PVOID EaBuffer,                      \
       ULONG EaLength))                     \
                                            \
@@ -84,7 +29,7 @@ index 186d3f2d..b331d1f1 100644
    X(NTSTATUS,                             \
      NTAPI,                                \
      NtDeviceIoControlFile,                \
-@@ -247,22 +235,6 @@ typedef struct _OBJECT_ATTRIBUTES {
+@@ -247,22 +234,6 @@ typedef struct _OBJECT_ATTRIBUTES {
       PVOID OutputBuffer,                  \
       ULONG OutputBufferLength))           \
                                            \
@@ -107,39 +52,66 @@ index 186d3f2d..b331d1f1 100644
    X(ULONG, WINAPI, RtlNtStatusToDosError, (NTSTATUS Status))
  
  #define X(return_type, attributes, name, parameters) \
-@@ -1520,16 +1492,12 @@ bool queue_is_enqueued(const queue_node_t* node) {
+@@ -481,6 +452,8 @@ WEPOLL_INTERNAL ts_tree_node_t* port_state_to_handle_tree_node(
+ 
+ typedef struct reflock {
+   volatile long state; /* 32-bit Interlocked APIs operate on `long` values. */
++  CONDITION_VARIABLE cv_signal;
++  CONDITION_VARIABLE cv_await;
+ } reflock_t;
+ 
+ WEPOLL_INTERNAL int reflock_global_init(void);
+@@ -1520,35 +1493,60 @@ bool queue_is_enqueued(const queue_node_t* node) {
  #define REFLOCK__REF          ((long) 0x00000001UL)
  #define REFLOCK__REF_MASK     ((long) 0x0fffffffUL)
  #define REFLOCK__DESTROY      ((long) 0x10000000UL)
 -#define REFLOCK__DESTROY_MASK ((long) 0xf0000000UL)
+-#define REFLOCK__POISON       ((long) 0x300dead0UL)
 +#define REFLOCK__DESTROY_MASK ((long) 0x10000000UL)
 +#define REFLOCK__SIGNAL       ((long) 0x20000000UL)
 +#define REFLOCK__SIGNAL_MASK  ((long) 0x20000000UL)
- #define REFLOCK__POISON       ((long) 0x300dead0UL)
++#define REFLOCK__AWAIT        ((long) 0x40000000UL)
++#define REFLOCK__AWAIT_MASK   ((long) 0x40000000UL)
++#define REFLOCK__POISON       ((long) 0x800dead0UL)
  
 -static HANDLE reflock__keyed_event = NULL;
--
++static CRITICAL_SECTION signalMutex;
+ 
  int reflock_global_init(void) {
 -  NTSTATUS status = NtCreateKeyedEvent(
 -      &reflock__keyed_event, KEYEDEVENT_ALL_ACCESS, NULL, 0);
 -  if (status != STATUS_SUCCESS)
 -    return_set_error(-1, RtlNtStatusToDosError(status));
++  InitializeCriticalSection(&signalMutex);
    return 0;
  }
  
-@@ -1537,17 +1505,22 @@ void reflock_init(reflock_t* reflock) {
+ void reflock_init(reflock_t* reflock) {
    reflock->state = 0;
++  InitializeConditionVariable(&reflock->cv_signal);
++  InitializeConditionVariable(&reflock->cv_await);
  }
  
 -static void reflock__signal_event(void* address) {
 -  NTSTATUS status =
 -      NtReleaseKeyedEvent(reflock__keyed_event, address, FALSE, NULL);
 -  if (status != STATUS_SUCCESS)
--    abort();
 +static void reflock__signal_event(reflock_t* reflock) {
-+  long state = InterlockedAdd(&reflock->state, REFLOCK__SIGNAL);
++  BOOL status = TRUE;
++
++  EnterCriticalSection(&signalMutex);
++  long state = InterlockedOr(&reflock->state, REFLOCK__SIGNAL);
++  while ((reflock->state & REFLOCK__AWAIT_MASK) == 0) {
++    status = SleepConditionVariableCS(&reflock->cv_signal, &signalMutex, INFINITE);
++  }
++  LeaveCriticalSection(&signalMutex);
++
++  if (status != TRUE)
+     abort();
++
++  /* At most one reflock__await_event call per reflock. */
++  WakeConditionVariable(&reflock->cv_await);
 +  unused_var(state);
-+  WakeByAddressSingle(reflock);
  }
  
 -static void reflock__await_event(void* address) {
@@ -148,14 +120,40 @@ index 186d3f2d..b331d1f1 100644
 -  if (status != STATUS_SUCCESS)
 +static void reflock__await_event(reflock_t* reflock) {
 +  BOOL status = TRUE;
-+  do {
-+    status = WaitOnAddress(reflock, reflock, sizeof(reflock_t*), INFINITE);
-+  } while ((reflock->state & REFLOCK__SIGNAL_MASK) == 0);
 +
-+  long state = InterlockedAdd(&reflock->state, -REFLOCK__SIGNAL);
-+  unused_var(state);
++  EnterCriticalSection(&signalMutex);
++  long state = InterlockedOr(&reflock->state, REFLOCK__AWAIT);
++  while ((reflock->state & REFLOCK__SIGNAL_MASK) == 0) {
++    status = SleepConditionVariableCS(&reflock->cv_await, &signalMutex, INFINITE);
++  }
++  LeaveCriticalSection(&signalMutex);
 +
 +  if (status != TRUE)
      abort();
++
++  /* Multiple threads could be waiting. */
++  WakeAllConditionVariable(&reflock->cv_signal);
++  unused_var(state);
  }
-
+ 
+ void reflock_ref(reflock_t* reflock) {
+@@ -1565,7 +1563,8 @@ void reflock_unref(reflock_t* reflock) {
+   /* Verify that the lock was referenced and not already destroyed. */
+   assert((state & REFLOCK__DESTROY_MASK & ~REFLOCK__DESTROY) == 0);
+ 
+-  if (state == REFLOCK__DESTROY)
++  if ((state & REFLOCK__DESTROY_MASK) == REFLOCK__DESTROY &&
++      (state & REFLOCK__REF_MASK) == 0)
+     reflock__signal_event(reflock);
+ }
+ 
+@@ -1581,7 +1580,8 @@ void reflock_unref_and_destroy(reflock_t* reflock) {
+     reflock__await_event(reflock);
+ 
+   state = InterlockedExchange(&reflock->state, REFLOCK__POISON);
+-  assert(state == REFLOCK__DESTROY);
++  assert((state & REFLOCK__DESTROY_MASK) == REFLOCK__DESTROY);
++  assert((state & REFLOCK__REF_MASK) == 0);
+ }
+ 
+ #define SOCK__KNOWN_EPOLL_EVENTS                                       \
