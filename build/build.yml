@@ -111,7 +111,7 @@ steps:
       zeromq.js/build/libzmq/bin/*.dll
       zeromq.js/**/*.pdb
     TargetFolder: $(Agent.TempDirectory)/apiscan
-  displayName: Copy files to APIScan dir
+  displayName: Copy files for APIScan
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
 - task: APIScan@2
@@ -125,6 +125,7 @@ steps:
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
   env:
     AzureServicesAuthConnectionString: $(apiscan-connectionstring)
+    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
 - task: PublishSecurityAnalysisLogs@3
   inputs:
