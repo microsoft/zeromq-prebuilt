@@ -120,6 +120,7 @@ steps:
     softwareFolder: $(Agent.TempDirectory)/apiscan
     softwareName: 'zeromq'
     softwareVersionNum: '1'
+    symbolsFolder: 'srv*https://symweb.azurefd.net;$(Agent.TempDirectory)/apiscan'
     isLargeApp: false
     toolVersion: 'Latest'
     azureSubscription: 'vscode-apiscan'
