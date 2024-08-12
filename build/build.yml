@@ -124,9 +124,11 @@ steps:
     }
     Write-Host ""
 
-    # Display checksums of C:/Program Files/Microsoft Visual Studio/2022/**/*.dll files
+    # Display checksums of C:/Program Files (x86)/Microsoft Visual Studio/2022/**/*.dll files
     # $msvc_dlls = Get-ChildItem -Path "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.29.30133/x64" -Filter "*.dll" -Recurse
-    $msvc_dlls = Get-ChildItem -Path "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Redist/MSVC" -Filter "*.dll" -Recurse
+  
+    # Display checksums of C:/Program Files/Microsoft Visual Studio/2022/**/*.dll files
+    $msvc_dlls = Get-ChildItem -Path "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Redist/MSVC/14.40.33807/x64" -Filter "*.dll" -Recurse
     $msvc_dlls | Foreach-Object {
       $hash = Get-FileHash -Algorithm SHA256 $_
       Write-Host "$($hash.Hash)    $($hash.Path)"
