@@ -33,7 +33,7 @@ extends:
         jobs:
           - job: win32_x64
             pool:
-              name: 1es-windows-2019-x64
+              name: 1es-windows-2022-x64
               os: windows
             variables:
               - group: 'API Scan'
