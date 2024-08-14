@@ -145,6 +145,7 @@ steps:
     isLargeApp: false
     toolVersion: 'Latest'
     azureSubscription: 'vscode-apiscan'
+    preserveLogsFolder: true
   displayName: Run APIScan
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
   env:
