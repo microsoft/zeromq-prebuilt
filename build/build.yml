@@ -115,27 +115,6 @@ steps:
   displayName: Copy files for APIScan
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
-- pwsh: |
-    # Display checksums of $(Agent.TempDirectory)/apiscan/zeromq.js/**/*.dll files
-    $apiscan_dlls = Get-ChildItem -Path "$(Agent.TempDirectory)/apiscan/zeromq.js" -Filter "*.dll" -Recurse
-    $apiscan_dlls | Foreach-Object {
-      $hash = Get-FileHash -Algorithm SHA256 $_
-      Write-Host "$($hash.Hash)    $($hash.Path)"
-    }
-    Write-Host ""
-
-    # Display checksums of C:/Program Files (x86)/Microsoft Visual Studio/2022/**/*.dll files
-    # $msvc_dlls = Get-ChildItem -Path "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.29.30133/x64" -Filter "*.dll" -Recurse
-  
-    # Display checksums of C:/Program Files/Microsoft Visual Studio/2022/**/*.dll files
-    $msvc_dlls = Get-ChildItem -Path "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Redist/MSVC/14.40.33807/x64" -Filter "*.dll" -Recurse
-    $msvc_dlls | Foreach-Object {
-      $hash = Get-FileHash -Algorithm SHA256 $_
-      Write-Host "$($hash.Hash)    $($hash.Path)"
-    }
-  displayName: Display DLL checksums
-  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
-
 - task: APIScan@2
   inputs:
     softwareFolder: $(Agent.TempDirectory)/apiscan
