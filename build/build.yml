@@ -50,8 +50,9 @@ steps:
 
 - bash: |
     node ../build/patch.js
-    git apply --whitespace=fix ../build/patch.patch
+    git apply --whitespace=fix ../build/zeromq.js.patch
     git diff
+    cp ../build/libzmq.patch .
   displayName: Patch zeromq.js
   workingDirectory: zeromq.js
 
@@ -98,7 +99,7 @@ steps:
     npm install -g pnpm@latest-8
     pnpm install
     npm run prebuild
-  displayName: Build
+  displayName: Build (no-arch)
   condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), eq('${{ parameters.ARCH }}', ''))
   workingDirectory: zeromq.js
   env:
@@ -111,7 +112,7 @@ steps:
       zeromq.js/build/libzmq/bin/*.dll
       zeromq.js/**/*.pdb
     TargetFolder: $(Agent.TempDirectory)/apiscan
-  displayName: Copy files to APIScan dir
+  displayName: Copy files for APIScan
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
 - task: APIScan@2
@@ -119,12 +120,15 @@ steps:
     softwareFolder: $(Agent.TempDirectory)/apiscan
     softwareName: 'zeromq'
     softwareVersionNum: '1'
+    symbolsFolder: 'srv*https://symweb.azurefd.net;$(Agent.TempDirectory)/apiscan'
     isLargeApp: false
     toolVersion: 'Latest'
+    azureSubscription: 'vscode-apiscan'
   displayName: Run APIScan
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
   env:
     AzureServicesAuthConnectionString: $(apiscan-connectionstring)
+    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
 - task: PublishSecurityAnalysisLogs@3
   inputs:

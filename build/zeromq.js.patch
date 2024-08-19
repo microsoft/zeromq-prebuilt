@@ -500,3 +500,18 @@ index 1acd1f1..db6ddfb 100644
        setimmediate-napi: 1.0.6
      dev: true
  
+diff --git a/script/build.ts b/script/build.ts
+index 693d914..c0d8ca5 100644
+--- a/script/build.ts
++++ b/script/build.ts
+@@ -65,6 +65,10 @@ function main() {
+     exec(`tar xzf "${tarball}"`, execOptions)
+   }
+ 
++  cd(src_dir)
++  exec(`patch -p1 < ${root}/libzmq.patch`)
++  cd(libzmq_build_prefix)
++
+   if (process.env.ZMQ_DRAFT === "true") {
+     console.log("Enabling draft support")
+     build_options += " -DENABLE_DRAFTS=ON"
