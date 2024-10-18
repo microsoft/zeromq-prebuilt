@@ -105,6 +105,15 @@ steps:
   env:
     npm_config_arch: ${{ parameters.npm_config_arch }}
 
+- task: PublishSymbols@2
+  inputs:
+    IndexSources: true
+    SymbolsFolder: zeromq.js
+    SearchPattern: '**/*.pdb'
+    SymbolServerType: TeamServices
+  displayName: Publish Symbols
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
+
 - task: CopyFiles@2
   inputs:
     Contents: |
