@@ -3,7 +3,7 @@ parameters:
   tag: ''
   python_arch: 'x64'
   npm_config_arch: 'x64'
-  node_version: '18.x'
+  node_version: '20.x'
   ARCH: 'x64'
   artifact_name: ''
   prebuild_folder_name: ''
@@ -107,7 +107,7 @@ steps:
 
 - task: PublishSymbols@2
   inputs:
-    IndexSources: true
+    IndexSources: false
     SymbolsFolder: zeromq.js
     SearchPattern: '**/*.pdb'
     SymbolServerType: TeamServices
