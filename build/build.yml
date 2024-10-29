@@ -53,6 +53,7 @@ steps:
     git apply --whitespace=fix ../build/zeromq.js.patch
     git diff
     cp ../build/libzmq.patch .
+    cp ../build/libzmq-438d5d88.patch .
   displayName: Patch zeromq.js
   workingDirectory: zeromq.js
 
