@@ -18,8 +18,8 @@ steps:
 
 - task: PublishSymbols@2
   inputs:
-    IndexSources: false
-    SymbolsFolder: zeromq.js
+    IndexSources: true
+    SymbolsFolder: $(Build.SourcesDirectory)/zeromq.js
     SearchPattern: '**/*.pdb'
     SymbolServerType: TeamServices
   displayName: Publish Symbols
