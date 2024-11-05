@@ -2,10 +2,6 @@ parameters:
   testGitHubRelease: false
 
 steps:
-- task: DownloadPipelineArtifact@2
-  inputs:
-    path: '$(System.ArtifactsDirectory)'
-
 - bash: ls -LR
   displayName: List Files
   workingDirectory: $(System.ArtifactsDirectory)
@@ -24,29 +20,29 @@ steps:
     archiveType: 'zip'
     archiveFile: '$(System.ArtifactsDirectory)/linux-x64.zip'
 
-- task: GitHubRelease@0
+- task: GitHubRelease@1
   condition: eq('${{ parameters.testGitHubRelease }}', 'false')
   inputs:
     gitHubConnection: 'zeromq-prebuilt'
     repositoryName: '$(Build.Repository.Name)'
     action: 'edit'
     target: '$(Build.SourceVersion)'
-    tagSource: 'auto'
+    tagSource: 'userSpecifiedTag'
     tag: '$(Build.SourceBranchName)'
     assets: '$(System.ArtifactsDirectory)/**/*.zip'
     assetUploadMode: 'replace'
     addChangeLog: true
 
-- task: GitHubRelease@0
+- task: GitHubRelease@1
   condition: eq('${{ parameters.testGitHubRelease }}', 'true')
   inputs:
     gitHubConnection: 'zeromq-prebuilt'
     repositoryName: '$(Build.Repository.Name)'
     action: 'edit'
     target: '$(Build.SourceVersion)'
-    tagSource: 'manual'
-    isDraft: true
+    tagSource: 'userSpecifiedTag'
     tag: 'Test'
+    isDraft: true
     assets: '$(System.ArtifactsDirectory)/**/*.zip'
     assetUploadMode: 'replace'
     addChangeLog: false

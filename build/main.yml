@@ -283,7 +283,38 @@ extends:
           os: linux
         condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq('${{ parameters.testGitHubRelease }}', 'true')))
         jobs:
-          - job: win32_x64
+          - job: publish
+            templateContext:
+              type: releaseJob
+              isProduction: true
+              inputs:
+              - input: pipelineArtifact
+                artifactName: win32-x64
+                targetPath: $(System.ArtifactsDirectory)/win32-x64
+              - input: pipelineArtifact
+                artifactName: win32-arm64
+                targetPath: $(System.ArtifactsDirectory)/win32-arm64
+              - input: pipelineArtifact
+                artifactName: darwin-x64
+                targetPath: $(System.ArtifactsDirectory)/darwin-x64
+              - input: pipelineArtifact
+                artifactName: darwin-arm64
+                targetPath: $(System.ArtifactsDirectory)/darwin-arm64
+              - input: pipelineArtifact
+                artifactName: linux-x64
+                targetPath: $(System.ArtifactsDirectory)/linux-x64
+              - input: pipelineArtifact
+                artifactName: linux-arm64-glibc
+                targetPath: $(System.ArtifactsDirectory)/linux-arm64-glibc
+              - input: pipelineArtifact
+                artifactName: linux-armhf-glibc
+                targetPath: $(System.ArtifactsDirectory)/linux-armhf-glibc
+              - input: pipelineArtifact
+                artifactName: alpine-x64-musl
+                targetPath: $(System.ArtifactsDirectory)/alpine-x64-musl
+              - input: pipelineArtifact
+                artifactName: alpine-arm64-musl
+                targetPath: $(System.ArtifactsDirectory)/alpine-arm64-musl
             steps:
               - template: build/publish.yml@self
                 parameters:
