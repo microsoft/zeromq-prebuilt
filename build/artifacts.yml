@@ -20,7 +20,7 @@ steps:
   inputs:
     IndexSources: false # Unsupported source provider 'GitHub' for source indexing.
     SymbolsFolder: $(Build.SourcesDirectory)/zeromq.js
-    SearchPattern: '**\*.pdb'
+    SearchPattern: 'build\**\*.pdb'
     SymbolServerType: TeamServices
     ArtifactServices.Symbol.AccountName: microsoft
     ArtifactServices.Symbol.PAT: $(System.AccessToken)
