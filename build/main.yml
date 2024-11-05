@@ -25,7 +25,7 @@ extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
   parameters:
     sdl:
-      sourceAnalysisPool: 1es-windows-2019-x64
+      sourceAnalysisPool: 1es-windows-2022-x64
       tsa:
         enabled: true
     stages:
@@ -33,7 +33,7 @@ extends:
         jobs:
           - job: win32_x64
             pool:
-              name: 1es-windows-2019-x64
+              name: 1es-windows-2022-x64
               os: windows
             variables:
               - group: 'API Scan'
@@ -51,7 +51,7 @@ extends:
 
           - job: win32_arm64
             pool:
-              name: 1es-windows-2019-x64
+              name: 1es-windows-2022-x64
               os: windows
             templateContext:
               outputs:
