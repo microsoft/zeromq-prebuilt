@@ -35,8 +35,6 @@ extends:
             pool:
               name: 1es-windows-2022-x64
               os: windows
-            variables:
-              - group: 'API Scan'
             templateContext:
               outputs:
                 - output: pipelineArtifact
