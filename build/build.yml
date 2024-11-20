@@ -116,10 +116,6 @@ steps:
   displayName: Copy files for APIScan
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
-- pwsh: Get-ChildItem -Path $(Agent.TempDirectory)/apiscan -Recurse
-  displayName: 📦 List files under scan dir
-  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
-
 - task: APIScan@2
   inputs:
     softwareFolder: $(Agent.TempDirectory)/apiscan
