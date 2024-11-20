@@ -23,7 +23,7 @@ steps:
 - task: GitHubRelease@1
   condition: eq('${{ parameters.testGitHubRelease }}', 'false')
   inputs:
-    gitHubConnection: 'zeromq-prebuilt'
+    gitHubConnection: 'microsoft'
     repositoryName: '$(Build.Repository.Name)'
     action: 'edit'
     target: '$(Build.SourceVersion)'
@@ -36,7 +36,7 @@ steps:
 - task: GitHubRelease@1
   condition: eq('${{ parameters.testGitHubRelease }}', 'true')
   inputs:
-    gitHubConnection: 'zeromq-prebuilt'
+    gitHubConnection: 'microsoft'
     repositoryName: '$(Build.Repository.Name)'
     action: 'edit'
     target: '$(Build.SourceVersion)'
