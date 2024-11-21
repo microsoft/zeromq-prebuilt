@@ -3,6 +3,7 @@ parameters:
   prebuild_folder_name: ''
   output_node_file: ''
   test: true
+  ARCH: ''
 
 steps:
 

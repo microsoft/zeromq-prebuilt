@@ -147,3 +147,4 @@ steps:
       prebuild_folder_name: ${{ parameters.prebuild_folder_name }}
       output_node_file: ${{ parameters.output_node_file }}
       test: ${{ parameters.test }}
+      ARCH: ${{ parameters.ARCH }}
