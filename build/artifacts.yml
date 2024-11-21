@@ -16,17 +16,6 @@ steps:
   condition: and(succeeded(), eq(${{ parameters.test }}, true))
   displayName: Test Node Module
 
-- task: PublishSymbols@2
-  inputs:
-    IndexSources: false # Unsupported source provider 'GitHub' for source indexing.
-    SymbolsFolder: $(Build.SourcesDirectory)/zeromq.js
-    SearchPattern: '**\*.pdb'
-    SymbolServerType: TeamServices
-    ArtifactServices.Symbol.AccountName: microsoft
-    ArtifactServices.Symbol.PAT: $(System.AccessToken)
-    ArtifactServices.Symbol.UseAAD: false
-  displayName: Publish Symbols
-
 - task: ArchiveFiles@2
   condition: and(succeeded(), eq('${{ parameters.artifact_name }}', 'linux-x64'))
   displayName: 'Archive Binary'
