@@ -116,6 +116,18 @@ steps:
   displayName: Copy files for APIScan
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
+- task: PublishSymbols@2
+  inputs:
+    IndexSources: false # Unsupported source provider 'GitHub' for source indexing.
+    SymbolsFolder: $(Agent.TempDirectory)/apiscan
+    SearchPattern: '**\*.pdb'
+    SymbolServerType: TeamServices
+    ArtifactServices.Symbol.AccountName: microsoft
+    ArtifactServices.Symbol.PAT: $(System.AccessToken)
+    ArtifactServices.Symbol.UseAAD: false
+  displayName: Publish Symbols
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
+
 - task: APIScan@2
   inputs:
     softwareFolder: $(Agent.TempDirectory)/apiscan
@@ -147,4 +159,3 @@ steps:
       prebuild_folder_name: ${{ parameters.prebuild_folder_name }}
       output_node_file: ${{ parameters.output_node_file }}
       test: ${{ parameters.test }}
-      ARCH: ${{ parameters.ARCH }}

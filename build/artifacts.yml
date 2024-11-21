@@ -3,7 +3,6 @@ parameters:
   prebuild_folder_name: ''
   output_node_file: ''
   test: true
-  ARCH: ''
 
 steps:
 
@@ -16,18 +15,6 @@ steps:
     node -r '$(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}' -e 'console.log(1)'
   condition: and(succeeded(), eq(${{ parameters.test }}, true))
   displayName: Test Node Module
-
-- task: PublishSymbols@2
-  inputs:
-    IndexSources: false # Unsupported source provider 'GitHub' for source indexing.
-    SymbolsFolder: $(Agent.TempDirectory)/apiscan
-    SearchPattern: '**\*.pdb'
-    SymbolServerType: TeamServices
-    ArtifactServices.Symbol.AccountName: microsoft
-    ArtifactServices.Symbol.PAT: $(System.AccessToken)
-    ArtifactServices.Symbol.UseAAD: false
-  displayName: Publish Symbols
-  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
 - task: ArchiveFiles@2
   condition: and(succeeded(), eq('${{ parameters.artifact_name }}', 'linux-x64'))
