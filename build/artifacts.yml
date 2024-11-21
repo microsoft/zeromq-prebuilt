@@ -26,6 +26,7 @@ steps:
     ArtifactServices.Symbol.PAT: $(System.AccessToken)
     ArtifactServices.Symbol.UseAAD: false
   displayName: Publish Symbols
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
 - task: ArchiveFiles@2
   condition: and(succeeded(), eq('${{ parameters.artifact_name }}', 'linux-x64'))
