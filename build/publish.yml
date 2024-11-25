@@ -33,6 +33,7 @@ steps:
     assetUploadMode: 'replace'
     addChangeLog: true
 
+# Indicate to downstream pipelines running APIScan that this build contains symbols we want to use.
 - script: echo "##vso[build.addbuildtag]publishes-apiscan-symbols"
   displayName: Add build tag
   condition: eq('${{ parameters.testGitHubRelease }}', 'false')
