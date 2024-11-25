@@ -128,7 +128,7 @@ steps:
 - task: 1ES.PublishPipelineArtifact@1
   inputs:
     targetPath: $(Agent.TempDirectory)/apiscan/zeromq.js/build/Release
-    artifactName: zeromq-prebuilt-symbols
+    artifactName: apiscan-symbols
   displayName: Publish Symbols Backup
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 

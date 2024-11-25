@@ -33,7 +33,7 @@ steps:
     assetUploadMode: 'replace'
     addChangeLog: true
 
-- script: echo "##vso[build.addbuildtag]$(Build.SourceBranchName)"
+- script: echo "##vso[build.addbuildtag]publishes-apiscan-symbols"
   displayName: Add build tag
   condition: eq('${{ parameters.testGitHubRelease }}', 'false')
 
