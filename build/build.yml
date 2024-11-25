@@ -128,6 +128,14 @@ steps:
   displayName: Publish Symbols
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
+- task: 1ES.PublishPipelineArtifact@1
+  inputs:
+    targetPath: $(Agent.TempDirectory)/apiscan
+    artifactName: ScannedFiles
+    sbomEnabled: false
+  displayName: Publish scanned files
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
+
 - task: APIScan@2
   inputs:
     softwareFolder: $(Agent.TempDirectory)/apiscan
