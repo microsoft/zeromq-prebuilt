@@ -119,13 +119,17 @@ steps:
 - task: PublishSymbols@2
   inputs:
     IndexSources: false # Unsupported source provider 'GitHub' for source indexing.
-    SymbolsFolder: $(Agent.TempDirectory)/apiscan
+    SymbolsFolder: $(Agent.TempDirectory)/apiscan/zeromq.js/build/Release
     SearchPattern: '**\*.pdb'
     SymbolServerType: TeamServices
-    ArtifactServices.Symbol.AccountName: microsoft
-    ArtifactServices.Symbol.PAT: $(System.AccessToken)
-    ArtifactServices.Symbol.UseAAD: false
   displayName: Publish Symbols
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
+
+- task: 1ES.PublishPipelineArtifact@1
+  inputs:
+    targetPath: $(Agent.TempDirectory)/apiscan/zeromq.js/build/Release
+    artifactName: apiscan-symbols
+  displayName: Publish Symbols Backup
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
 - task: APIScan@2
@@ -133,7 +137,7 @@ steps:
     softwareFolder: $(Agent.TempDirectory)/apiscan
     softwareName: 'zeromq'
     softwareVersionNum: '1'
-    symbolsFolder: 'srv*https://symweb.azurefd.net;$(Agent.TempDirectory)/apiscan'
+    symbolsFolder: 'srv*https://symweb.azurefd.net;$(Agent.TempDirectory)/apiscan/zeromq.js/build/Release'
     isLargeApp: false
     toolVersion: 'Latest'
     azureSubscription: 'vscode-apiscan'
