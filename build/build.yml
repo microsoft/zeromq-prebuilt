@@ -122,6 +122,9 @@ steps:
     SymbolsFolder: $(Agent.TempDirectory)/apiscan/zeromq.js/build/Release
     SearchPattern: '**\*.pdb'
     SymbolServerType: TeamServices
+    ArtifactServices.Symbol.AccountName: monacotools
+    ArtifactServices.Symbol.PAT: $(System.AccessToken)
+    ArtifactServices.Symbol.UseAAD: false
   displayName: Publish Symbols
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
