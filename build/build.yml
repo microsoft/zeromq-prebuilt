@@ -48,14 +48,14 @@ steps:
       cd zeromq.js
       git checkout $TREEISH
 
-- bash: |
-    node ../build/patch.js
-    git apply --whitespace=fix ../build/zeromq.js.patch
-    git diff
-    cp ../build/libzmq.patch .
-    cp ../build/libzmq-438d5d88.patch .
-  displayName: Patch zeromq.js
-  workingDirectory: zeromq.js
+# - bash: |
+#     node ../build/patch.js
+#     git apply --whitespace=fix ../build/zeromq.js.patch
+#     git diff
+#     cp ../build/libzmq.patch .
+#     cp ../build/libzmq-438d5d88.patch .
+#   displayName: Patch zeromq.js
+#   workingDirectory: zeromq.js
 
 - pwsh: |
     $includes = @'
@@ -85,9 +85,8 @@ steps:
 
 - bash: |
     export PREBUILD_STRIP_BIN=$STRIP
-    npm install -g pnpm@latest-8
+    npm install -g pnpm@latest-9
     pnpm install
-    npm run prebuild
   displayName: Build
   condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), ne('${{ parameters.ARCH }}', ''))
   workingDirectory: zeromq.js
@@ -97,9 +96,19 @@ steps:
     PREBUILD_ARCH: ${{ parameters.ARCH }}
 
 - bash: |
-    npm install -g pnpm@latest-8
+    pnpm run build
+  displayName: Build
+  condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), ne('${{ parameters.ARCH }}', ''))
+  workingDirectory: zeromq.js
+  env:
+    ARCH: ${{ parameters.ARCH }}
+    npm_config_arch: ${{ parameters.npm_config_arch }}
+    PREBUILD_ARCH: ${{ parameters.ARCH }}
+
+- bash: |
+    npm install -g pnpm@latest-9
     pnpm install
-    npm run prebuild
+    pnpm run build
   displayName: Build (no-arch)
   condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), eq('${{ parameters.ARCH }}', ''))
   workingDirectory: zeromq.js
