@@ -86,7 +86,7 @@ steps:
 - bash: |
     export PREBUILD_STRIP_BIN=$STRIP
     npm install -g pnpm@latest-9
-    npm install
+    pnpm install
   displayName: Build
   condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), ne('${{ parameters.ARCH }}', ''))
   workingDirectory: zeromq.js
@@ -96,7 +96,7 @@ steps:
     PREBUILD_ARCH: ${{ parameters.ARCH }}
 
 - bash: |
-    npm run build
+    pnpm run build
   displayName: Build
   condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), ne('${{ parameters.ARCH }}', ''))
   workingDirectory: zeromq.js
@@ -107,8 +107,8 @@ steps:
 
 - bash: |
     npm install -g pnpm@latest-9
-    npm install
-    npm run build
+    pnpm install
+    pnpm run build
   displayName: Build (no-arch)
   condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), eq('${{ parameters.ARCH }}', ''))
   workingDirectory: zeromq.js
