@@ -87,6 +87,15 @@ steps:
     export PREBUILD_STRIP_BIN=$STRIP
     npm install -g pnpm@latest-9
     npm install
+  displayName: Build
+  condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), ne('${{ parameters.ARCH }}', ''))
+  workingDirectory: zeromq.js
+  env:
+    ARCH: ${{ parameters.ARCH }}
+    npm_config_arch: ${{ parameters.npm_config_arch }}
+    PREBUILD_ARCH: ${{ parameters.ARCH }}
+
+- bash: |
     npm run build
   displayName: Build
   condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), ne('${{ parameters.ARCH }}', ''))
