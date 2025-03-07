@@ -18,13 +18,13 @@ steps:
   condition: eq('${{ parameters.install_node }}', 'true')
   inputs:
     versionSource: 'spec'
-    versionSpec: ${{ parameters.node_version }}
+    versionSpec: 20.18.0 # ${{ parameters.node_version }}
 
 - task: UsePythonVersion@0
   condition: eq('${{ parameters.yum_install_python }}', 'false')
   displayName: Use Python 3 ${{ parameters.python_arch }}
   inputs:
-    versionSpec: '3.11'
+    versionSpec: '3.11.10'
     addToPath: true
     architecture: ${{ parameters.python_arch }}
 
