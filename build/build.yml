@@ -111,7 +111,7 @@ steps:
     Contents: |
       zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}
       zeromq.js/build/libzmq/bin/*.dll
-      zeromq.js/**/*.pdb
+      zeromq.js/build/Release/zeromq.pdb
     TargetFolder: $(Agent.TempDirectory)/apiscan
   displayName: Copy files for APIScan
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
@@ -129,7 +129,7 @@ steps:
   inputs:
     targetPath: $(Agent.TempDirectory)/apiscan/zeromq.js/build/Release
     artifactName: apiscan-symbols
-  displayName: Publish Symbols Backup
+  displayName: Publish Symbols Artifact
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
 - task: APIScan@2
