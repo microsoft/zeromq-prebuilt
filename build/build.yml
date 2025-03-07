@@ -24,7 +24,7 @@ steps:
   condition: eq('${{ parameters.yum_install_python }}', 'false')
   displayName: Use Python 3 ${{ parameters.python_arch }}
   inputs:
-    versionSpec: '3.11.10'
+    versionSpec: '3.11'
     addToPath: true
     architecture: ${{ parameters.python_arch }}
 
