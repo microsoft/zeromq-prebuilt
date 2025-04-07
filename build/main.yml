@@ -213,7 +213,7 @@ extends:
                   CURRENTDIR: $(Build.SourcesDirectory)
                   DOCKERCMD: >
                     addgroup -g 1001 node && adduser -u 1001 -G node -s /bin/sh -D node && HOME=/home/node &&
-                    apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev npm patch &&
+                    apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake libbsd-dev musl-dev npm patch &&
                     npm i -g pnpm@latest-8 && pnpm install && npm run prebuild
                 inputs:
                   targetType: 'inline'
@@ -256,7 +256,7 @@ extends:
                   CURRENTDIR: $(Build.SourcesDirectory)
                   DOCKERCMD: >
                     addgroup -g 1001 node && adduser -u 1001 -G node -s /bin/sh -D node && HOME=/home/node &&
-                    apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake musl-dev npm patch &&
+                    apk add --no-cache pkgconfig curl tar python3 make gcc g++ cmake libbsd-dev musl-dev npm patch &&
                     npm i -g cross-env pnpm@latest-8 && cross-env ARCH=arm64 npm_config_arch=arm64 pnpm install && cross-env ARCH=arm64 npm_config_arch=arm64 npm run prebuild
                 inputs:
                   targetType: 'inline'
