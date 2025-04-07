@@ -42,7 +42,7 @@ index e0871dcc99..5e97368911 100644
  #else
  template <typename T> struct secure_allocator_t : std::allocator<T>
  {
-+    secure_allocator_t () ZMQ_DEFAULT;
++    secure_allocator_t () ZMQ_DEFAULT
 +
 +    template <class U>
 +    secure_allocator_t (const secure_allocator_t<U> &) ZMQ_NOEXCEPT
