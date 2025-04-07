@@ -51,7 +51,7 @@ index e0871dcc99..5e97368911 100644
 +
 +    template <class U> struct rebind
 +    {
-+        typedef secure_allocator_t<U> other;
++        using other = secure_allocator_t<U>;
 +    };
  };
  #endif
