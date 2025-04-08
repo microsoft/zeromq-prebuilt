@@ -219,8 +219,8 @@ extends:
                   targetType: 'inline'
                   workingDirectory: zeromq.js
                   script: |
-                      docker pull mcr.microsoft.com/devcontainers/base:alpine-3.17
-                      docker tag mcr.microsoft.com/devcontainers/base:alpine-3.17 builder
+                      docker pull mcr.microsoft.com/devcontainers/base:alpine-3.19
+                      docker tag mcr.microsoft.com/devcontainers/base:alpine-3.19 builder
                       docker run --volume ${CURRENTDIR}/zeromq.js:/app --workdir /app --privileged builder sh -c "${DOCKERCMD}"
 
               - template: build/artifacts.yml@self
@@ -263,8 +263,8 @@ extends:
                   workingDirectory: zeromq.js
                   script: |
                       docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-                      docker pull --platform linux/arm64/v8 mcr.microsoft.com/devcontainers/base:alpine-3.17
-                      docker tag mcr.microsoft.com/devcontainers/base:alpine-3.17 builder
+                      docker pull --platform linux/arm64/v8 mcr.microsoft.com/devcontainers/base:alpine-3.19
+                      docker tag mcr.microsoft.com/devcontainers/base:alpine-3.19 builder
                       docker run --volume ${CURRENTDIR}/zeromq.js:/app --workdir /app --privileged builder sh -c "${DOCKERCMD}"
 
               - template: build/artifacts.yml@self
