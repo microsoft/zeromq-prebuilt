@@ -219,7 +219,7 @@ extends:
                   targetType: 'inline'
                   workingDirectory: zeromq.js
                   script: |
-                      docker run --pull always --privileged --rm mcr.microsoft.com/devcontainers/base:alpine-3.19 --volume ${CURRENTDIR}/zeromq.js:/app --workdir /app /bin/sh -c "${DOCKERCMD}"
+                      docker run --pull always --privileged --rm --volume ${CURRENTDIR}/zeromq.js:/app --workdir /app mcr.microsoft.com/devcontainers/base:alpine-3.19 /bin/sh -c "${DOCKERCMD}"
 
               - template: build/artifacts.yml@self
                 parameters:
@@ -261,7 +261,7 @@ extends:
                   workingDirectory: zeromq.js
                   script: |
                       docker run --pull always --privileged --rm tonistiigi/binfmt --install arm64
-                      docker run --pull always --privileged --rm --platform linux/arm64 mcr.microsoft.com/devcontainers/base:alpine-3.19 --volume ${CURRENTDIR}/zeromq.js:/app --workdir /app /bin/sh -c "${DOCKERCMD}"
+                      docker run --pull always --privileged --rm --platform linux/arm64 --volume ${CURRENTDIR}/zeromq.js:/app --workdir /app mcr.microsoft.com/devcontainers/base:alpine-3.19 /bin/sh -c "${DOCKERCMD}"
 
               - template: build/artifacts.yml@self
                 parameters:
