@@ -233,6 +233,7 @@ extends:
             pool:
               name: '1es-mariner-2.0-arm64'
               os: linux
+              hostArchitecture: Arm64
             templateContext:
               outputs:
                 - output: pipelineArtifact
@@ -245,6 +246,7 @@ extends:
                   targetType: 'inline'
                   script: |
                     sudo tdnf install -y zip
+
               - template: build/build.yml@self
                 parameters:
                   build: false
