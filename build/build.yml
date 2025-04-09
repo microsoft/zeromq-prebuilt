@@ -38,6 +38,7 @@ steps:
       script: |
         sudo yum install -y python3
         python3 --version
+
 - ${{ else }}:
   - script: |
       python --version

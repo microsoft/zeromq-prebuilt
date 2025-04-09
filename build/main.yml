@@ -239,6 +239,12 @@ extends:
                   targetPath: $(Build.ArtifactStagingDirectory)
                   artifactName: alpine-arm64-musl
             steps:
+              - task: Bash@3
+                displayName: Install zip package
+                inputs:
+                  targetType: 'inline'
+                  script: |
+                    sudo tdnf install -y zip
               - template: build/build.yml@self
                 parameters:
                   build: false
