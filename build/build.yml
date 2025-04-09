@@ -10,6 +10,7 @@ parameters:
   build: true
   test: true
   install_node: true
+  install_python: true
   yum_install_python: false
   output_node_file: ''
 
@@ -20,21 +21,27 @@ steps:
     versionSource: 'spec'
     versionSpec: ${{ parameters.node_version }}
 
-- task: UsePythonVersion@0
-  condition: eq('${{ parameters.yum_install_python }}', 'false')
-  displayName: Use Python 3 ${{ parameters.python_arch }}
-  inputs:
-    versionSpec: '3.11'
-    addToPath: true
-    architecture: ${{ parameters.python_arch }}
+- ${{ if eq(parameters.install_python, true) }}:
+  - task: UsePythonVersion@0
+    condition: eq('${{ parameters.yum_install_python }}', 'false')
+    displayName: Use Python 3 ${{ parameters.python_arch }}
+    inputs:
+      versionSpec: '3.11'
+      addToPath: true
+      architecture: ${{ parameters.python_arch }}
 
-- task: Bash@3
-  condition: eq('${{ parameters.yum_install_python }}', 'true')
-  displayName: Install Python3
-  inputs:
-    targetType: 'inline'
-    script: |
-      sudo yum install -y python3
+  - task: Bash@3
+    condition: eq('${{ parameters.yum_install_python }}', 'true')
+    displayName: Install Python3
+    inputs:
+      targetType: 'inline'
+      script: |
+        sudo yum install -y python3
+        python3 --version
+- ${{ else }}:
+  - script: |
+      python --version
+    displayName: List Python version
 
 - task: Bash@3
   displayName: Git Clone
