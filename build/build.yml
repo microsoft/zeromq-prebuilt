@@ -72,9 +72,27 @@ steps:
           'conditions': [
             ['OS=="win"', {
               'msvs_settings': {
+                'VCCLCompilerTool': {
+                  'AdditionalOptions': [
+                    '/guard:cf',
+                    '/Qspectre',
+                    '/w34244',
+                    '/w34267'
+                  ]
+                },
                 'VCLinkerTool': {
                   'AdditionalOptions': [
+                    '/guard:cf',
                     '/profile'
+                  ]
+                }
+              }
+            }],
+            ['OS=="win" and target_arch=="x64"', {
+              'msvs_settings': {
+                'VCLinkerTool': {
+                  'AdditionalOptions': [
+                    '/CETCOMPAT'
                   ]
                 }
               }
@@ -89,7 +107,7 @@ steps:
       echo $includes > "~/.gyp/include.gypi"
     }
   displayName: Create include.gypi
-  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
 - bash: |
     export PREBUILD_STRIP_BIN=$STRIP
@@ -119,7 +137,7 @@ steps:
     Contents: |
       zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}
       zeromq.js/build/libzmq/bin/*.dll
-      zeromq.js/**/*.pdb
+      zeromq.js/build/Release/zeromq.pdb
     TargetFolder: $(Agent.TempDirectory)/apiscan
   displayName: Copy files for APIScan
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
@@ -137,7 +155,7 @@ steps:
   inputs:
     targetPath: $(Agent.TempDirectory)/apiscan/zeromq.js/build/Release
     artifactName: apiscan-symbols
-  displayName: Publish Symbols Backup
+  displayName: Publish Symbols Artifact
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
 - task: APIScan@2
@@ -154,6 +172,26 @@ steps:
   env:
     AzureServicesAuthConnectionString: RunAs=App;AppId=c0940da5-8bd3-4dd3-8af1-40774b50edbd;TenantId=72f988bf-86f1-41af-91ab-2d7cd011db47;ServiceConnectionId=3e55d992-b60d-414d-9071-e4fad359c748;
     SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+- task: CopyFiles@2
+  inputs:
+    Contents: |
+      zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }}
+      zeromq.js/build/Release/zeromq.pdb
+    TargetFolder: $(Agent.TempDirectory)/binskim
+    flattenFolders: true
+  displayName: Copy files for BinSkim
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+
+- task: BinSkim@4
+  inputs:
+    InputType: Basic
+    Function: analyze
+    TargetPattern: guardianGlob
+    AnalyzeTargetGlob: $(Agent.TempDirectory)/binskim/${{ parameters.output_node_file }}
+    AnalyzeSymPath: $(Agent.TempDirectory)/binskim/zeromq.pdb
+  displayName: Run BinSkim
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
 - task: PublishSecurityAnalysisLogs@3
   inputs:
