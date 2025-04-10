@@ -501,9 +501,21 @@ index 1acd1f1..db6ddfb 100644
      dev: true
  
 diff --git a/script/build.ts b/script/build.ts
-index 693d914..955dc2b 100644
+index 693d914..518e168 100644
 --- a/script/build.ts
 +++ b/script/build.ts
+@@ -28,9 +28,9 @@ function main() {
+   // https://cmake.org/cmake/help/latest/variable/CMAKE_MSVC_RUNTIME_LIBRARY.html
+   if (process.platform === "win32") {
+     if (CMAKE_BUILD_TYPE !== "Debug") {
+-      build_options += " -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL"
++      build_options += " -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded"
+     } else {
+-      build_options += " -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebugDLL"
++      build_options += " -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug"
+     }
+   }
+
 @@ -65,6 +65,11 @@ function main() {
      exec(`tar xzf "${tarball}"`, execOptions)
    }

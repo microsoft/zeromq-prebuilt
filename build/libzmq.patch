@@ -168,7 +168,7 @@ index 34ae1595..e0e49180 100644
    add_definitions(-D_WINSOCK_DEPRECATED_NO_WARNINGS)
 +
 +  # static linking for vcpkg
-+  set(VCPKG_TARGET_TRIPLET "x64-windows-static")
++  # set(VCPKG_TARGET_TRIPLET "x64-windows-static")
 +  # use static runtime library
-+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
++  # set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
  endif()
