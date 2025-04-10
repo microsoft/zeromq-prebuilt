@@ -157,18 +157,3 @@ index 186d3f2d..d440eeb8 100644
  }
  
  #define SOCK__KNOWN_EPOLL_EVENTS                                       \
-
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 34ae1595..e0e49180 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -884,6 +884,11 @@ if(WIN32)
-   add_definitions(-DFD_SETSIZE=16384)
-   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-   add_definitions(-D_WINSOCK_DEPRECATED_NO_WARNINGS)
-+
-+  # static linking for vcpkg
-+  # set(VCPKG_TARGET_TRIPLET "x64-windows-static")
-+  # use static runtime library
-+  # set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
- endif()

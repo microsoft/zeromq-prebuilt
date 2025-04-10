@@ -509,10 +509,10 @@ index 693d914..518e168 100644
    if (process.platform === "win32") {
      if (CMAKE_BUILD_TYPE !== "Debug") {
 -      build_options += " -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL"
-+      build_options += " -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded"
++      build_options += " -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded -DZMQ_STATIC"
      } else {
 -      build_options += " -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebugDLL"
-+      build_options += " -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug"
++      build_options += " -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug -DZMQ_STATIC"
      }
    }
 
