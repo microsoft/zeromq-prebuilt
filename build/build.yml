@@ -83,7 +83,8 @@ steps:
                 'VCLinkerTool': {
                   'AdditionalOptions': [
                     '/guard:cf',
-                    '/profile'
+                    '/profile',
+                    '/verbose:lib'
                   ]
                 }
               }
