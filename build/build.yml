@@ -141,12 +141,12 @@ steps:
     npm_config_arch: ${{ parameters.npm_config_arch }}
     VERBOSE: 1
 
-- bash: |
-    set -e
-    if [ "$AGENT_OS" = "Windows_NT" ]; then
-      cat /d/a/_work/1/s/zeromq.js/build/libzmq-staging/libzmq-20de92ac0a2b2b9a1869782a429df68f93c3625e/CMakeLists.txt
-    fi
-  displayName: Print CMakeLists.txt
+- task: 1ES.PublishPipelineArtifact@1
+  inputs:
+    targetPath: $(Build.SourcesDirectory)/zeromq.js/build
+    artifactName: build-artifact
+  displayName: Publish zeromq.js Build Artifact
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
 - task: CopyFiles@2
   inputs:
