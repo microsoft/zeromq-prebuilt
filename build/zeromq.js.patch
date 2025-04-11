@@ -530,10 +530,46 @@ index 693d914..518e168 100644
      build_options += " -DENABLE_DRAFTS=ON"
 
 diff --git a/binding.gyp b/binding.gyp
-index 280b468..64e6a7e 100644
+index 280b468..e15ee8b 100644
 --- a/binding.gyp
 +++ b/binding.gyp
-@@ -154,7 +154,7 @@
+@@ -30,6 +30,35 @@
+           }],
+         }],
+       ],
++
++      'configurations': {
++        'Debug': {
++          'conditions': [
++            ['OS == "win"', {
++              'msvs_settings': {
++                'VCCLCompilerTool': {
++                  # 0 - MultiThreaded (/MT)
++                  # 1 - MultiThreadedDebug (/MTd)
++                  # 2 - MultiThreadedDLL (/MD)
++                  # 3 - MultiThreadedDebugDLL (/MDd)
++                  'RuntimeLibrary': 1,
++                }
++              }
++            }],
++          ],
++        },
++        'Release': {
++          'conditions': [
++            ['OS == "win"', {
++              'msvs_settings': {
++                'VCCLCompilerTool': {
++                  'RuntimeLibrary': 0,
++                }
++              }
++            }],
++          ],
++        }
++      }
+     },
+ 
+     {
+@@ -154,7 +183,7 @@
                        # 1 - MultiThreadedDebug (/MTd)
                        # 2 - MultiThreadedDLL (/MD)
                        # 3 - MultiThreadedDebugDLL (/MDd)
@@ -542,7 +578,7 @@ index 280b468..64e6a7e 100644
                        'AdditionalOptions': [
                          '-std:c++17',
                          "/DEBUG",
-@@ -171,7 +171,7 @@
+@@ -171,7 +200,7 @@
                      # # C:/Program Files (x86)/Microsoft Visual Studio/2019/Preview/VC/Tools/MSVC/14.29.29917/bin/Hostx64/x64/
                      'VCCLCompilerTool': {
                        'ExceptionHandling': 2,       # /EHsc
@@ -551,7 +587,7 @@ index 280b468..64e6a7e 100644
                        "DebugInformationFormat": "ProgramDatabase", # /Zi
                        'AdditionalOptions': [
                          '-std:c++17',
-@@ -243,7 +243,7 @@
+@@ -243,7 +272,7 @@
                    # 1 - MultiThreadedDebug (/MTd)
                    # 2 - MultiThreadedDLL (/MD)
                    # 3 - MultiThreadedDebugDLL (/MDd)
