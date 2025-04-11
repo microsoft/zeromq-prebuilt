@@ -65,6 +65,10 @@ steps:
   displayName: Patch zeromq.js
   workingDirectory: zeromq.js
 
+- bash: |
+    cmake --version
+  displayName: Print CMake version
+
 - pwsh: |
     $includes = @'
       {
@@ -109,6 +113,8 @@ steps:
     }
   displayName: Create include.gypi
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+
+
 
 - bash: |
     export PREBUILD_STRIP_BIN=$STRIP

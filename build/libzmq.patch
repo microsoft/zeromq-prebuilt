@@ -159,14 +159,17 @@ index 186d3f2d..d440eeb8 100644
  #define SOCK__KNOWN_EPOLL_EVENTS                                       \
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 34ae1595..50d8fd39 100644
+index 34ae1595..80de3dba 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -1360,6 +1360,7 @@ if(MSVC)
-   endif()
+@@ -7,6 +7,10 @@ else()
+   cmake_minimum_required(VERSION 2.8.12)
+ endif()
 
-   if(BUILD_STATIC)
-+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-     add_library(libzmq-static STATIC ${sources} ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
-     set_target_properties(
-       libzmq-static
++# Allow overriding RuntimeLibrary
++cmake_policy(SET CMP0091 NEW)
++set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
++
+ include(CheckIncludeFiles)
+ include(CheckCCompilerFlag)
+ include(CheckCXXCompilerFlag)
