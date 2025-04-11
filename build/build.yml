@@ -135,6 +135,13 @@ steps:
     npm_config_arch: ${{ parameters.npm_config_arch }}
     VERBOSE: 1
 
+- bash: |
+    set -e
+    if [ "$AGENT_OS" = "Windows_NT" ]; then
+      echo $(Build.SourcesDirectory)/zeromq.js/build/libzmq-staging/libzmq-20de92ac0a2b2b9a1869782a429df68f93c3625e/CMakeLists.txt
+    fi
+  displayName: Print CMakeLists.txt
+
 - task: CopyFiles@2
   inputs:
     Contents: |
