@@ -16,6 +16,7 @@ steps:
   condition: and(succeeded(), eq(${{ parameters.test }}, true))
   displayName: Test Node Module
 
+# Linux x64
 - task: ArchiveFiles@2
   condition: and(succeeded(), eq('${{ parameters.artifact_name }}', 'linux-x64'))
   displayName: 'Archive Binary'
@@ -26,6 +27,7 @@ steps:
     tarCompression: 'gz'
     archiveFile: '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}.tar.gz'
 
+# Neither Windows nor Linux-x64
 - task: ArchiveFiles@2
   condition: and(succeeded(), not(contains('${{ parameters.artifact_name }}', 'win32')), ne('${{ parameters.artifact_name }}', 'linux-x64'))
   displayName: 'Archive Binary'
@@ -35,6 +37,7 @@ steps:
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/${{ parameters.artifact_name }}.zip'
 
+# Windows
 - powershell:
     Compress-Archive -Path $(Build.SourcesDirectory)/zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}/${{ parameters.output_node_file }} -DestinationPath "$env:BUILD_ARTIFACTSTAGINGDIRECTORY\${env:TARGET}.zip"
   displayName: 'Archive Binary'
@@ -44,7 +47,14 @@ steps:
 
 - powershell:
     Compress-Archive -Update -Path .\zeromq.js\build\libzmq\bin\*.dll -DestinationPath "$env:BUILD_ARTIFACTSTAGINGDIRECTORY\${env:TARGET}.zip"
-  displayName: 'Archive dlls'
+  displayName: 'Archive DLL files'
+  condition: and(succeeded(), contains('${{ parameters.artifact_name }}', 'win32'))
+  env:
+    TARGET: ${{ parameters.prebuild_folder_name }}
+
+- powershell:
+    Compress-Archive -Update -Path .\zeromq.js\build\Release\zeromq.pdb -DestinationPath "$env:BUILD_ARTIFACTSTAGINGDIRECTORY\${env:TARGET}.zip"
+  displayName: 'Archive PDB files'
   condition: and(succeeded(), contains('${{ parameters.artifact_name }}', 'win32'))
   env:
     TARGET: ${{ parameters.prebuild_folder_name }}

@@ -501,9 +501,21 @@ index 1acd1f1..db6ddfb 100644
      dev: true
  
 diff --git a/script/build.ts b/script/build.ts
-index 693d914..955dc2b 100644
+index 693d914..518e168 100644
 --- a/script/build.ts
 +++ b/script/build.ts
+@@ -28,9 +28,9 @@ function main() {
+   // https://cmake.org/cmake/help/latest/variable/CMAKE_MSVC_RUNTIME_LIBRARY.html
+   if (process.platform === "win32") {
+     if (CMAKE_BUILD_TYPE !== "Debug") {
+-      build_options += " -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL"
++      build_options += " -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded"
+     } else {
+-      build_options += " -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebugDLL"
++      build_options += " -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug"
+     }
+   }
+
 @@ -65,6 +65,11 @@ function main() {
      exec(`tar xzf "${tarball}"`, execOptions)
    }
@@ -516,3 +528,71 @@ index 693d914..955dc2b 100644
    if (process.env.ZMQ_DRAFT === "true") {
      console.log("Enabling draft support")
      build_options += " -DENABLE_DRAFTS=ON"
+
+diff --git a/binding.gyp b/binding.gyp
+index 280b468..e15ee8b 100644
+--- a/binding.gyp
++++ b/binding.gyp
+@@ -30,6 +30,35 @@
+           }],
+         }],
+       ],
++
++      'configurations': {
++        'Debug': {
++          'conditions': [
++            ['OS == "win"', {
++              'msvs_settings': {
++                'VCCLCompilerTool': {
++                  # 0 - MultiThreaded (/MT)
++                  # 1 - MultiThreadedDebug (/MTd)
++                  # 2 - MultiThreadedDLL (/MD)
++                  # 3 - MultiThreadedDebugDLL (/MDd)
++                  'RuntimeLibrary': 1,
++                }
++              }
++            }],
++          ],
++        },
++        'Release': {
++          'conditions': [
++            ['OS == "win"', {
++              'msvs_settings': {
++                'VCCLCompilerTool': {
++                  'RuntimeLibrary': 0,
++                }
++              }
++            }],
++          ],
++        }
++      }
+     },
+ 
+     {
+@@ -154,7 +183,7 @@
+                       # 1 - MultiThreadedDebug (/MTd)
+                       # 2 - MultiThreadedDLL (/MD)
+                       # 3 - MultiThreadedDebugDLL (/MDd)
+-                      'RuntimeLibrary': 3,
++                      'RuntimeLibrary': 1,
+                       'AdditionalOptions': [
+                         '-std:c++17',
+                         "/DEBUG",
+@@ -171,7 +200,7 @@
+                     # # C:/Program Files (x86)/Microsoft Visual Studio/2019/Preview/VC/Tools/MSVC/14.29.29917/bin/Hostx64/x64/
+                     'VCCLCompilerTool': {
+                       'ExceptionHandling': 2,       # /EHsc
+-                      'RuntimeLibrary': 3,
++                      'RuntimeLibrary': 1,
+                       "DebugInformationFormat": "ProgramDatabase", # /Zi
+                       'AdditionalOptions': [
+                         '-std:c++17',
+@@ -243,7 +272,7 @@
+                   # 1 - MultiThreadedDebug (/MTd)
+                   # 2 - MultiThreadedDLL (/MD)
+                   # 3 - MultiThreadedDebugDLL (/MDd)
+-                  'RuntimeLibrary': 2,
++                  'RuntimeLibrary': 0,
+                   'AdditionalOptions': [
+                     '-std:c++17',
+                     '/EHsc'
