@@ -122,6 +122,7 @@ steps:
     ARCH: ${{ parameters.ARCH }}
     npm_config_arch: ${{ parameters.npm_config_arch }}
     PREBUILD_ARCH: ${{ parameters.ARCH }}
+    VERBOSE: 1
 
 - bash: |
     npm install -g pnpm@latest-8
@@ -132,6 +133,7 @@ steps:
   workingDirectory: zeromq.js
   env:
     npm_config_arch: ${{ parameters.npm_config_arch }}
+    VERBOSE: 1
 
 - task: CopyFiles@2
   inputs:
