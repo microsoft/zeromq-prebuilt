@@ -157,3 +157,16 @@ index 186d3f2d..d440eeb8 100644
  }
  
  #define SOCK__KNOWN_EPOLL_EVENTS                                       \
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 34ae1595..50d8fd39 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1360,6 +1360,7 @@ if(MSVC)
+   endif()
+
+   if(BUILD_STATIC)
++    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MT")
+     add_library(libzmq-static STATIC ${sources} ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+     set_target_properties(
+       libzmq-static
