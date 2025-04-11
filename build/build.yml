@@ -65,10 +65,6 @@ steps:
   displayName: Patch zeromq.js
   workingDirectory: zeromq.js
 
-- bash: |
-    cmake --version
-  displayName: Print CMake version
-
 - pwsh: |
     $includes = @'
       {
@@ -114,8 +110,6 @@ steps:
   displayName: Create include.gypi
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
-
-
 - bash: |
     export PREBUILD_STRIP_BIN=$STRIP
     npm install -g pnpm@latest-8
@@ -128,7 +122,6 @@ steps:
     ARCH: ${{ parameters.ARCH }}
     npm_config_arch: ${{ parameters.npm_config_arch }}
     PREBUILD_ARCH: ${{ parameters.ARCH }}
-    VERBOSE: 1
 
 - bash: |
     npm install -g pnpm@latest-8
@@ -139,14 +132,6 @@ steps:
   workingDirectory: zeromq.js
   env:
     npm_config_arch: ${{ parameters.npm_config_arch }}
-    VERBOSE: 1
-
-- task: 1ES.PublishPipelineArtifact@1
-  inputs:
-    targetPath: $(Build.SourcesDirectory)/zeromq.js/build
-    artifactName: build-artifact
-  displayName: Publish zeromq.js Build Artifact
-  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
 - task: CopyFiles@2
   inputs:
