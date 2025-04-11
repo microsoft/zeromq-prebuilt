@@ -157,3 +157,16 @@ index 186d3f2d..d440eeb8 100644
  }
  
  #define SOCK__KNOWN_EPOLL_EVENTS                                       \
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 34ae1595..0b9a2298 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1371,6 +1371,7 @@ if(MSVC)
+                  "${MSVC_TOOLSET}-mt-s-${ZMQ_VERSION_MAJOR}_${ZMQ_VERSION_MINOR}_${ZMQ_VERSION_PATCH}"
+                  DEBUG_POSTFIX "${MSVC_TOOLSET}-mt-sgd-${ZMQ_VERSION_MAJOR}_${ZMQ_VERSION_MINOR}_${ZMQ_VERSION_PATCH}"
+                  COMPILE_FLAGS "/DZMQ_STATIC"
++                 MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+                  OUTPUT_NAME "lib${ZMQ_OUTPUT_BASENAME}")
+   endif()
+ else()
