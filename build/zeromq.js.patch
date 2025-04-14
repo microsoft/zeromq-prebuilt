@@ -593,3 +593,13 @@ index 280b468..64e6a7e 100644
                    'AdditionalOptions': [
                      '-std:c++17',
                      '/EHsc'
+
+@@ -1736,7 +1743,7 @@ if(BUILD_SHARED OR BUILD_STATIC)
+           DESTINATION ${ZEROMQ_CMAKECONFIG_INSTALL_DIR})
+ endif()
+
+-option(ENABLE_CPACK "Enables cpack rules" ON)
++option(ENABLE_CPACK "Enables cpack rules" OFF)
+ if(MSVC AND ENABLE_CPACK)
+   if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+     set(CMAKE_INSTALL_DEBUG_LIBRARIES_ONLY TRUE)
