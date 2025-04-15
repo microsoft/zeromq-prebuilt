@@ -525,7 +525,7 @@ index 1acd1f1..16c70b4 100644
      dev: true
  
 diff --git a/script/build.ts b/script/build.ts
-index 693d914..518e168 100644
+index 693d914..3ade658 100644
 --- a/script/build.ts
 +++ b/script/build.ts
 @@ -28,9 +28,9 @@ function main() {
@@ -543,7 +543,7 @@ index 693d914..518e168 100644
 @@ -65,6 +65,11 @@ function main() {
      exec(`tar xzf "${tarball}"`, execOptions)
    }
- 
+
 +  cd(src_dir)
 +  exec(`patch -p1 < ${root}/libzmq.patch`)
 +  exec(`patch -p1 < ${root}/libzmq-438d5d88.patch`)
@@ -552,7 +552,6 @@ index 693d914..518e168 100644
    if (process.env.ZMQ_DRAFT === "true") {
      console.log("Enabling draft support")
      build_options += " -DENABLE_DRAFTS=ON"
-
 @@ -78,7 +83,7 @@ function main() {
      writeFileSync(clang_format_file, "")
    }
