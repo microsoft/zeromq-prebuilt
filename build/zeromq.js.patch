@@ -1,16 +1,18 @@
 diff --git a/package.json b/package.json
-index c9611cf..8c300d9 100644
+index c9611cf..2dd0b7a 100644
 --- a/package.json
 +++ b/package.json
-@@ -18,7 +18,7 @@
+@@ -18,9 +18,9 @@
    },
    "homepage": "http://zeromq.github.io/zeromq.js/",
    "dependencies": {
 -    "@aminya/node-gyp-build": "4.5.0-aminya.5",
-+    "node-gyp-build": "^4.8.2",
      "cross-env": "^7.0.3",
      "node-addon-api": "^7.0.0",
++    "node-gyp-build": "^4.8.2",
      "shelljs": "^0.8.5",
+     "shx": "^0.3.4"
+   },
 @@ -35,7 +35,6 @@
      "@types/which": "^2.0.1",
      "benchmark": "^2.1.4",
@@ -28,18 +30,20 @@ index c9611cf..8c300d9 100644
      "prettier": "^2.8.0",
      "rocha": "^2.5.10",
      "semver": "^7.3.8",
-@@ -59,7 +58,9 @@
+@@ -59,7 +58,11 @@
    "pnpm": {
      "overrides": {
        "typescript": "~4.9.3",
 -      "node-gyp": "10.0.1"
 +      "node-gyp": "10.0.1",
 +      "@babel/traverse": "7.23.2",
-+      "node-gyp-build": "^4.8.2"
++      "node-gyp-build": "^4.8.2",
++      "brace-expansion@>=1.0.0 <=1.1.11": "^1.1.12",
++      "brace-expansion@>=2.0.0 <=2.0.1": "^2.0.2"
      }
    },
    "engines": {
-@@ -79,7 +80,7 @@
+@@ -79,7 +82,7 @@
      "tsconfig.json"
    ],
    "scripts": {
