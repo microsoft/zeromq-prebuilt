@@ -133,11 +133,18 @@ steps:
 - ${{ if startsWith(parameters.artifact_name, 'darwin') }}:
   - template: azure-pipelines/common/steps/sign-binaries.yml@templates
     parameters:
-      workingDirectory: zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}
+      workingDirectory: ${{ parameters.prebuild_folder_name }}
       binaryName: ${{ parameters.output_node_file }}
       signingType: darwin
 
 - ${{ if startsWith(parameters.artifact_name, 'linux') }}:
+  - template: azure-pipelines/common/steps/sign-binaries.yml@templates
+    parameters:
+      workingDirectory: zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}
+      binaryName: ${{ parameters.output_node_file }}
+      signingType: linux
+
+- ${{ if startsWith(parameters.artifact_name, 'alpine') }}:
   - template: azure-pipelines/common/steps/sign-binaries.yml@templates
     parameters:
       workingDirectory: zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}
