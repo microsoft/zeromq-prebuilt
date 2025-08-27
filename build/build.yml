@@ -1,3 +1,15 @@
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: microsoft/vscode-engineering
+      ref: main
+      endpoint: Monaco
+    - repository: 1esPipelines
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
+
 parameters:
   repo: ''
   tag: ''
@@ -122,6 +134,27 @@ steps:
   workingDirectory: zeromq.js
   env:
     npm_config_arch: ${{ parameters.npm_config_arch }}
+
+- ${{ if startsWith(parameters.artifact_name, 'win') }}:
+  - template: azure-pipelines/common/steps/sign-binaries.yml@templates
+    parameters:
+      workingDirectory: zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}
+      binaryName: ${{ parameters.output_node_file }}
+      signingType: windows
+
+- ${{ if startsWith(parameters.artifact_name, 'darwin') }}:
+  - template: azure-pipelines/common/steps/sign-binaries.yml@templates
+    parameters:
+      workingDirectory: zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}
+      binaryName: ${{ parameters.output_node_file }}
+      signingType: darwin
+
+- ${{ if startsWith(parameters.artifact_name, 'linux') }}:
+  - template: azure-pipelines/common/steps/sign-binaries.yml@templates
+    parameters:
+      workingDirectory: zeromq.js/prebuilds/${{ parameters.prebuild_folder_name }}
+      binaryName: ${{ parameters.output_node_file }}
+      signingType: linux
 
 - task: CopyFiles@2
   inputs:
