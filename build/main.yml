@@ -247,6 +247,14 @@ extends:
                   script: |
                     sudo tdnf install -y zip
 
+              - task: Bash@3
+                displayName: Install python package
+                inputs:
+                  targetType: 'inline'
+                  script: |
+                    sudo tdnf install -y python3
+                    python3 --version
+
               - template: build/build.yml@self
                 parameters:
                   build: false
