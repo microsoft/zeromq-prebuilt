@@ -251,7 +251,7 @@ extends:
                 parameters:
                   build: false
                   test: false
-                  install_python: false
+                  install_python: true
 
               - task: DockerInstaller@0
                 inputs:
