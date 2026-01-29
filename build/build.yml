@@ -41,7 +41,7 @@ steps:
 
 - ${{ else }}:
   - script: |
-      python --version
+      python --version || python3 --version
     displayName: List Python version
 
 - task: Bash@3
