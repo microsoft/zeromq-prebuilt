@@ -231,7 +231,7 @@ extends:
 
           - job: alpine_arm64_musl
             pool:
-              name: '1es-mariner-2.0-arm64'
+              name: 1es-azure-linux-3-arm64
               os: linux
               hostArchitecture: Arm64
             templateContext:
