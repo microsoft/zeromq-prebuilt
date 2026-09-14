@@ -1,5 +1,5 @@
 diff --git a/package.json b/package.json
-index c9611cf..2dd0b7a 100644
+index c9611cf..c811068 100644
 --- a/package.json
 +++ b/package.json
 @@ -18,9 +18,9 @@
@@ -30,20 +30,18 @@ index c9611cf..2dd0b7a 100644
      "prettier": "^2.8.0",
      "rocha": "^2.5.10",
      "semver": "^7.3.8",
-@@ -59,7 +58,11 @@
+@@ -59,7 +58,9 @@
    "pnpm": {
      "overrides": {
        "typescript": "~4.9.3",
 -      "node-gyp": "10.0.1"
 +      "node-gyp": "10.0.1",
 +      "@babel/traverse": "7.23.2",
-+      "node-gyp-build": "^4.8.2",
-+      "brace-expansion@>=1.0.0 <=1.1.11": "^1.1.12",
-+      "brace-expansion@>=2.0.0 <=2.0.1": "^2.0.2"
++      "node-gyp-build": "^4.8.2"
      }
    },
    "engines": {
-@@ -79,7 +82,7 @@
+@@ -79,7 +80,7 @@
      "tsconfig.json"
    ],
    "scripts": {
@@ -53,7 +51,7 @@ index c9611cf..2dd0b7a 100644
      "clean.temp": "shx rm -rf ./tmp && shx mkdir -p ./tmp && shx touch ./tmp/.gitkeep",
      "build.library.compat": "shx rm -rf ./lib/ts3.7 && downlevel-dts ./lib ./lib/ts3.7 --to=3.7",
 diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
-index 1acd1f1..16c70b4 100644
+index 1acd1f1..aa36ec8 100644
 --- a/pnpm-lock.yaml
 +++ b/pnpm-lock.yaml
 @@ -7,17 +7,19 @@ settings:
@@ -334,7 +332,16 @@ index 1acd1f1..16c70b4 100644
    /@colors/colors@1.5.0:
      resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
      engines: {node: '>=0.1.90'}
-@@ -434,6 +506,7 @@ packages:
+@@ -425,7 +497,7 @@ packages:
+       ignore: 4.0.6
+       import-fresh: 3.3.0
+       js-yaml: 3.14.1
+-      minimatch: 3.1.2
++      minimatch: 3.1.4
+       strip-json-comments: 3.1.1
+     transitivePeerDependencies:
+       - supports-color
+@@ -434,16 +506,18 @@ packages:
    /@humanwhocodes/config-array@0.5.0:
      resolution: {integrity: sha512-FagtKFz74XrTl7y6HCzQpwDfXP0yhxe9lHLD1UZxjvZIcbyRz8zTFF/yYNfSfzU414eDwZ1SrO0Qvtyf+wFMQg==}
      engines: {node: '>=10.10.0'}
@@ -342,7 +349,11 @@ index 1acd1f1..16c70b4 100644
      dependencies:
        '@humanwhocodes/object-schema': 1.2.1
        debug: 4.3.4(supports-color@8.1.1)
-@@ -444,6 +517,7 @@ packages:
+-      minimatch: 3.1.2
++      minimatch: 3.1.4
+     transitivePeerDependencies:
+       - supports-color
+     dev: true
  
    /@humanwhocodes/object-schema@1.2.1:
      resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
@@ -405,6 +416,25 @@ index 1acd1f1..16c70b4 100644
    /bl@4.1.0:
      resolution: {integrity: sha512-1W07cM9gS6DcLperZfFSj+bWLtaPGSOHWhPiGzXmvVJbRLdG82sH/Kn8EtW1VqWVA54AKf2h5k5BbnIbwF3h6w==}
      dependencies:
+@@ -1192,14 +1281,14 @@ packages:
+       widest-line: 2.0.1
+     dev: true
+ 
+-  /brace-expansion@1.1.11:
+-    resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}
++  /brace-expansion@1.1.18:
++    resolution: {integrity: sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==}
+     dependencies:
+       balanced-match: 1.0.2
+       concat-map: 0.0.1
+ 
+-  /brace-expansion@2.0.1:
+-    resolution: {integrity: sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==}
++  /brace-expansion@2.1.4:
++    resolution: {integrity: sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==}
+     dependencies:
+       balanced-match: 1.0.2
+     dev: true
 @@ -1714,15 +1803,6 @@ packages:
      resolution: {integrity: sha512-AsElvov3LoNB7tf5k37H2jYSB+ZZPMT5sG2QjJCcdlV5chIv6htBUBUui2IKRjgtKAKtCBN7Zbwa+MtwLjSeNw==}
      dev: true
@@ -421,6 +451,33 @@ index 1acd1f1..16c70b4 100644
    /debug@2.6.9:
      resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
      peerDependencies:
+@@ -2262,7 +2342,7 @@ packages:
+       has: 1.0.3
+       is-core-module: 2.11.0
+       is-glob: 4.0.3
+-      minimatch: 3.1.2
++      minimatch: 3.1.4
+       object.values: 1.1.6
+       resolve: 1.22.1
+       tsconfig-paths: 3.14.1
+@@ -2299,7 +2379,7 @@ packages:
+       has: 1.0.3
+       jsx-ast-utils: 3.3.3
+       language-tags: 1.0.5
+-      minimatch: 3.1.2
++      minimatch: 3.1.4
+       semver: 6.3.0
+     dev: true
+     optional: true
+@@ -2314,7 +2394,7 @@ packages:
+       eslint-plugin-es: 3.0.1(eslint@7.32.0)
+       eslint-utils: 2.1.0
+       ignore: 5.2.1
+-      minimatch: 3.1.2
++      minimatch: 3.1.4
+       resolve: 1.22.1
+       semver: 6.3.0
+     dev: true
 @@ -2365,7 +2445,7 @@ packages:
      peerDependencies:
        eslint: ^3.17.0 || ^4 || ^5 || ^6 || ^7
@@ -430,6 +487,24 @@ index 1acd1f1..16c70b4 100644
        eslint: 7.32.0
        eslint-plugin-react-native-globals: 0.1.2
      transitivePeerDependencies:
+@@ -2386,7 +2466,7 @@ packages:
+       eslint: 7.32.0
+       has: 1.0.3
+       jsx-ast-utils: 2.4.1
+-      minimatch: 3.1.2
++      minimatch: 3.1.4
+       object.entries: 1.1.6
+       object.fromentries: 2.0.6
+       object.values: 1.1.6
+@@ -2409,7 +2489,7 @@ packages:
+       eslint: 7.32.0
+       estraverse: 5.3.0
+       jsx-ast-utils: 3.3.3
+-      minimatch: 3.1.2
++      minimatch: 3.1.4
+       object.entries: 1.1.6
+       object.fromentries: 2.0.6
+       object.hasown: 1.1.2
 @@ -2489,6 +2569,7 @@ packages:
    /eslint@7.32.0:
      resolution: {integrity: sha512-VHZ8gX+EDfz+97jGcgyGCyRia/dPOd6Xh9yPv8Bl1+SoaIwD+a/vlrOmGRUyOYu7MwUhc7CxqeaDZU13S4+EpA==}
@@ -438,6 +513,15 @@ index 1acd1f1..16c70b4 100644
      hasBin: true
      dependencies:
        '@babel/code-frame': 7.12.11
+@@ -2520,7 +2601,7 @@ packages:
+       json-stable-stringify-without-jsonify: 1.0.1
+       levn: 0.4.1
+       lodash.merge: 4.6.2
+-      minimatch: 3.1.2
++      minimatch: 3.1.4
+       natural-compare: 1.4.0
+       optionator: 0.9.1
+       progress: 2.0.3
 @@ -2592,12 +2673,6 @@ packages:
        strip-eof: 1.0.0
      dev: true
@@ -462,6 +546,89 @@ index 1acd1f1..16c70b4 100644
    /filename-reserved-regex@2.0.0:
      resolution: {integrity: sha512-lc1bnsSr4L4Bdif8Xb/qrtokGbq5zlsms/CYH8PP+WtCkGNF65DPiQY8vG3SakEdRn8Dlnm+gW/qWKKjS5sZzQ==}
      engines: {node: '>=4'}
+@@ -2882,7 +2953,7 @@ packages:
+       fs.realpath: 1.0.0
+       inflight: 1.0.6
+       inherits: 2.0.4
+-      minimatch: 3.1.2
++      minimatch: 3.1.4
+       once: 1.4.0
+       path-is-absolute: 1.0.1
+     dev: true
+@@ -2893,7 +2964,7 @@ packages:
+       fs.realpath: 1.0.0
+       inflight: 1.0.6
+       inherits: 2.0.4
+-      minimatch: 3.1.2
++      minimatch: 3.1.4
+       once: 1.4.0
+       path-is-absolute: 1.0.1
+     dev: true
+@@ -2904,7 +2975,7 @@ packages:
+       fs.realpath: 1.0.0
+       inflight: 1.0.6
+       inherits: 2.0.4
+-      minimatch: 3.1.2
++      minimatch: 3.1.4
+       once: 1.4.0
+       path-is-absolute: 1.0.1
+ 
+@@ -3739,46 +3810,46 @@ packages:
+   /minimatch@3.0.4:
+     resolution: {integrity: sha512-yJHVQEhyqPLUTgt9B83PXu6W3rx4MvvHvSUvToogpwoGDOUQ+yDrR0HRot+yOCdCO7u4hX3pWft6kWBBcqh0UA==}
+     dependencies:
+-      brace-expansion: 1.1.11
++      brace-expansion: 1.1.18
+     dev: true
+ 
+   /minimatch@3.0.8:
+     resolution: {integrity: sha512-6FsRAQsxQ61mw+qP1ZzbL9Bc78x2p5OqNgNpnoAFLTrX8n5Kxph0CsnhmKKNXTWjXqU5L0pGPR7hYk+XWZr60Q==}
+     dependencies:
+-      brace-expansion: 1.1.11
++      brace-expansion: 1.1.18
+     dev: true
+ 
+-  /minimatch@3.1.2:
+-    resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
++  /minimatch@3.1.4:
++    resolution: {integrity: sha512-twmL+S8+7yIsE9wsqgzU3E8/LumN3M3QELrBZ20OdmQ9jB2JvW5oZtBEmft84k/Gs5CG9mqtWc6Y9vW+JEzGxw==}
+     dependencies:
+-      brace-expansion: 1.1.11
++      brace-expansion: 1.1.18
+ 
+   /minimatch@4.2.1:
+     resolution: {integrity: sha512-9Uq1ChtSZO+Mxa/CL1eGizn2vRn3MlLgzhT0Iz8zaY8NdvxvB0d5QdPFmCKf7JKA9Lerx5vRrnwO03jsSfGG9g==}
+     engines: {node: '>=10'}
+     dependencies:
+-      brace-expansion: 1.1.11
++      brace-expansion: 1.1.18
+     dev: true
+ 
+   /minimatch@5.0.1:
+     resolution: {integrity: sha512-nLDxIFRyhDblz3qMuq+SoRZED4+miJ/G+tdDrjkkkRnjAsBexeGpgjLEQ0blJy7rHhR2b93rhQY4SvyWu9v03g==}
+     engines: {node: '>=10'}
+     dependencies:
+-      brace-expansion: 2.0.1
++      brace-expansion: 2.1.4
+     dev: true
+ 
+   /minimatch@5.1.0:
+     resolution: {integrity: sha512-9TPBGGak4nHfGZsPBohm9AWg6NoT7QTCehS3BIJABslyZbzxfV78QM2Y6+i741OPZIafFAaiiEMh5OyIrJPgtg==}
+     engines: {node: '>=10'}
+     dependencies:
+-      brace-expansion: 2.0.1
++      brace-expansion: 2.1.4
+     dev: true
+ 
+   /minimatch@9.0.3:
+     resolution: {integrity: sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==}
+     engines: {node: '>=16 || 14 >=14.17'}
+     dependencies:
+-      brace-expansion: 2.0.1
++      brace-expansion: 2.1.4
+     dev: true
+ 
+   /minimist@0.0.8:
 @@ -3998,10 +4069,6 @@ packages:
        semver: 7.3.8
      dev: true
