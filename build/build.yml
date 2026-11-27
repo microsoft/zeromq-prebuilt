@@ -100,7 +100,17 @@ steps:
   displayName: Create include.gypi
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
+- pwsh: |
+    Set-Content -LiteralPath "$(Agent.TempDirectory)/.npmrc" -Value "registry=https://pkgs.dev.azure.com/monacotools/Monaco/_packaging/vscode/npm/registry/"
+  displayName: Configure npm feed
+
+- task: npmAuthenticate@0
+  inputs:
+    workingFile: $(Agent.TempDirectory)/.npmrc
+  displayName: Authenticate npm feed
+
 - bash: |
+    set -e
     export PREBUILD_STRIP_BIN=$STRIP
     npm install -g pnpm@latest-8
     pnpm install
@@ -109,11 +119,13 @@ steps:
   condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), ne('${{ parameters.ARCH }}', ''))
   workingDirectory: zeromq.js
   env:
+    NPM_CONFIG_USERCONFIG: $(Agent.TempDirectory)/.npmrc
     ARCH: ${{ parameters.ARCH }}
     npm_config_arch: ${{ parameters.npm_config_arch }}
     PREBUILD_ARCH: ${{ parameters.ARCH }}
 
 - bash: |
+    set -e
     npm install -g pnpm@latest-8
     pnpm install
     npm run prebuild
@@ -121,6 +133,7 @@ steps:
   condition: and(succeeded(), eq('${{ parameters.build }}', 'true'), eq('${{ parameters.ARCH }}', ''))
   workingDirectory: zeromq.js
   env:
+    NPM_CONFIG_USERCONFIG: $(Agent.TempDirectory)/.npmrc
     npm_config_arch: ${{ parameters.npm_config_arch }}
 
 - task: CopyFiles@2
