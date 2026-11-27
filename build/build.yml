@@ -149,7 +149,7 @@ steps:
   displayName: Publish Symbols Artifact
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
-- ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))) }}:
+- ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
   - task: APIScan@2
     inputs:
       softwareFolder: $(Agent.TempDirectory)/apiscan
