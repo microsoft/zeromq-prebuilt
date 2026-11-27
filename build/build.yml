@@ -149,20 +149,21 @@ steps:
   displayName: Publish Symbols Artifact
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
 
-- task: APIScan@2
-  inputs:
-    softwareFolder: $(Agent.TempDirectory)/apiscan
-    softwareName: 'zeromq'
-    softwareVersionNum: '1'
-    symbolsFolder: 'srv*https://symweb.azurefd.net;$(Agent.TempDirectory)/apiscan/zeromq.js/build/Release'
-    isLargeApp: false
-    toolVersion: 'Latest'
-    azureSubscription: 'vscode-apiscan'
-  displayName: Run APIScan
-  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
-  env:
-    AzureServicesAuthConnectionString: RunAs=App;AppId=c0940da5-8bd3-4dd3-8af1-40774b50edbd;TenantId=72f988bf-86f1-41af-91ab-2d7cd011db47;ServiceConnectionId=3e55d992-b60d-414d-9071-e4fad359c748;
-    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+- ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))) }}:
+  - task: APIScan@2
+    inputs:
+      softwareFolder: $(Agent.TempDirectory)/apiscan
+      softwareName: 'zeromq'
+      softwareVersionNum: '1'
+      symbolsFolder: 'srv*https://symweb.azurefd.net;$(Agent.TempDirectory)/apiscan/zeromq.js/build/Release'
+      isLargeApp: false
+      toolVersion: 'Latest'
+      azureSubscription: 'vscode-apiscan'
+    displayName: Run APIScan
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq('${{ parameters.ARCH }}', 'x64'))
+    env:
+      AzureServicesAuthConnectionString: RunAs=App;AppId=c0940da5-8bd3-4dd3-8af1-40774b50edbd;TenantId=72f988bf-86f1-41af-91ab-2d7cd011db47;ServiceConnectionId=3e55d992-b60d-414d-9071-e4fad359c748;
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
 - task: CopyFiles@2
   inputs:
